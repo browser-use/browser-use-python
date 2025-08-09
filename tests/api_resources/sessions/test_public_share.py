@@ -7,9 +7,9 @@ from typing import Any, cast
 
 import pytest
 
-from browser_use import BrowserUse, AsyncBrowserUse
 from tests.utils import assert_matches_type
-from browser_use.types.sessions import ShareView
+from browser_use_sdk import BrowserUse, AsyncBrowserUse
+from browser_use_sdk.types.sessions import ShareView
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 

@@ -7,9 +7,9 @@ from typing import Any, cast
 
 import pytest
 
-from browser_use import BrowserUse, AsyncBrowserUse
 from tests.utils import assert_matches_type
-from browser_use.types import (
+from browser_use_sdk import BrowserUse, AsyncBrowserUse
+from browser_use_sdk.types import (
     AgentProfileView,
     AgentProfileListResponse,
 )

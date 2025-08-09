@@ -7,17 +7,17 @@ from ._proxy import LazyProxy
 
 
 class ResourcesProxy(LazyProxy[Any]):
-    """A proxy for the `browser_use.resources` module.
+    """A proxy for the `browser_use_sdk.resources` module.
 
-    This is used so that we can lazily import `browser_use.resources` only when
-    needed *and* so that users can just import `browser_use` and reference `browser_use.resources`
+    This is used so that we can lazily import `browser_use_sdk.resources` only when
+    needed *and* so that users can just import `browser_use_sdk` and reference `browser_use_sdk.resources`
     """
 
     @override
     def __load__(self) -> Any:
         import importlib
 
-        mod = importlib.import_module("browser_use.resources")
+        mod = importlib.import_module("browser_use_sdk.resources")
         return mod
 
 
