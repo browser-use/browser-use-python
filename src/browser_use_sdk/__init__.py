@@ -89,12 +89,12 @@ _setup_logging()
 # Update the __module__ attribute for exported symbols so that
 # error messages point to this module instead of the module
 # it was originally defined in, e.g.
-# browser_use._exceptions.NotFoundError -> browser_use.NotFoundError
+# browser_use_sdk._exceptions.NotFoundError -> browser_use_sdk.NotFoundError
 __locals = locals()
 for __name in __all__:
     if not __name.startswith("__"):
         try:
-            __locals[__name].__module__ = "browser_use"
+            __locals[__name].__module__ = "browser_use_sdk"
         except (TypeError, AttributeError):
             # Some of our exported symbols are builtins which we can't set attributes for.
             pass

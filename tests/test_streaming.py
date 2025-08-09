@@ -5,8 +5,8 @@ from typing import Iterator, AsyncIterator
 import httpx
 import pytest
 
-from browser_use import BrowserUse, AsyncBrowserUse
-from browser_use._streaming import Stream, AsyncStream, ServerSentEvent
+from browser_use_sdk import BrowserUse, AsyncBrowserUse
+from browser_use_sdk._streaming import Stream, AsyncStream, ServerSentEvent
 
 
 @pytest.mark.asyncio
