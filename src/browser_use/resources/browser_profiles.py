@@ -37,7 +37,7 @@ class BrowserProfilesResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/browser-use-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/browser-use/browser-use-python#accessing-raw-response-data-eg-headers
         """
         return BrowserProfilesResourceWithRawResponse(self)
 
@@ -46,7 +46,7 @@ class BrowserProfilesResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/browser-use-python#with_streaming_response
+        For more information, see https://www.github.com/browser-use/browser-use-python#with_streaming_response
         """
         return BrowserProfilesResourceWithStreamingResponse(self)
 
@@ -279,7 +279,7 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/browser-use-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/browser-use/browser-use-python#accessing-raw-response-data-eg-headers
         """
         return AsyncBrowserProfilesResourceWithRawResponse(self)
 
@@ -288,7 +288,7 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/browser-use-python#with_streaming_response
+        For more information, see https://www.github.com/browser-use/browser-use-python#with_streaming_response
         """
         return AsyncBrowserProfilesResourceWithStreamingResponse(self)
 
