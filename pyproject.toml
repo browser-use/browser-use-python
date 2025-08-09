@@ -1,5 +1,5 @@
 [project]
-name = "browser_use"
+name = "browser-use-sdk"
 version = "0.0.1"
 description = "The official Python library for the browser-use API"
 dynamic = ["readme"]

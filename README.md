@@ -1,7 +1,7 @@
 # Browser Use Python API library
 
 <!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/browser_use.svg?label=pypi%20(stable))](https://pypi.org/project/browser_use/)
+[![PyPI version](https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable))](https://pypi.org/project/browser-use-sdk/)
 
 The Browser Use Python library provides convenient access to the Browser Use REST API from any Python 3.8+
 application. The library includes type definitions for all request params and response fields,
@@ -16,12 +16,9 @@ The REST API documentation can be found on [docs.browser-use.com](https://docs.b
 ## Installation
 
 ```sh
-# install from the production repo
-pip install git+ssh://git@github.com/browser-use/browser-use-python.git
+# install from PyPI
+pip install browser-use-sdk
 ```
-
-> [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install browser_use`
 
 ## Usage
 
@@ -75,8 +72,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from the production repo
-pip install 'browser_use[aiohttp] @ git+ssh://git@github.com/browser-use/browser-use-python.git'
+# install from PyPI
+pip install browser-use-sdk[aiohttp]
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
