@@ -20,7 +20,7 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 class TestAgentProfiles:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_create(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.create(
@@ -28,7 +28,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_create_with_all_params(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.create(
@@ -44,7 +44,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_raw_response_create(self, client: BrowserUse) -> None:
         response = client.agent_profiles.with_raw_response.create(
@@ -56,7 +56,7 @@ class TestAgentProfiles:
         agent_profile = response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_streaming_response_create(self, client: BrowserUse) -> None:
         with client.agent_profiles.with_streaming_response.create(
@@ -70,7 +70,7 @@ class TestAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_retrieve(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.retrieve(
@@ -78,7 +78,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_raw_response_retrieve(self, client: BrowserUse) -> None:
         response = client.agent_profiles.with_raw_response.retrieve(
@@ -90,7 +90,7 @@ class TestAgentProfiles:
         agent_profile = response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_streaming_response_retrieve(self, client: BrowserUse) -> None:
         with client.agent_profiles.with_streaming_response.retrieve(
@@ -104,7 +104,7 @@ class TestAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_path_params_retrieve(self, client: BrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
@@ -112,7 +112,7 @@ class TestAgentProfiles:
                 "",
             )
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_update(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.update(
@@ -120,7 +120,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_update_with_all_params(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.update(
@@ -137,7 +137,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_raw_response_update(self, client: BrowserUse) -> None:
         response = client.agent_profiles.with_raw_response.update(
@@ -149,7 +149,7 @@ class TestAgentProfiles:
         agent_profile = response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_streaming_response_update(self, client: BrowserUse) -> None:
         with client.agent_profiles.with_streaming_response.update(
@@ -163,7 +163,7 @@ class TestAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_path_params_update(self, client: BrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
@@ -171,13 +171,13 @@ class TestAgentProfiles:
                 profile_id="",
             )
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_list(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.list()
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_list_with_all_params(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.list(
@@ -186,7 +186,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_raw_response_list(self, client: BrowserUse) -> None:
         response = client.agent_profiles.with_raw_response.list()
@@ -196,7 +196,7 @@ class TestAgentProfiles:
         agent_profile = response.parse()
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_streaming_response_list(self, client: BrowserUse) -> None:
         with client.agent_profiles.with_streaming_response.list() as response:
@@ -208,7 +208,7 @@ class TestAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_method_delete(self, client: BrowserUse) -> None:
         agent_profile = client.agent_profiles.delete(
@@ -216,7 +216,7 @@ class TestAgentProfiles:
         )
         assert_matches_type(object, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_raw_response_delete(self, client: BrowserUse) -> None:
         response = client.agent_profiles.with_raw_response.delete(
@@ -228,7 +228,7 @@ class TestAgentProfiles:
         agent_profile = response.parse()
         assert_matches_type(object, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_streaming_response_delete(self, client: BrowserUse) -> None:
         with client.agent_profiles.with_streaming_response.delete(
@@ -242,7 +242,7 @@ class TestAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     def test_path_params_delete(self, client: BrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
@@ -256,7 +256,7 @@ class TestAsyncAgentProfiles:
         "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
     )
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_create(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.create(
@@ -264,7 +264,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.create(
@@ -280,7 +280,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.agent_profiles.with_raw_response.create(
@@ -292,7 +292,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.agent_profiles.with_streaming_response.create(
@@ -306,7 +306,7 @@ class TestAsyncAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.retrieve(
@@ -314,7 +314,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.agent_profiles.with_raw_response.retrieve(
@@ -326,7 +326,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.agent_profiles.with_streaming_response.retrieve(
@@ -340,7 +340,7 @@ class TestAsyncAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncBrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
@@ -348,7 +348,7 @@ class TestAsyncAgentProfiles:
                 "",
             )
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_update(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.update(
@@ -356,7 +356,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_update_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.update(
@@ -373,7 +373,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_raw_response_update(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.agent_profiles.with_raw_response.update(
@@ -385,7 +385,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await response.parse()
         assert_matches_type(AgentProfileView, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_streaming_response_update(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.agent_profiles.with_streaming_response.update(
@@ -399,7 +399,7 @@ class TestAsyncAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_path_params_update(self, async_client: AsyncBrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
@@ -407,13 +407,13 @@ class TestAsyncAgentProfiles:
                 profile_id="",
             )
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_list(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.list()
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.list(
@@ -422,7 +422,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_raw_response_list(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.agent_profiles.with_raw_response.list()
@@ -432,7 +432,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await response.parse()
         assert_matches_type(AgentProfileListResponse, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_streaming_response_list(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.agent_profiles.with_streaming_response.list() as response:
@@ -444,7 +444,7 @@ class TestAsyncAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_method_delete(self, async_client: AsyncBrowserUse) -> None:
         agent_profile = await async_client.agent_profiles.delete(
@@ -452,7 +452,7 @@ class TestAsyncAgentProfiles:
         )
         assert_matches_type(object, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_raw_response_delete(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.agent_profiles.with_raw_response.delete(
@@ -464,7 +464,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await response.parse()
         assert_matches_type(object, agent_profile, path=["response"])
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_streaming_response_delete(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.agent_profiles.with_streaming_response.delete(
@@ -478,7 +478,7 @@ class TestAsyncAgentProfiles:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip()
+    @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
     async def test_path_params_delete(self, async_client: AsyncBrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `profile_id` but received ''"):
