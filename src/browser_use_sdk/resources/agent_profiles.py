@@ -7,7 +7,7 @@ from typing import List, Optional
 import httpx
 
 from ..types import agent_profile_list_params, agent_profile_create_params, agent_profile_update_params
-from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven
+from .._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -49,11 +49,11 @@ class AgentProfilesResource(SyncAPIResource):
         *,
         name: str,
         allowed_domains: List[str] | NotGiven = NOT_GIVEN,
+        custom_system_prompt_extension: str | NotGiven = NOT_GIVEN,
         description: str | NotGiven = NOT_GIVEN,
         flash_mode: bool | NotGiven = NOT_GIVEN,
         highlight_elements: bool | NotGiven = NOT_GIVEN,
         max_agent_steps: int | NotGiven = NOT_GIVEN,
-        system_prompt: str | NotGiven = NOT_GIVEN,
         thinking: bool | NotGiven = NOT_GIVEN,
         vision: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -64,7 +64,34 @@ class AgentProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Create Agent Profile
+        Create a new agent profile for the authenticated user.
+
+        Agent profiles define how your AI agents behave during tasks. You can create
+        multiple profiles for different use cases (e.g., customer support, data
+        analysis, web scraping). Free users can create 1 profile; paid users can create
+        unlimited profiles.
+
+        Key features you can configure:
+
+        - System prompt: The core instructions that define the agent's personality and
+          behavior
+        - Allowed domains: Restrict which websites the agent can access
+        - Max steps: Limit how many actions the agent can take in a single task
+        - Vision: Enable/disable the agent's ability to see and analyze screenshots
+        - Thinking: Enable/disable the agent's reasoning process
+
+        Args:
+
+        - request: The agent profile configuration including name, description, and
+          behavior settings
+
+        Returns:
+
+        - The newly created agent profile with all its details
+
+        Raises:
+
+        - 402: If user needs a subscription to create additional profiles
 
         Args:
           extra_headers: Send extra headers
@@ -81,11 +108,11 @@ class AgentProfilesResource(SyncAPIResource):
                 {
                     "name": name,
                     "allowed_domains": allowed_domains,
+                    "custom_system_prompt_extension": custom_system_prompt_extension,
                     "description": description,
                     "flash_mode": flash_mode,
                     "highlight_elements": highlight_elements,
                     "max_agent_steps": max_agent_steps,
-                    "system_prompt": system_prompt,
                     "thinking": thinking,
                     "vision": vision,
                 },
@@ -109,7 +136,22 @@ class AgentProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Get Agent Profile
+        Get a specific agent profile by its ID.
+
+        Retrieves the complete details of an agent profile, including all its
+        configuration settings like system prompts, allowed domains, and behavior flags.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile
+
+        Returns:
+
+        - Complete agent profile information
+
+        Raises:
+
+        - 404: If the user agent profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -135,12 +177,12 @@ class AgentProfilesResource(SyncAPIResource):
         profile_id: str,
         *,
         allowed_domains: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        custom_system_prompt_extension: Optional[str] | NotGiven = NOT_GIVEN,
         description: Optional[str] | NotGiven = NOT_GIVEN,
         flash_mode: Optional[bool] | NotGiven = NOT_GIVEN,
         highlight_elements: Optional[bool] | NotGiven = NOT_GIVEN,
         max_agent_steps: Optional[int] | NotGiven = NOT_GIVEN,
         name: Optional[str] | NotGiven = NOT_GIVEN,
-        system_prompt: Optional[str] | NotGiven = NOT_GIVEN,
         thinking: Optional[bool] | NotGiven = NOT_GIVEN,
         vision: Optional[bool] | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -151,7 +193,24 @@ class AgentProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Update Agent Profile
+        Update an existing agent profile.
+
+        Modify any aspect of an agent profile, such as its name, description, system
+        prompt, or behavior settings. Only the fields you provide will be updated; other
+        fields remain unchanged.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile to update
+        - request: The fields to update (only provided fields will be changed)
+
+        Returns:
+
+        - The updated agent profile with all its current details
+
+        Raises:
+
+        - 404: If the user agent profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -169,12 +228,12 @@ class AgentProfilesResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "allowed_domains": allowed_domains,
+                    "custom_system_prompt_extension": custom_system_prompt_extension,
                     "description": description,
                     "flash_mode": flash_mode,
                     "highlight_elements": highlight_elements,
                     "max_agent_steps": max_agent_steps,
                     "name": name,
-                    "system_prompt": system_prompt,
                     "thinking": thinking,
                     "vision": vision,
                 },
@@ -199,7 +258,17 @@ class AgentProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileListResponse:
         """
-        List Agent Profiles
+        Get a paginated list of all agent profiles for the authenticated user.
+
+        Agent profiles define how your AI agents behave, including their personality,
+        capabilities, and limitations. Use this endpoint to see all your configured
+        agent profiles.
+
+        Returns:
+
+        - A paginated list of agent profiles
+        - Total count of profiles
+        - Page information for navigation
 
         Args:
           extra_headers: Send extra headers
@@ -238,9 +307,21 @@ class AgentProfilesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Agent Profile
+        Delete an agent profile.
+
+        Permanently removes an agent profile and all its configuration. This action
+        cannot be undone. Any tasks that were using this profile will continue to work,
+        but you won't be able to create new tasks with the deleted profile.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
 
         Args:
           extra_headers: Send extra headers
@@ -253,12 +334,13 @@ class AgentProfilesResource(SyncAPIResource):
         """
         if not profile_id:
             raise ValueError(f"Expected a non-empty value for `profile_id` but received {profile_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._delete(
             f"/agent-profiles/{profile_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 
@@ -287,11 +369,11 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         *,
         name: str,
         allowed_domains: List[str] | NotGiven = NOT_GIVEN,
+        custom_system_prompt_extension: str | NotGiven = NOT_GIVEN,
         description: str | NotGiven = NOT_GIVEN,
         flash_mode: bool | NotGiven = NOT_GIVEN,
         highlight_elements: bool | NotGiven = NOT_GIVEN,
         max_agent_steps: int | NotGiven = NOT_GIVEN,
-        system_prompt: str | NotGiven = NOT_GIVEN,
         thinking: bool | NotGiven = NOT_GIVEN,
         vision: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -302,7 +384,34 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Create Agent Profile
+        Create a new agent profile for the authenticated user.
+
+        Agent profiles define how your AI agents behave during tasks. You can create
+        multiple profiles for different use cases (e.g., customer support, data
+        analysis, web scraping). Free users can create 1 profile; paid users can create
+        unlimited profiles.
+
+        Key features you can configure:
+
+        - System prompt: The core instructions that define the agent's personality and
+          behavior
+        - Allowed domains: Restrict which websites the agent can access
+        - Max steps: Limit how many actions the agent can take in a single task
+        - Vision: Enable/disable the agent's ability to see and analyze screenshots
+        - Thinking: Enable/disable the agent's reasoning process
+
+        Args:
+
+        - request: The agent profile configuration including name, description, and
+          behavior settings
+
+        Returns:
+
+        - The newly created agent profile with all its details
+
+        Raises:
+
+        - 402: If user needs a subscription to create additional profiles
 
         Args:
           extra_headers: Send extra headers
@@ -319,11 +428,11 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
                 {
                     "name": name,
                     "allowed_domains": allowed_domains,
+                    "custom_system_prompt_extension": custom_system_prompt_extension,
                     "description": description,
                     "flash_mode": flash_mode,
                     "highlight_elements": highlight_elements,
                     "max_agent_steps": max_agent_steps,
-                    "system_prompt": system_prompt,
                     "thinking": thinking,
                     "vision": vision,
                 },
@@ -347,7 +456,22 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Get Agent Profile
+        Get a specific agent profile by its ID.
+
+        Retrieves the complete details of an agent profile, including all its
+        configuration settings like system prompts, allowed domains, and behavior flags.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile
+
+        Returns:
+
+        - Complete agent profile information
+
+        Raises:
+
+        - 404: If the user agent profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -373,12 +497,12 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         profile_id: str,
         *,
         allowed_domains: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        custom_system_prompt_extension: Optional[str] | NotGiven = NOT_GIVEN,
         description: Optional[str] | NotGiven = NOT_GIVEN,
         flash_mode: Optional[bool] | NotGiven = NOT_GIVEN,
         highlight_elements: Optional[bool] | NotGiven = NOT_GIVEN,
         max_agent_steps: Optional[int] | NotGiven = NOT_GIVEN,
         name: Optional[str] | NotGiven = NOT_GIVEN,
-        system_prompt: Optional[str] | NotGiven = NOT_GIVEN,
         thinking: Optional[bool] | NotGiven = NOT_GIVEN,
         vision: Optional[bool] | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -389,7 +513,24 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileView:
         """
-        Update Agent Profile
+        Update an existing agent profile.
+
+        Modify any aspect of an agent profile, such as its name, description, system
+        prompt, or behavior settings. Only the fields you provide will be updated; other
+        fields remain unchanged.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile to update
+        - request: The fields to update (only provided fields will be changed)
+
+        Returns:
+
+        - The updated agent profile with all its current details
+
+        Raises:
+
+        - 404: If the user agent profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -407,12 +548,12 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "allowed_domains": allowed_domains,
+                    "custom_system_prompt_extension": custom_system_prompt_extension,
                     "description": description,
                     "flash_mode": flash_mode,
                     "highlight_elements": highlight_elements,
                     "max_agent_steps": max_agent_steps,
                     "name": name,
-                    "system_prompt": system_prompt,
                     "thinking": thinking,
                     "vision": vision,
                 },
@@ -437,7 +578,17 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AgentProfileListResponse:
         """
-        List Agent Profiles
+        Get a paginated list of all agent profiles for the authenticated user.
+
+        Agent profiles define how your AI agents behave, including their personality,
+        capabilities, and limitations. Use this endpoint to see all your configured
+        agent profiles.
+
+        Returns:
+
+        - A paginated list of agent profiles
+        - Total count of profiles
+        - Page information for navigation
 
         Args:
           extra_headers: Send extra headers
@@ -476,9 +627,21 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Agent Profile
+        Delete an agent profile.
+
+        Permanently removes an agent profile and all its configuration. This action
+        cannot be undone. Any tasks that were using this profile will continue to work,
+        but you won't be able to create new tasks with the deleted profile.
+
+        Args:
+
+        - profile_id: The unique identifier of the agent profile to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
 
         Args:
           extra_headers: Send extra headers
@@ -491,12 +654,13 @@ class AsyncAgentProfilesResource(AsyncAPIResource):
         """
         if not profile_id:
             raise ValueError(f"Expected a non-empty value for `profile_id` but received {profile_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._delete(
             f"/agent-profiles/{profile_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 

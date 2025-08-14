@@ -13,6 +13,8 @@ __all__ = ["AgentProfileUpdateParams"]
 class AgentProfileUpdateParams(TypedDict, total=False):
     allowed_domains: Annotated[Optional[List[str]], PropertyInfo(alias="allowedDomains")]
 
+    custom_system_prompt_extension: Annotated[Optional[str], PropertyInfo(alias="customSystemPromptExtension")]
+
     description: Optional[str]
 
     flash_mode: Annotated[Optional[bool], PropertyInfo(alias="flashMode")]
@@ -22,8 +24,6 @@ class AgentProfileUpdateParams(TypedDict, total=False):
     max_agent_steps: Annotated[Optional[int], PropertyInfo(alias="maxAgentSteps")]
 
     name: Optional[str]
-
-    system_prompt: Annotated[Optional[str], PropertyInfo(alias="systemPrompt")]
 
     thinking: Optional[bool]
 

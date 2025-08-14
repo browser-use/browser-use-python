@@ -216,7 +216,7 @@ class TestBrowserProfiles:
         browser_profile = client.browser_profiles.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, browser_profile, path=["response"])
+        assert browser_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -228,7 +228,7 @@ class TestBrowserProfiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         browser_profile = response.parse()
-        assert_matches_type(object, browser_profile, path=["response"])
+        assert browser_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -240,7 +240,7 @@ class TestBrowserProfiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             browser_profile = response.parse()
-            assert_matches_type(object, browser_profile, path=["response"])
+            assert browser_profile is None
 
         assert cast(Any, response.is_closed) is True
 
@@ -454,7 +454,7 @@ class TestAsyncBrowserProfiles:
         browser_profile = await async_client.browser_profiles.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, browser_profile, path=["response"])
+        assert browser_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -466,7 +466,7 @@ class TestAsyncBrowserProfiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         browser_profile = await response.parse()
-        assert_matches_type(object, browser_profile, path=["response"])
+        assert browser_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -478,7 +478,7 @@ class TestAsyncBrowserProfiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             browser_profile = await response.parse()
-            assert_matches_type(object, browser_profile, path=["response"])
+            assert browser_profile is None
 
         assert cast(Any, response.is_closed) is True
 

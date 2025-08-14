@@ -25,33 +25,26 @@ pip install browser-use-sdk
 The full API of this library can be found in [api.md](api.md).
 
 ```python
-import os
 from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
-    api_key=os.environ.get("BROWSER_USE_API_KEY"),  # This is the default and can be omitted
+    api_key="My API Key",
 )
 
 tasks = client.tasks.list()
 print(tasks.items)
 ```
 
-While you can provide an `api_key` keyword argument,
-we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `BROWSER_USE_API_KEY="My API Key"` to your `.env` file
-so that your API Key is not stored in source control.
-
 ## Async usage
 
 Simply import `AsyncBrowserUse` instead of `BrowserUse` and use `await` with each API call:
 
 ```python
-import os
 import asyncio
 from browser_use_sdk import AsyncBrowserUse
 
 client = AsyncBrowserUse(
-    api_key=os.environ.get("BROWSER_USE_API_KEY"),  # This is the default and can be omitted
+    api_key="My API Key",
 )
 
 
@@ -112,7 +105,9 @@ Nested parameters are dictionaries, typed using `TypedDict`, for example:
 ```python
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse()
+client = BrowserUse(
+    api_key="My API Key",
+)
 
 task_view = client.tasks.create(
     task="x",
@@ -134,7 +129,9 @@ All errors inherit from `browser_use_sdk.APIError`.
 import browser_use_sdk
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse()
+client = BrowserUse(
+    api_key="My API Key",
+)
 
 try:
     client.tasks.list()
@@ -175,6 +172,7 @@ from browser_use_sdk import BrowserUse
 
 # Configure the default for all requests:
 client = BrowserUse(
+    api_key="My API Key",
     # default is 2
     max_retries=0,
 )
@@ -193,12 +191,14 @@ from browser_use_sdk import BrowserUse
 
 # Configure the default for all requests:
 client = BrowserUse(
+    api_key="My API Key",
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
 client = BrowserUse(
+    api_key="My API Key",
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
@@ -243,7 +243,9 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 ```py
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse()
+client = BrowserUse(
+    api_key="My API Key",
+)
 response = client.tasks.with_raw_response.list()
 print(response.headers.get('X-My-Header'))
 
@@ -318,6 +320,7 @@ import httpx
 from browser_use_sdk import BrowserUse, DefaultHttpxClient
 
 client = BrowserUse(
+    api_key="My API Key",
     # Or use the `BROWSER_USE_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
@@ -340,7 +343,9 @@ By default the library closes underlying HTTP connections whenever the client is
 ```py
 from browser_use_sdk import BrowserUse
 
-with BrowserUse() as client:
+with BrowserUse(
+    api_key="My API Key",
+) as client:
   # make requests here
   ...
 

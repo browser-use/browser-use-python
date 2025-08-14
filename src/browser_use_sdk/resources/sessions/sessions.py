@@ -71,7 +71,25 @@ class SessionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionView:
         """
-        Get Session
+        Get detailed information about a specific AI agent session.
+
+        Retrieves comprehensive information about a session, including its current
+        status, live browser URL (if active), recording URL (if completed), and optional
+        task details. This endpoint is useful for monitoring active sessions or
+        reviewing completed ones.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+        - params: Optional parameters to control what data is included
+
+        Returns:
+
+        - Complete session information including status, URLs, and optional task details
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -109,12 +127,36 @@ class SessionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionView:
         """
-        Update Session
+        Update a session's status or perform actions on it.
+
+        Currently supports stopping a session, which will:
+
+        1. Stop any running tasks in the session
+        2. End the browser session
+        3. Generate a recording URL if available
+        4. Update the session status to 'stopped'
+
+        This is useful for manually stopping long-running sessions or when you want to
+        end a session before all tasks are complete.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to update
+        - request: The action to perform on the session
+
+        Returns:
+
+        - The updated session information including the new status and recording URL
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           action: Available actions that can be performed on a session
 
-              Attributes: STOP: Stop the session and all its associated tasks
+              Attributes: STOP: Stop the session and all its associated tasks (cannot be
+              undone)
 
           extra_headers: Send extra headers
 
@@ -150,14 +192,27 @@ class SessionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionListResponse:
         """
-        List Sessions
+        Get a paginated list of all AI agent sessions for the authenticated user.
+
+        AI agent sessions represent active or completed browsing sessions where your AI
+        agents perform tasks. Each session can contain multiple tasks and maintains
+        browser state throughout the session lifecycle.
+
+        You can filter sessions by status and optionally include task details for each
+        session.
+
+        Returns:
+
+        - A paginated list of agent sessions
+        - Total count of sessions
+        - Page information for navigation
+        - Optional task details for each session (if requested)
 
         Args:
           filter_by: Enumeration of possible (browser) session states
 
-              Attributes: ACTIVE: Session is currently active and running (aka browser is
-              running) STOPPED: Session has been stopped and is no longer active (aka browser
-              is stopped)
+              Attributes: ACTIVE: Session is currently active and running (browser is running)
+              STOPPED: Session has been stopped and is no longer active (browser is stopped)
 
           extra_headers: Send extra headers
 
@@ -225,7 +280,25 @@ class AsyncSessionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionView:
         """
-        Get Session
+        Get detailed information about a specific AI agent session.
+
+        Retrieves comprehensive information about a session, including its current
+        status, live browser URL (if active), recording URL (if completed), and optional
+        task details. This endpoint is useful for monitoring active sessions or
+        reviewing completed ones.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+        - params: Optional parameters to control what data is included
+
+        Returns:
+
+        - Complete session information including status, URLs, and optional task details
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -265,12 +338,36 @@ class AsyncSessionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionView:
         """
-        Update Session
+        Update a session's status or perform actions on it.
+
+        Currently supports stopping a session, which will:
+
+        1. Stop any running tasks in the session
+        2. End the browser session
+        3. Generate a recording URL if available
+        4. Update the session status to 'stopped'
+
+        This is useful for manually stopping long-running sessions or when you want to
+        end a session before all tasks are complete.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to update
+        - request: The action to perform on the session
+
+        Returns:
+
+        - The updated session information including the new status and recording URL
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           action: Available actions that can be performed on a session
 
-              Attributes: STOP: Stop the session and all its associated tasks
+              Attributes: STOP: Stop the session and all its associated tasks (cannot be
+              undone)
 
           extra_headers: Send extra headers
 
@@ -306,14 +403,27 @@ class AsyncSessionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> SessionListResponse:
         """
-        List Sessions
+        Get a paginated list of all AI agent sessions for the authenticated user.
+
+        AI agent sessions represent active or completed browsing sessions where your AI
+        agents perform tasks. Each session can contain multiple tasks and maintains
+        browser state throughout the session lifecycle.
+
+        You can filter sessions by status and optionally include task details for each
+        session.
+
+        Returns:
+
+        - A paginated list of agent sessions
+        - Total count of sessions
+        - Page information for navigation
+        - Optional task details for each session (if requested)
 
         Args:
           filter_by: Enumeration of possible (browser) session states
 
-              Attributes: ACTIVE: Session is currently active and running (aka browser is
-              running) STOPPED: Session has been stopped and is no longer active (aka browser
-              is stopped)
+              Attributes: ACTIVE: Session is currently active and running (browser is running)
+              STOPPED: Session has been stopped and is no longer active (browser is stopped)
 
           extra_headers: Send extra headers
 

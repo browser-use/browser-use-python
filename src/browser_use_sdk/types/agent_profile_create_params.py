@@ -15,6 +15,8 @@ class AgentProfileCreateParams(TypedDict, total=False):
 
     allowed_domains: Annotated[List[str], PropertyInfo(alias="allowedDomains")]
 
+    custom_system_prompt_extension: Annotated[str, PropertyInfo(alias="customSystemPromptExtension")]
+
     description: str
 
     flash_mode: Annotated[bool, PropertyInfo(alias="flashMode")]
@@ -22,8 +24,6 @@ class AgentProfileCreateParams(TypedDict, total=False):
     highlight_elements: Annotated[bool, PropertyInfo(alias="highlightElements")]
 
     max_agent_steps: Annotated[int, PropertyInfo(alias="maxAgentSteps")]
-
-    system_prompt: Annotated[str, PropertyInfo(alias="systemPrompt")]
 
     thinking: bool
 

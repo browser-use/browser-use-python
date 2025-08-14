@@ -15,9 +15,8 @@ class SessionListParams(TypedDict, total=False):
     filter_by: Annotated[Optional[SessionStatus], PropertyInfo(alias="filterBy")]
     """Enumeration of possible (browser) session states
 
-    Attributes: ACTIVE: Session is currently active and running (aka browser is
-    running) STOPPED: Session has been stopped and is no longer active (aka browser
-    is stopped)
+    Attributes: ACTIVE: Session is currently active and running (browser is running)
+    STOPPED: Session has been stopped and is no longer active (browser is stopped)
     """
 
     include_tasks: Annotated[bool, PropertyInfo(alias="includeTasks")]

@@ -17,18 +17,16 @@ class TaskCreateParams(TypedDict, total=False):
     agent_settings: Annotated[AgentSettings, PropertyInfo(alias="agentSettings")]
     """Configuration settings for the AI agent
 
-    Attributes: llm: The LLM model to use for the agent (default: O3 - best
-    performance for now) profile_id: ID of the agent profile to use for the task
-    (None for default)
+    Attributes: llm: The LLM model to use for the agent profile_id: Unique
+    identifier of the agent profile to use for the task
     """
 
     browser_settings: Annotated[BrowserSettings, PropertyInfo(alias="browserSettings")]
     """Configuration settings for the browser session
 
-    Attributes: session_id: ID of existing session to continue (None for new
-    session) profile_id: ID of browser profile to use (None for default)
-    save_browser_data: Whether to save browser state/data for the user to download
-    later
+    Attributes: session_id: Unique identifier of existing session to continue
+    profile_id: Unique identifier of browser profile to use save_browser_data:
+    Whether to save browser state/data for the user to download later
     """
 
     included_file_names: Annotated[Optional[List[str]], PropertyInfo(alias="includedFileNames")]

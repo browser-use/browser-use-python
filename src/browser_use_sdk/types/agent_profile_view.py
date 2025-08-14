@@ -17,6 +17,8 @@ class AgentProfileView(BaseModel):
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
+    custom_system_prompt_extension: str = FieldInfo(alias="customSystemPromptExtension")
+
     description: str
 
     flash_mode: bool = FieldInfo(alias="flashMode")
@@ -26,8 +28,6 @@ class AgentProfileView(BaseModel):
     max_agent_steps: int = FieldInfo(alias="maxAgentSteps")
 
     name: str
-
-    system_prompt: str = FieldInfo(alias="systemPrompt")
 
     thinking: bool
 
