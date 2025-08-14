@@ -24,7 +24,7 @@ from pydantic import ValidationError
 from browser_use_sdk import BrowserUse, AsyncBrowserUse, APIResponseValidationError
 from browser_use_sdk._types import Omit
 from browser_use_sdk._models import BaseModel, FinalRequestOptions
-from browser_use_sdk._exceptions import APIStatusError, APITimeoutError, BrowserUseError, APIResponseValidationError
+from browser_use_sdk._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
 from browser_use_sdk._base_client import (
     DEFAULT_TIMEOUT,
     HTTPX_DEFAULT_TIMEOUT,
@@ -335,16 +335,6 @@ class TestBrowserUse:
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "stainless"
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
-
-    def test_validate_headers(self) -> None:
-        client = BrowserUse(base_url=base_url, api_key=api_key, _strict_response_validation=True)
-        request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("X-Browser-Use-API-Key") == api_key
-
-        with pytest.raises(BrowserUseError):
-            with update_env(**{"BROWSER_USE_API_KEY": Omit()}):
-                client2 = BrowserUse(base_url=base_url, api_key=None, _strict_response_validation=True)
-            _ = client2
 
     def test_default_query_option(self) -> None:
         client = BrowserUse(
@@ -1144,16 +1134,6 @@ class TestAsyncBrowserUse:
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "stainless"
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
-
-    def test_validate_headers(self) -> None:
-        client = AsyncBrowserUse(base_url=base_url, api_key=api_key, _strict_response_validation=True)
-        request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("X-Browser-Use-API-Key") == api_key
-
-        with pytest.raises(BrowserUseError):
-            with update_env(**{"BROWSER_USE_API_KEY": Omit()}):
-                client2 = AsyncBrowserUse(base_url=base_url, api_key=None, _strict_response_validation=True)
-            _ = client2
 
     def test_default_query_option(self) -> None:
         client = AsyncBrowserUse(

@@ -12,7 +12,7 @@ from ..types import (
     browser_profile_create_params,
     browser_profile_update_params,
 )
-from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven
+from .._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -71,7 +71,33 @@ class BrowserProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Create Browser Profile
+        Create a new browser profile for the authenticated user.
+
+        Browser profiles define how your web browsers behave during AI agent tasks. You
+        can create multiple profiles for different use cases (e.g., mobile testing,
+        desktop browsing, proxy-enabled scraping). Free users can create up to 10
+        profiles; paid users can create unlimited profiles.
+
+        Key features you can configure:
+
+        - Viewport dimensions: Set the browser window size for consistent rendering
+        - Mobile emulation: Enable mobile device simulation
+        - Proxy settings: Route traffic through specific locations or proxy servers
+        - Ad blocking: Enable/disable ad blocking for cleaner browsing
+        - Cache persistence: Choose whether to save browser data between sessions
+
+        Args:
+
+        - request: The browser profile configuration including name, description, and
+          browser settings
+
+        Returns:
+
+        - The newly created browser profile with all its details
+
+        Raises:
+
+        - 402: If user needs a subscription to create additional profiles
 
         Args:
           extra_headers: Send extra headers
@@ -117,7 +143,23 @@ class BrowserProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Get Browser Profile
+        Get a specific browser profile by its ID.
+
+        Retrieves the complete details of a browser profile, including all its
+        configuration settings like viewport dimensions, proxy settings, and behavior
+        flags.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile
+
+        Returns:
+
+        - Complete browser profile information
+
+        Raises:
+
+        - 404: If the user browser profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -160,7 +202,24 @@ class BrowserProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Update Browser Profile
+        Update an existing browser profile.
+
+        Modify any aspect of a browser profile, such as its name, description, viewport
+        settings, or proxy configuration. Only the fields you provide will be updated;
+        other fields remain unchanged.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile to update
+        - request: The fields to update (only provided fields will be changed)
+
+        Returns:
+
+        - The updated browser profile with all its current details
+
+        Raises:
+
+        - 404: If the user browser profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -209,7 +268,17 @@ class BrowserProfilesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileListResponse:
         """
-        List Browser Profiles
+        Get a paginated list of all browser profiles for the authenticated user.
+
+        Browser profiles define how your web browsers behave during AI agent tasks,
+        including settings like viewport size, mobile emulation, proxy configuration,
+        and ad blocking. Use this endpoint to see all your configured browser profiles.
+
+        Returns:
+
+        - A paginated list of browser profiles
+        - Total count of profiles
+        - Page information for navigation
 
         Args:
           extra_headers: Send extra headers
@@ -248,9 +317,22 @@ class BrowserProfilesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Browser Profile
+        Delete a browser profile.
+
+        Permanently removes a browser profile and all its configuration. This action
+        cannot be undone. The profile will also be removed from the browser service. Any
+        active sessions using this profile will continue to work, but you won't be able
+        to create new sessions with the deleted profile.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
 
         Args:
           extra_headers: Send extra headers
@@ -263,12 +345,13 @@ class BrowserProfilesResource(SyncAPIResource):
         """
         if not profile_id:
             raise ValueError(f"Expected a non-empty value for `profile_id` but received {profile_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._delete(
             f"/browser-profiles/{profile_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 
@@ -313,7 +396,33 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Create Browser Profile
+        Create a new browser profile for the authenticated user.
+
+        Browser profiles define how your web browsers behave during AI agent tasks. You
+        can create multiple profiles for different use cases (e.g., mobile testing,
+        desktop browsing, proxy-enabled scraping). Free users can create up to 10
+        profiles; paid users can create unlimited profiles.
+
+        Key features you can configure:
+
+        - Viewport dimensions: Set the browser window size for consistent rendering
+        - Mobile emulation: Enable mobile device simulation
+        - Proxy settings: Route traffic through specific locations or proxy servers
+        - Ad blocking: Enable/disable ad blocking for cleaner browsing
+        - Cache persistence: Choose whether to save browser data between sessions
+
+        Args:
+
+        - request: The browser profile configuration including name, description, and
+          browser settings
+
+        Returns:
+
+        - The newly created browser profile with all its details
+
+        Raises:
+
+        - 402: If user needs a subscription to create additional profiles
 
         Args:
           extra_headers: Send extra headers
@@ -359,7 +468,23 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Get Browser Profile
+        Get a specific browser profile by its ID.
+
+        Retrieves the complete details of a browser profile, including all its
+        configuration settings like viewport dimensions, proxy settings, and behavior
+        flags.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile
+
+        Returns:
+
+        - Complete browser profile information
+
+        Raises:
+
+        - 404: If the user browser profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -402,7 +527,24 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileView:
         """
-        Update Browser Profile
+        Update an existing browser profile.
+
+        Modify any aspect of a browser profile, such as its name, description, viewport
+        settings, or proxy configuration. Only the fields you provide will be updated;
+        other fields remain unchanged.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile to update
+        - request: The fields to update (only provided fields will be changed)
+
+        Returns:
+
+        - The updated browser profile with all its current details
+
+        Raises:
+
+        - 404: If the user browser profile doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -451,7 +593,17 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> BrowserProfileListResponse:
         """
-        List Browser Profiles
+        Get a paginated list of all browser profiles for the authenticated user.
+
+        Browser profiles define how your web browsers behave during AI agent tasks,
+        including settings like viewport size, mobile emulation, proxy configuration,
+        and ad blocking. Use this endpoint to see all your configured browser profiles.
+
+        Returns:
+
+        - A paginated list of browser profiles
+        - Total count of profiles
+        - Page information for navigation
 
         Args:
           extra_headers: Send extra headers
@@ -490,9 +642,22 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Browser Profile
+        Delete a browser profile.
+
+        Permanently removes a browser profile and all its configuration. This action
+        cannot be undone. The profile will also be removed from the browser service. Any
+        active sessions using this profile will continue to work, but you won't be able
+        to create new sessions with the deleted profile.
+
+        Args:
+
+        - profile_id: The unique identifier of the browser profile to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
 
         Args:
           extra_headers: Send extra headers
@@ -505,12 +670,13 @@ class AsyncBrowserProfilesResource(AsyncAPIResource):
         """
         if not profile_id:
             raise ValueError(f"Expected a non-empty value for `profile_id` but received {profile_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._delete(
             f"/browser-profiles/{profile_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 

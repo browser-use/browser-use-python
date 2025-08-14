@@ -9,7 +9,13 @@ from .._models import BaseModel
 from .llm_model import LlmModel
 from .task_status import TaskStatus
 
-__all__ = ["TaskView", "Step"]
+__all__ = ["TaskView", "OutputFile", "Step", "UserUploadedFile"]
+
+
+class OutputFile(BaseModel):
+    id: str
+
+    file_name: str = FieldInfo(alias="fileName")
 
 
 class Step(BaseModel):
@@ -28,14 +34,20 @@ class Step(BaseModel):
     screenshot_url: Optional[str] = FieldInfo(alias="screenshotUrl", default=None)
 
 
-class TaskView(BaseModel):
+class UserUploadedFile(BaseModel):
     id: str
 
-    done_output: str = FieldInfo(alias="doneOutput")
+    file_name: str = FieldInfo(alias="fileName")
+
+
+class TaskView(BaseModel):
+    id: str
 
     is_scheduled: bool = FieldInfo(alias="isScheduled")
 
     llm: LlmModel
+
+    output_files: List[OutputFile] = FieldInfo(alias="outputFiles")
 
     session_id: str = FieldInfo(alias="sessionId")
 
@@ -44,23 +56,25 @@ class TaskView(BaseModel):
     status: TaskStatus
     """Enumeration of possible task execution states
 
-    Attributes: STARTED: Task has been initiated and is currently running PAUSED:
-    Task execution has been temporarily paused STOPPED: Task execution has been
-    stopped (not completed) FINISHED: Task has completed successfully
+    Attributes: STARTED: Task has been started and is currently running PAUSED: Task
+    execution has been temporarily paused (can be resumed) STOPPED: Task execution
+    has been stopped (cannot be resumed) FINISHED: Task has completed successfully
     """
+
+    steps: List[Step]
 
     task: str
 
+    user_uploaded_files: List[UserUploadedFile] = FieldInfo(alias="userUploadedFiles")
+
     browser_use_version: Optional[str] = FieldInfo(alias="browserUseVersion", default=None)
+
+    done_output: Optional[str] = FieldInfo(alias="doneOutput", default=None)
 
     finished_at: Optional[datetime] = FieldInfo(alias="finishedAt", default=None)
 
+    is_success: Optional[bool] = FieldInfo(alias="isSuccess", default=None)
+
     metadata: Optional[Dict[str, object]] = None
 
-    output_files: Optional[List[str]] = FieldInfo(alias="outputFiles", default=None)
-
     session_live_url: Optional[str] = FieldInfo(alias="sessionLiveUrl", default=None)
-
-    steps: Optional[List[Step]] = None
-
-    user_uploaded_files: Optional[List[str]] = FieldInfo(alias="userUploadedFiles", default=None)

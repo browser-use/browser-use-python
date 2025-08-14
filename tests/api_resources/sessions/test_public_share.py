@@ -107,7 +107,7 @@ class TestPublicShare:
         public_share = client.sessions.public_share.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, public_share, path=["response"])
+        assert public_share is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -119,7 +119,7 @@ class TestPublicShare:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         public_share = response.parse()
-        assert_matches_type(object, public_share, path=["response"])
+        assert public_share is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -131,7 +131,7 @@ class TestPublicShare:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             public_share = response.parse()
-            assert_matches_type(object, public_share, path=["response"])
+            assert public_share is None
 
         assert cast(Any, response.is_closed) is True
 
@@ -239,7 +239,7 @@ class TestAsyncPublicShare:
         public_share = await async_client.sessions.public_share.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, public_share, path=["response"])
+        assert public_share is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -251,7 +251,7 @@ class TestAsyncPublicShare:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         public_share = await response.parse()
-        assert_matches_type(object, public_share, path=["response"])
+        assert public_share is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -263,7 +263,7 @@ class TestAsyncPublicShare:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             public_share = await response.parse()
-            assert_matches_type(object, public_share, path=["response"])
+            assert public_share is None
 
         assert cast(Any, response.is_closed) is True
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..._types import NOT_GIVEN, Body, Query, Headers, NotGiven
+from ..._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
@@ -51,7 +51,29 @@ class PublicShareResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> ShareView:
         """
-        Create Session Public Share
+        Create a public share for a session.
+
+        Generates a public sharing link that allows anyone with the URL to view the
+        session and its tasks. If a public share already exists for the session, it will
+        return the existing share instead of creating a new one.
+
+        Public shares are useful for:
+
+        - Sharing results with clients or team members
+        - Demonstrating AI agent capabilities
+        - Collaborative review of automated tasks
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to share
+
+        Returns:
+
+        - Public share information including the share URL and usage statistics
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -84,7 +106,23 @@ class PublicShareResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> ShareView:
         """
-        Get Session Public Share
+        Get information about the public share for a session.
+
+        Retrieves details about the public sharing link for a session, including the
+        share token, public URL, view count, and last viewed timestamp. This is useful
+        for monitoring how your shared sessions are being accessed.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+
+        Returns:
+
+        - Public share information including the share URL and usage statistics
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist or doesn't have a public share
 
         Args:
           extra_headers: Send extra headers
@@ -115,9 +153,25 @@ class PublicShareResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Session Public Share
+        Remove the public share for a session.
+
+        Deletes the public sharing link for a session, making it no longer accessible to
+        anyone with the previous share URL. This is useful for removing access to
+        sensitive sessions or when you no longer want to share the results.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -130,12 +184,13 @@ class PublicShareResource(SyncAPIResource):
         """
         if not session_id:
             raise ValueError(f"Expected a non-empty value for `session_id` but received {session_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._delete(
             f"/sessions/{session_id}/public-share",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 
@@ -171,7 +226,29 @@ class AsyncPublicShareResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> ShareView:
         """
-        Create Session Public Share
+        Create a public share for a session.
+
+        Generates a public sharing link that allows anyone with the URL to view the
+        session and its tasks. If a public share already exists for the session, it will
+        return the existing share instead of creating a new one.
+
+        Public shares are useful for:
+
+        - Sharing results with clients or team members
+        - Demonstrating AI agent capabilities
+        - Collaborative review of automated tasks
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to share
+
+        Returns:
+
+        - Public share information including the share URL and usage statistics
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -204,7 +281,23 @@ class AsyncPublicShareResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> ShareView:
         """
-        Get Session Public Share
+        Get information about the public share for a session.
+
+        Retrieves details about the public sharing link for a session, including the
+        share token, public URL, view count, and last viewed timestamp. This is useful
+        for monitoring how your shared sessions are being accessed.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+
+        Returns:
+
+        - Public share information including the share URL and usage statistics
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist or doesn't have a public share
 
         Args:
           extra_headers: Send extra headers
@@ -235,9 +328,25 @@ class AsyncPublicShareResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> object:
+    ) -> None:
         """
-        Delete Session Public Share
+        Remove the public share for a session.
+
+        Deletes the public sharing link for a session, making it no longer accessible to
+        anyone with the previous share URL. This is useful for removing access to
+        sensitive sessions or when you no longer want to share the results.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
+
+        Raises:
+
+        - 404: If the user agent session doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -250,12 +359,13 @@ class AsyncPublicShareResource(AsyncAPIResource):
         """
         if not session_id:
             raise ValueError(f"Expected a non-empty value for `session_id` but received {session_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._delete(
             f"/sessions/{session_id}/public-share",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=object,
+            cast_to=NoneType,
         )
 
 

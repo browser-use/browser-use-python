@@ -34,11 +34,11 @@ class TestAgentProfiles:
         agent_profile = client.agent_profiles.create(
             name="x",
             allowed_domains=["string"],
+            custom_system_prompt_extension="x",
             description="x",
             flash_mode=True,
             highlight_elements=True,
             max_agent_steps=1,
-            system_prompt="x",
             thinking=True,
             vision=True,
         )
@@ -126,12 +126,12 @@ class TestAgentProfiles:
         agent_profile = client.agent_profiles.update(
             profile_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
             allowed_domains=["string"],
+            custom_system_prompt_extension="x",
             description="x",
             flash_mode=True,
             highlight_elements=True,
             max_agent_steps=1,
             name="x",
-            system_prompt="x",
             thinking=True,
             vision=True,
         )
@@ -214,7 +214,7 @@ class TestAgentProfiles:
         agent_profile = client.agent_profiles.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, agent_profile, path=["response"])
+        assert agent_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -226,7 +226,7 @@ class TestAgentProfiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         agent_profile = response.parse()
-        assert_matches_type(object, agent_profile, path=["response"])
+        assert agent_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -238,7 +238,7 @@ class TestAgentProfiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             agent_profile = response.parse()
-            assert_matches_type(object, agent_profile, path=["response"])
+            assert agent_profile is None
 
         assert cast(Any, response.is_closed) is True
 
@@ -270,11 +270,11 @@ class TestAsyncAgentProfiles:
         agent_profile = await async_client.agent_profiles.create(
             name="x",
             allowed_domains=["string"],
+            custom_system_prompt_extension="x",
             description="x",
             flash_mode=True,
             highlight_elements=True,
             max_agent_steps=1,
-            system_prompt="x",
             thinking=True,
             vision=True,
         )
@@ -362,12 +362,12 @@ class TestAsyncAgentProfiles:
         agent_profile = await async_client.agent_profiles.update(
             profile_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
             allowed_domains=["string"],
+            custom_system_prompt_extension="x",
             description="x",
             flash_mode=True,
             highlight_elements=True,
             max_agent_steps=1,
             name="x",
-            system_prompt="x",
             thinking=True,
             vision=True,
         )
@@ -450,7 +450,7 @@ class TestAsyncAgentProfiles:
         agent_profile = await async_client.agent_profiles.delete(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(object, agent_profile, path=["response"])
+        assert agent_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -462,7 +462,7 @@ class TestAsyncAgentProfiles:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         agent_profile = await response.parse()
-        assert_matches_type(object, agent_profile, path=["response"])
+        assert agent_profile is None
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -474,7 +474,7 @@ class TestAsyncAgentProfiles:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             agent_profile = await response.parse()
-            assert_matches_type(object, agent_profile, path=["response"])
+            assert agent_profile is None
 
         assert cast(Any, response.is_closed) is True
 

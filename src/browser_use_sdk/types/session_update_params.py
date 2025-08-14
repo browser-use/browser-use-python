@@ -11,5 +11,6 @@ class SessionUpdateParams(TypedDict, total=False):
     action: Required[Literal["stop"]]
     """Available actions that can be performed on a session
 
-    Attributes: STOP: Stop the session and all its associated tasks
+    Attributes: STOP: Stop the session and all its associated tasks (cannot be
+    undone)
     """

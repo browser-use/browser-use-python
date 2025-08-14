@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, cast
+from typing import Dict, List, Optional
 from typing_extensions import Literal
 
 import httpx
 
-from ..types import task_list_params, task_create_params, task_update_params, task_retrieve_params
+from ..types import task_list_params, task_create_params, task_update_params
 from .._types import NOT_GIVEN, Body, Query, Headers, NotGiven
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
@@ -21,9 +21,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.task_view import TaskView
 from ..types.task_list_response import TaskListResponse
-from ..types.task_retrieve_response import TaskRetrieveResponse
 from ..types.task_retrieve_logs_response import TaskRetrieveLogsResponse
-from ..types.task_retrieve_output_file_response import TaskRetrieveOutputFileResponse
 
 __all__ = ["TasksResource", "AsyncTasksResource"]
 
@@ -66,21 +64,62 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskView:
         """
-        Create Task
+        Create and start a new AI agent task.
+
+        This is the main endpoint for running AI agents. You can either:
+
+        1. Start a new session with a new task
+        2. Add a follow-up task to an existing session
+
+        When starting a new session:
+
+        - A new browser session is created
+        - Credits are deducted from your account
+        - The agent begins executing your task immediately
+
+        When adding to an existing session:
+
+        - The agent continues in the same browser context
+        - No additional browser start up costs are charged (browser session is already
+          active)
+        - The agent can build on previous work
+
+        Key features:
+
+        - Agent profiles: Define agent behavior and capabilities
+        - Browser profiles: Control browser settings and environment (only used for new
+          sessions)
+        - File uploads: Include documents for the agent to work with
+        - Structured output: Define the format you want results in
+        - Task metadata: Add custom data for tracking and organization (useful when
+          using webhooks)
+
+        Args:
+
+        - request: Complete task configuration including agent settings, browser
+          settings, and task description
+
+        Returns:
+
+        - The created task with its initial details
+
+        Raises:
+
+        - 402: If user has insufficient credits for a new session
+        - 404: If referenced agent/browser profiles don't exist
+        - 400: If session is stopped or already has a running task
 
         Args:
           agent_settings: Configuration settings for the AI agent
 
-              Attributes: llm: The LLM model to use for the agent (default: O3 - best
-              performance for now) profile_id: ID of the agent profile to use for the task
-              (None for default)
+              Attributes: llm: The LLM model to use for the agent profile_id: Unique
+              identifier of the agent profile to use for the task
 
           browser_settings: Configuration settings for the browser session
 
-              Attributes: session_id: ID of existing session to continue (None for new
-              session) profile_id: ID of browser profile to use (None for default)
-              save_browser_data: Whether to save browser state/data for the user to download
-              later
+              Attributes: session_id: Unique identifier of existing session to continue
+              profile_id: Unique identifier of browser profile to use save_browser_data:
+              Whether to save browser state/data for the user to download later
 
           extra_headers: Send extra headers
 
@@ -114,16 +153,38 @@ class TasksResource(SyncAPIResource):
         self,
         task_id: str,
         *,
-        status_only: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskRetrieveResponse:
+    ) -> TaskView:
         """
-        Get Task
+        Get detailed information about a specific AI agent task.
+
+        Retrieves comprehensive information about a task, including its current status,
+        progress, and detailed execution data. You can choose to get just the status
+        (for quick polling) or full details including steps and file information.
+
+        Use this endpoint to:
+
+        - Monitor task progress in real-time
+        - Review completed task results
+        - Debug failed tasks by examining steps
+        - Download output files and logs
+
+        Args:
+
+        - task_id: The unique identifier of the agent task
+
+        Returns:
+
+        - Complete task information
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -136,21 +197,12 @@ class TasksResource(SyncAPIResource):
         """
         if not task_id:
             raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
-        return cast(
-            TaskRetrieveResponse,
-            self._get(
-                f"/tasks/{task_id}",
-                options=make_request_options(
-                    extra_headers=extra_headers,
-                    extra_query=extra_query,
-                    extra_body=extra_body,
-                    timeout=timeout,
-                    query=maybe_transform({"status_only": status_only}, task_retrieve_params.TaskRetrieveParams),
-                ),
-                cast_to=cast(
-                    Any, TaskRetrieveResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+        return self._get(
+            f"/tasks/{task_id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
+            cast_to=TaskView,
         )
 
     def update(
@@ -166,7 +218,34 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskView:
         """
-        Update Task
+        Control the execution of an AI agent task.
+
+        Allows you to pause, resume, or stop tasks, and optionally stop the entire
+        session. This is useful for:
+
+        - Pausing long-running tasks to review progress
+        - Stopping tasks that are taking too long
+        - Ending sessions when you're done with all tasks
+
+        Available actions:
+
+        - STOP: Stop the current task
+        - PAUSE: Pause the task (can be resumed later)
+        - RESUME: Resume a paused task
+        - STOP_TASK_AND_SESSION: Stop the task and end the entire session
+
+        Args:
+
+        - task_id: The unique identifier of the agent task to control
+        - request: The action to perform on the task
+
+        Returns:
+
+        - The updated task information
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
 
         Args:
           action: Available actions that can be performed on a task
@@ -197,11 +276,14 @@ class TasksResource(SyncAPIResource):
     def list(
         self,
         *,
+        filter_by: Optional[Literal["started", "paused", "stopped", "finished", "successful", "unsuccessful"]]
+        | NotGiven = NOT_GIVEN,
         include_output_files: bool | NotGiven = NOT_GIVEN,
         include_steps: bool | NotGiven = NOT_GIVEN,
         include_user_uploaded_files: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
+        session_id: Optional[str] | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -210,9 +292,33 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskListResponse:
         """
-        List Tasks
+        Get a paginated list of all AI agent tasks for the authenticated user.
+
+        AI agent tasks are the individual jobs that your agents perform within a
+        session. Each task represents a specific instruction or goal that the agent
+        works on, such as filling out a form, extracting data, or navigating to specific
+        pages.
+
+        You can control what data is included for each task:
+
+        - Task steps: Detailed actions the agent took
+        - User uploaded files: Files you provided for the task
+        - Output files: Files generated by the agent during the task
+
+        Returns:
+
+        - A paginated list of agent tasks
+        - Total count of tasks
+        - Page information for navigation
+        - Optional detailed data based on your parameters
 
         Args:
+          filter_by: Enumeration of possible task filters
+
+              Attributes: STARTED: All started tasks PAUSED: All paused tasks STOPPED: All
+              stopped tasks FINISHED: All finished tasks SUCCESSFUL: All successful tasks
+              UNSUCCESSFUL: All unsuccessful tasks
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -230,11 +336,13 @@ class TasksResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "filter_by": filter_by,
                         "include_output_files": include_output_files,
                         "include_steps": include_steps,
                         "include_user_uploaded_files": include_user_uploaded_files,
                         "page_number": page_number,
                         "page_size": page_size,
+                        "session_id": session_id,
                     },
                     task_list_params.TaskListParams,
                 ),
@@ -254,7 +362,35 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskRetrieveLogsResponse:
         """
-        Get Task Logs
+        Get a download URL for the execution logs of an AI agent task.
+
+        Task logs contain detailed information about how the AI agent executed the task,
+        including:
+
+        - Step-by-step reasoning and decisions
+        - Actions taken on web pages
+        - Error messages and debugging information
+        - Performance metrics and timing data
+
+        This is useful for:
+
+        - Understanding how the agent solved the task
+        - Debugging failed or unexpected results
+        - Optimizing agent behavior and prompts
+        - Auditing agent actions for compliance
+
+        Args:
+
+        - task_id: The unique identifier of the agent task
+
+        Returns:
+
+        - A presigned download URL for the task log file
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
+        - 500: If the download URL cannot be generated (should not happen)
 
         Args:
           extra_headers: Send extra headers
@@ -273,42 +409,6 @@ class TasksResource(SyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TaskRetrieveLogsResponse,
-        )
-
-    def retrieve_output_file(
-        self,
-        file_name: str,
-        *,
-        task_id: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskRetrieveOutputFileResponse:
-        """
-        Get Task Output File
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not task_id:
-            raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
-        if not file_name:
-            raise ValueError(f"Expected a non-empty value for `file_name` but received {file_name!r}")
-        return self._get(
-            f"/tasks/{task_id}/output-files/{file_name}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TaskRetrieveOutputFileResponse,
         )
 
 
@@ -350,21 +450,62 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskView:
         """
-        Create Task
+        Create and start a new AI agent task.
+
+        This is the main endpoint for running AI agents. You can either:
+
+        1. Start a new session with a new task
+        2. Add a follow-up task to an existing session
+
+        When starting a new session:
+
+        - A new browser session is created
+        - Credits are deducted from your account
+        - The agent begins executing your task immediately
+
+        When adding to an existing session:
+
+        - The agent continues in the same browser context
+        - No additional browser start up costs are charged (browser session is already
+          active)
+        - The agent can build on previous work
+
+        Key features:
+
+        - Agent profiles: Define agent behavior and capabilities
+        - Browser profiles: Control browser settings and environment (only used for new
+          sessions)
+        - File uploads: Include documents for the agent to work with
+        - Structured output: Define the format you want results in
+        - Task metadata: Add custom data for tracking and organization (useful when
+          using webhooks)
+
+        Args:
+
+        - request: Complete task configuration including agent settings, browser
+          settings, and task description
+
+        Returns:
+
+        - The created task with its initial details
+
+        Raises:
+
+        - 402: If user has insufficient credits for a new session
+        - 404: If referenced agent/browser profiles don't exist
+        - 400: If session is stopped or already has a running task
 
         Args:
           agent_settings: Configuration settings for the AI agent
 
-              Attributes: llm: The LLM model to use for the agent (default: O3 - best
-              performance for now) profile_id: ID of the agent profile to use for the task
-              (None for default)
+              Attributes: llm: The LLM model to use for the agent profile_id: Unique
+              identifier of the agent profile to use for the task
 
           browser_settings: Configuration settings for the browser session
 
-              Attributes: session_id: ID of existing session to continue (None for new
-              session) profile_id: ID of browser profile to use (None for default)
-              save_browser_data: Whether to save browser state/data for the user to download
-              later
+              Attributes: session_id: Unique identifier of existing session to continue
+              profile_id: Unique identifier of browser profile to use save_browser_data:
+              Whether to save browser state/data for the user to download later
 
           extra_headers: Send extra headers
 
@@ -398,16 +539,38 @@ class AsyncTasksResource(AsyncAPIResource):
         self,
         task_id: str,
         *,
-        status_only: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskRetrieveResponse:
+    ) -> TaskView:
         """
-        Get Task
+        Get detailed information about a specific AI agent task.
+
+        Retrieves comprehensive information about a task, including its current status,
+        progress, and detailed execution data. You can choose to get just the status
+        (for quick polling) or full details including steps and file information.
+
+        Use this endpoint to:
+
+        - Monitor task progress in real-time
+        - Review completed task results
+        - Debug failed tasks by examining steps
+        - Download output files and logs
+
+        Args:
+
+        - task_id: The unique identifier of the agent task
+
+        Returns:
+
+        - Complete task information
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
 
         Args:
           extra_headers: Send extra headers
@@ -420,23 +583,12 @@ class AsyncTasksResource(AsyncAPIResource):
         """
         if not task_id:
             raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
-        return cast(
-            TaskRetrieveResponse,
-            await self._get(
-                f"/tasks/{task_id}",
-                options=make_request_options(
-                    extra_headers=extra_headers,
-                    extra_query=extra_query,
-                    extra_body=extra_body,
-                    timeout=timeout,
-                    query=await async_maybe_transform(
-                        {"status_only": status_only}, task_retrieve_params.TaskRetrieveParams
-                    ),
-                ),
-                cast_to=cast(
-                    Any, TaskRetrieveResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+        return await self._get(
+            f"/tasks/{task_id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
+            cast_to=TaskView,
         )
 
     async def update(
@@ -452,7 +604,34 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskView:
         """
-        Update Task
+        Control the execution of an AI agent task.
+
+        Allows you to pause, resume, or stop tasks, and optionally stop the entire
+        session. This is useful for:
+
+        - Pausing long-running tasks to review progress
+        - Stopping tasks that are taking too long
+        - Ending sessions when you're done with all tasks
+
+        Available actions:
+
+        - STOP: Stop the current task
+        - PAUSE: Pause the task (can be resumed later)
+        - RESUME: Resume a paused task
+        - STOP_TASK_AND_SESSION: Stop the task and end the entire session
+
+        Args:
+
+        - task_id: The unique identifier of the agent task to control
+        - request: The action to perform on the task
+
+        Returns:
+
+        - The updated task information
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
 
         Args:
           action: Available actions that can be performed on a task
@@ -483,11 +662,14 @@ class AsyncTasksResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        filter_by: Optional[Literal["started", "paused", "stopped", "finished", "successful", "unsuccessful"]]
+        | NotGiven = NOT_GIVEN,
         include_output_files: bool | NotGiven = NOT_GIVEN,
         include_steps: bool | NotGiven = NOT_GIVEN,
         include_user_uploaded_files: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
+        session_id: Optional[str] | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -496,9 +678,33 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskListResponse:
         """
-        List Tasks
+        Get a paginated list of all AI agent tasks for the authenticated user.
+
+        AI agent tasks are the individual jobs that your agents perform within a
+        session. Each task represents a specific instruction or goal that the agent
+        works on, such as filling out a form, extracting data, or navigating to specific
+        pages.
+
+        You can control what data is included for each task:
+
+        - Task steps: Detailed actions the agent took
+        - User uploaded files: Files you provided for the task
+        - Output files: Files generated by the agent during the task
+
+        Returns:
+
+        - A paginated list of agent tasks
+        - Total count of tasks
+        - Page information for navigation
+        - Optional detailed data based on your parameters
 
         Args:
+          filter_by: Enumeration of possible task filters
+
+              Attributes: STARTED: All started tasks PAUSED: All paused tasks STOPPED: All
+              stopped tasks FINISHED: All finished tasks SUCCESSFUL: All successful tasks
+              UNSUCCESSFUL: All unsuccessful tasks
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -516,11 +722,13 @@ class AsyncTasksResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "filter_by": filter_by,
                         "include_output_files": include_output_files,
                         "include_steps": include_steps,
                         "include_user_uploaded_files": include_user_uploaded_files,
                         "page_number": page_number,
                         "page_size": page_size,
+                        "session_id": session_id,
                     },
                     task_list_params.TaskListParams,
                 ),
@@ -540,7 +748,35 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskRetrieveLogsResponse:
         """
-        Get Task Logs
+        Get a download URL for the execution logs of an AI agent task.
+
+        Task logs contain detailed information about how the AI agent executed the task,
+        including:
+
+        - Step-by-step reasoning and decisions
+        - Actions taken on web pages
+        - Error messages and debugging information
+        - Performance metrics and timing data
+
+        This is useful for:
+
+        - Understanding how the agent solved the task
+        - Debugging failed or unexpected results
+        - Optimizing agent behavior and prompts
+        - Auditing agent actions for compliance
+
+        Args:
+
+        - task_id: The unique identifier of the agent task
+
+        Returns:
+
+        - A presigned download URL for the task log file
+
+        Raises:
+
+        - 404: If the user agent task doesn't exist
+        - 500: If the download URL cannot be generated (should not happen)
 
         Args:
           extra_headers: Send extra headers
@@ -559,42 +795,6 @@ class AsyncTasksResource(AsyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TaskRetrieveLogsResponse,
-        )
-
-    async def retrieve_output_file(
-        self,
-        file_name: str,
-        *,
-        task_id: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskRetrieveOutputFileResponse:
-        """
-        Get Task Output File
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not task_id:
-            raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
-        if not file_name:
-            raise ValueError(f"Expected a non-empty value for `file_name` but received {file_name!r}")
-        return await self._get(
-            f"/tasks/{task_id}/output-files/{file_name}",
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TaskRetrieveOutputFileResponse,
         )
 
 
@@ -617,9 +817,6 @@ class TasksResourceWithRawResponse:
         self.retrieve_logs = to_raw_response_wrapper(
             tasks.retrieve_logs,
         )
-        self.retrieve_output_file = to_raw_response_wrapper(
-            tasks.retrieve_output_file,
-        )
 
 
 class AsyncTasksResourceWithRawResponse:
@@ -640,9 +837,6 @@ class AsyncTasksResourceWithRawResponse:
         )
         self.retrieve_logs = async_to_raw_response_wrapper(
             tasks.retrieve_logs,
-        )
-        self.retrieve_output_file = async_to_raw_response_wrapper(
-            tasks.retrieve_output_file,
         )
 
 
@@ -665,9 +859,6 @@ class TasksResourceWithStreamingResponse:
         self.retrieve_logs = to_streamed_response_wrapper(
             tasks.retrieve_logs,
         )
-        self.retrieve_output_file = to_streamed_response_wrapper(
-            tasks.retrieve_output_file,
-        )
 
 
 class AsyncTasksResourceWithStreamingResponse:
@@ -688,7 +879,4 @@ class AsyncTasksResourceWithStreamingResponse:
         )
         self.retrieve_logs = async_to_streamed_response_wrapper(
             tasks.retrieve_logs,
-        )
-        self.retrieve_output_file = async_to_streamed_response_wrapper(
-            tasks.retrieve_output_file,
         )
