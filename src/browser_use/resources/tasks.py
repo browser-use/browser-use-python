@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, Generic, List, Optional, cast, TypeVar
 from typing_extensions import Literal
+
+from pydantic import BaseModel
 
 import httpx
 
@@ -24,11 +26,26 @@ from ..types.task_list_response import TaskListResponse
 from ..types.task_retrieve_response import TaskRetrieveResponse
 from ..types.task_retrieve_logs_response import TaskRetrieveLogsResponse
 from ..types.task_retrieve_output_file_response import TaskRetrieveOutputFileResponse
+from ..lib.parse import (
+    RunTaskCreateParamsWithStructuredOutput,
+    GetTaskStatusParamsWithStructuredOutput,
+    TaskViewWithStructuredOutput,
+    stringify_structured_output,
+    parse_structured_task_output,
+)
 
-__all__ = ["TasksResource", "AsyncTasksResource"]
+__all__ = [
+    "TasksResource",
+    "AsyncTasksResource",
+    "create_with_structured_output",
+    "retrieve_with_structured_output",
+]
 
 
-class TasksResource(SyncAPIResource):
+T = TypeVar("T", bound=BaseModel)
+
+
+class TasksResource(SyncAPIResource, Generic[T]):
     @cached_property
     def with_raw_response(self) -> TasksResourceWithRawResponse:
         """
@@ -110,6 +127,68 @@ class TasksResource(SyncAPIResource):
             cast_to=TaskView,
         )
 
+    def create_with_structured_output(
+        self,
+        *,
+        task: str,
+        structured_output_json: T,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithStructuredOutput[T]:
+        """
+        Create Task with Structured Output
+
+        Args:
+          task: The task prompt/instruction given to the agent
+          structured_output_json: Pydantic model defining the expected output schema
+          agent_settings: Configuration settings for the AI agent
+
+              Attributes: llm: The LLM model to use for the agent (default: O3 - best
+              performance for now) profile_id: ID of the agent profile to use for the task
+              (None for default)
+
+          browser_settings: Configuration settings for the browser session
+
+              Attributes: session_id: ID of existing session to continue (None for new
+              session) profile_id: ID of browser profile to use (None for default)
+              save_browser_data: Whether to save browser state/data for the user to download
+              later
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        # Create the request with structured output
+        req: RunTaskCreateParamsWithStructuredOutput[T] = {
+            "task": task,
+            "structured_output_json": structured_output_json,
+            "agent_settings": agent_settings,
+            "browser_settings": browser_settings,
+            "included_file_names": included_file_names,
+            "metadata": metadata,
+            "secrets": secrets,
+        }
+
+        # Convert to API format and create the task
+        api_req = stringify_structured_output(req)
+        response = self.create(**api_req)
+
+        # Return the response wrapped with structured output support
+        return parse_structured_task_output(response, {"structured_output_json": structured_output_json})
+
     def retrieve(
         self,
         task_id: str,
@@ -152,6 +231,62 @@ class TasksResource(SyncAPIResource):
                 ),  # Union types cannot be passed in as arguments in the type system
             ),
         )
+
+    def retrieve_with_structured_output(
+        self,
+        task_id: str,
+        *,
+        structured_output_json: T,
+        status_only: bool | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithStructuredOutput[T]:
+        """
+        Get Task with Structured Output
+
+        Args:
+          task_id: The ID of the task to retrieve
+          structured_output_json: Pydantic model defining the expected output schema
+          status_only: Whether to return only the status (default: False for structured output)
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not task_id:
+            raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
+
+        # Retrieve the task
+        response = self.retrieve(
+            task_id,
+            status_only=status_only,
+            **{
+                "extra_headers": extra_headers,
+                "extra_query": extra_query,
+                "extra_body": extra_body,
+                "timeout": timeout,
+            },
+        )
+
+        # Parse the structured output
+        params: GetTaskStatusParamsWithStructuredOutput[T] = {
+            "structured_output_json": structured_output_json,
+            "status_only": status_only if status_only is not NOT_GIVEN else False,
+        }
+
+        # If we got a TaskView, parse it; otherwise return as-is
+        if isinstance(response, TaskView):
+            return parse_structured_task_output(response, params)
+        else:
+            # For status-only responses, we can't parse structured output
+            raise ValueError("Cannot parse structured output from status-only response")
 
     def update(
         self,
@@ -312,7 +447,7 @@ class TasksResource(SyncAPIResource):
         )
 
 
-class AsyncTasksResource(AsyncAPIResource):
+class AsyncTasksResource(AsyncAPIResource, Generic[T]):
     @cached_property
     def with_raw_response(self) -> AsyncTasksResourceWithRawResponse:
         """
@@ -394,6 +529,68 @@ class AsyncTasksResource(AsyncAPIResource):
             cast_to=TaskView,
         )
 
+    async def create_with_structured_output(
+        self,
+        *,
+        task: str,
+        structured_output_json: T,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithStructuredOutput[T]:
+        """
+        Create Task with Structured Output
+
+        Args:
+          task: The task prompt/instruction given to the agent
+          structured_output_json: Pydantic model defining the expected output schema
+          agent_settings: Configuration settings for the AI agent
+
+              Attributes: llm: The LLM model to use for the agent (default: O3 - best
+              performance for now) profile_id: ID of the agent profile to use for the task
+              (None for default)
+
+          browser_settings: Configuration settings for the browser session
+
+              Attributes: session_id: ID of existing session to continue (None for new
+              session) profile_id: ID of browser profile to use (None for default)
+              save_browser_data: Whether to save browser state/data for the user to download
+              later
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        # Create the request with structured output
+        req: RunTaskCreateParamsWithStructuredOutput[T] = {
+            "task": task,
+            "structured_output_json": structured_output_json,
+            "agent_settings": agent_settings,
+            "browser_settings": browser_settings,
+            "included_file_names": included_file_names,
+            "metadata": metadata,
+            "secrets": secrets,
+        }
+
+        # Convert to API format and create the task
+        api_req = stringify_structured_output(req)
+        response = await self.create(**api_req)
+
+        # Return the response wrapped with structured output support
+        return parse_structured_task_output(response, {"structured_output_json": structured_output_json})
+
     async def retrieve(
         self,
         task_id: str,
@@ -438,6 +635,62 @@ class AsyncTasksResource(AsyncAPIResource):
                 ),  # Union types cannot be passed in as arguments in the type system
             ),
         )
+
+    async def retrieve_with_structured_output(
+        self,
+        task_id: str,
+        *,
+        structured_output_json: T,
+        status_only: bool | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithStructuredOutput[T]:
+        """
+        Get Task with Structured Output
+
+        Args:
+          task_id: The ID of the task to retrieve
+          structured_output_json: Pydantic model defining the expected output schema
+          status_only: Whether to return only the status (default: False for structured output)
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not task_id:
+            raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
+
+        # Retrieve the task
+        response = await self.retrieve(
+            task_id,
+            status_only=status_only,
+            **{
+                "extra_headers": extra_headers,
+                "extra_query": extra_query,
+                "extra_body": extra_body,
+                "timeout": timeout,
+            },
+        )
+
+        # Parse the structured output
+        params: GetTaskStatusParamsWithStructuredOutput[T] = {
+            "structured_output_json": structured_output_json,
+            "status_only": status_only if status_only is not NOT_GIVEN else False,
+        }
+
+        # If we got a TaskView, parse it; otherwise return as-is
+        if isinstance(response, TaskView):
+            return parse_structured_task_output(response, params)
+        else:
+            # For status-only responses, we can't parse structured output
+            raise ValueError("Cannot parse structured output from status-only response")
 
     async def update(
         self,
