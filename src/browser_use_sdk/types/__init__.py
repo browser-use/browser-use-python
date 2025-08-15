@@ -18,6 +18,7 @@ from .task_list_response import TaskListResponse as TaskListResponse
 from .task_update_params import TaskUpdateParams as TaskUpdateParams
 from .session_list_params import SessionListParams as SessionListParams
 from .browser_profile_view import BrowserProfileView as BrowserProfileView
+from .task_create_response import TaskCreateResponse as TaskCreateResponse
 from .session_list_response import SessionListResponse as SessionListResponse
 from .session_update_params import SessionUpdateParams as SessionUpdateParams
 from .task_get_logs_response import TaskGetLogsResponse as TaskGetLogsResponse
