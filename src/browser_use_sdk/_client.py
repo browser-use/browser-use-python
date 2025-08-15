@@ -29,6 +29,7 @@ from ._base_client import (
     SyncAPIClient,
     AsyncAPIClient,
 )
+from .resources.users import users
 from .resources.sessions import sessions
 
 __all__ = [
@@ -44,6 +45,7 @@ __all__ = [
 
 
 class BrowserUse(SyncAPIClient):
+    users: users.UsersResource
     tasks: tasks.TasksResource
     sessions: sessions.SessionsResource
     browser_profiles: browser_profiles.BrowserProfilesResource
@@ -105,6 +107,7 @@ class BrowserUse(SyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
+        self.users = users.UsersResource(self)
         self.tasks = tasks.TasksResource(self)
         self.sessions = sessions.SessionsResource(self)
         self.browser_profiles = browser_profiles.BrowserProfilesResource(self)
@@ -116,6 +119,12 @@ class BrowserUse(SyncAPIClient):
     @override
     def qs(self) -> Querystring:
         return Querystring(array_format="comma")
+
+    @property
+    @override
+    def auth_headers(self) -> dict[str, str]:
+        api_key = self.api_key
+        return {"X-Browser-Use-API-Key": api_key}
 
     @property
     @override
@@ -212,6 +221,7 @@ class BrowserUse(SyncAPIClient):
 
 
 class AsyncBrowserUse(AsyncAPIClient):
+    users: users.AsyncUsersResource
     tasks: tasks.AsyncTasksResource
     sessions: sessions.AsyncSessionsResource
     browser_profiles: browser_profiles.AsyncBrowserProfilesResource
@@ -273,6 +283,7 @@ class AsyncBrowserUse(AsyncAPIClient):
             _strict_response_validation=_strict_response_validation,
         )
 
+        self.users = users.AsyncUsersResource(self)
         self.tasks = tasks.AsyncTasksResource(self)
         self.sessions = sessions.AsyncSessionsResource(self)
         self.browser_profiles = browser_profiles.AsyncBrowserProfilesResource(self)
@@ -284,6 +295,12 @@ class AsyncBrowserUse(AsyncAPIClient):
     @override
     def qs(self) -> Querystring:
         return Querystring(array_format="comma")
+
+    @property
+    @override
+    def auth_headers(self) -> dict[str, str]:
+        api_key = self.api_key
+        return {"X-Browser-Use-API-Key": api_key}
 
     @property
     @override
@@ -381,6 +398,7 @@ class AsyncBrowserUse(AsyncAPIClient):
 
 class BrowserUseWithRawResponse:
     def __init__(self, client: BrowserUse) -> None:
+        self.users = users.UsersResourceWithRawResponse(client.users)
         self.tasks = tasks.TasksResourceWithRawResponse(client.tasks)
         self.sessions = sessions.SessionsResourceWithRawResponse(client.sessions)
         self.browser_profiles = browser_profiles.BrowserProfilesResourceWithRawResponse(client.browser_profiles)
@@ -389,6 +407,7 @@ class BrowserUseWithRawResponse:
 
 class AsyncBrowserUseWithRawResponse:
     def __init__(self, client: AsyncBrowserUse) -> None:
+        self.users = users.AsyncUsersResourceWithRawResponse(client.users)
         self.tasks = tasks.AsyncTasksResourceWithRawResponse(client.tasks)
         self.sessions = sessions.AsyncSessionsResourceWithRawResponse(client.sessions)
         self.browser_profiles = browser_profiles.AsyncBrowserProfilesResourceWithRawResponse(client.browser_profiles)
@@ -397,6 +416,7 @@ class AsyncBrowserUseWithRawResponse:
 
 class BrowserUseWithStreamedResponse:
     def __init__(self, client: BrowserUse) -> None:
+        self.users = users.UsersResourceWithStreamingResponse(client.users)
         self.tasks = tasks.TasksResourceWithStreamingResponse(client.tasks)
         self.sessions = sessions.SessionsResourceWithStreamingResponse(client.sessions)
         self.browser_profiles = browser_profiles.BrowserProfilesResourceWithStreamingResponse(client.browser_profiles)
@@ -405,6 +425,7 @@ class BrowserUseWithStreamedResponse:
 
 class AsyncBrowserUseWithStreamedResponse:
     def __init__(self, client: AsyncBrowserUse) -> None:
+        self.users = users.AsyncUsersResourceWithStreamingResponse(client.users)
         self.tasks = tasks.AsyncTasksResourceWithStreamingResponse(client.tasks)
         self.sessions = sessions.AsyncSessionsResourceWithStreamingResponse(client.sessions)
         self.browser_profiles = browser_profiles.AsyncBrowserProfilesResourceWithStreamingResponse(

@@ -1,14 +1,45 @@
+# Users
+
+## Me
+
+Types:
+
+```python
+from browser_use_sdk.types.users import MeRetrieveResponse
+```
+
+Methods:
+
+- <code title="get /users/me">client.users.me.<a href="./src/browser_use_sdk/resources/users/me/me.py">retrieve</a>() -> <a href="./src/browser_use_sdk/types/users/me_retrieve_response.py">MeRetrieveResponse</a></code>
+
+### Files
+
+Types:
+
+```python
+from browser_use_sdk.types.users.me import FileCreatePresignedURLResponse
+```
+
+Methods:
+
+- <code title="post /users/me/files/presigned-url">client.users.me.files.<a href="./src/browser_use_sdk/resources/users/me/files.py">create_presigned_url</a>(\*\*<a href="src/browser_use_sdk/types/users/me/file_create_presigned_url_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/users/me/file_create_presigned_url_response.py">FileCreatePresignedURLResponse</a></code>
+
 # Tasks
 
 Types:
 
 ```python
 from browser_use_sdk.types import (
+    FileView,
     LlmModel,
+    TaskItemView,
     TaskStatus,
+    TaskStepView,
     TaskView,
     TaskListResponse,
-    TaskRetrieveLogsResponse,
+    TaskGetLogsResponse,
+    TaskGetOutputFileResponse,
+    TaskGetUserUploadedFileResponse,
 )
 ```
 
@@ -18,7 +49,9 @@ Methods:
 - <code title="get /tasks/{task_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">retrieve</a>(task_id) -> <a href="./src/browser_use_sdk/types/task_view.py">TaskView</a></code>
 - <code title="patch /tasks/{task_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">update</a>(task_id, \*\*<a href="src/browser_use_sdk/types/task_update_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_view.py">TaskView</a></code>
 - <code title="get /tasks">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">list</a>(\*\*<a href="src/browser_use_sdk/types/task_list_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_list_response.py">TaskListResponse</a></code>
-- <code title="get /tasks/{task_id}/logs">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">retrieve_logs</a>(task_id) -> <a href="./src/browser_use_sdk/types/task_retrieve_logs_response.py">TaskRetrieveLogsResponse</a></code>
+- <code title="get /tasks/{task_id}/logs">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">get_logs</a>(task_id) -> <a href="./src/browser_use_sdk/types/task_get_logs_response.py">TaskGetLogsResponse</a></code>
+- <code title="get /tasks/{task_id}/output-files/{file_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">get_output_file</a>(file_id, \*, task_id) -> <a href="./src/browser_use_sdk/types/task_get_output_file_response.py">TaskGetOutputFileResponse</a></code>
+- <code title="get /tasks/{task_id}/user-uploaded-files/{file_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">get_user_uploaded_file</a>(file_id, \*, task_id) -> <a href="./src/browser_use_sdk/types/task_get_user_uploaded_file_response.py">TaskGetUserUploadedFileResponse</a></code>
 
 # Sessions
 
@@ -33,6 +66,7 @@ Methods:
 - <code title="get /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">retrieve</a>(session_id, \*\*<a href="src/browser_use_sdk/types/session_retrieve_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_view.py">SessionView</a></code>
 - <code title="patch /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">update</a>(session_id, \*\*<a href="src/browser_use_sdk/types/session_update_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_view.py">SessionView</a></code>
 - <code title="get /sessions">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">list</a>(\*\*<a href="src/browser_use_sdk/types/session_list_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_list_response.py">SessionListResponse</a></code>
+- <code title="delete /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">delete</a>(session_id) -> None</code>
 
 ## PublicShare
 

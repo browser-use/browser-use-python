@@ -24,7 +24,7 @@ from pydantic import ValidationError
 from browser_use_sdk import BrowserUse, AsyncBrowserUse, APIResponseValidationError
 from browser_use_sdk._types import Omit
 from browser_use_sdk._models import BaseModel, FinalRequestOptions
-from browser_use_sdk._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
+from browser_use_sdk._exceptions import APIStatusError, APITimeoutError, BrowserUseError, APIResponseValidationError
 from browser_use_sdk._base_client import (
     DEFAULT_TIMEOUT,
     HTTPX_DEFAULT_TIMEOUT,
@@ -335,6 +335,16 @@ class TestBrowserUse:
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "stainless"
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+
+    def test_validate_headers(self) -> None:
+        client = BrowserUse(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
+        assert request.headers.get("X-Browser-Use-API-Key") == api_key
+
+        with pytest.raises(BrowserUseError):
+            with update_env(**{"BROWSER_USE_API_KEY": Omit()}):
+                client2 = BrowserUse(base_url=base_url, api_key=None, _strict_response_validation=True)
+            _ = client2
 
     def test_default_query_option(self) -> None:
         client = BrowserUse(
@@ -712,20 +722,20 @@ class TestBrowserUse:
     @mock.patch("browser_use_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter, client: BrowserUse) -> None:
-        respx_mock.get("/tasks").mock(side_effect=httpx.TimeoutException("Test timeout error"))
+        respx_mock.get("/users/me").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            client.tasks.with_streaming_response.list().__enter__()
+            client.users.me.with_streaming_response.retrieve().__enter__()
 
         assert _get_open_connections(self.client) == 0
 
     @mock.patch("browser_use_sdk._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter, client: BrowserUse) -> None:
-        respx_mock.get("/tasks").mock(return_value=httpx.Response(500))
+        respx_mock.get("/users/me").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            client.tasks.with_streaming_response.list().__enter__()
+            client.users.me.with_streaming_response.retrieve().__enter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -752,9 +762,9 @@ class TestBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = client.tasks.with_raw_response.list()
+        response = client.users.me.with_raw_response.retrieve()
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -776,9 +786,9 @@ class TestBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = client.tasks.with_raw_response.list(extra_headers={"x-stainless-retry-count": Omit()})
+        response = client.users.me.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": Omit()})
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
@@ -799,9 +809,9 @@ class TestBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = client.tasks.with_raw_response.list(extra_headers={"x-stainless-retry-count": "42"})
+        response = client.users.me.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
@@ -1134,6 +1144,16 @@ class TestAsyncBrowserUse:
         request = client2._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "stainless"
         assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+
+    def test_validate_headers(self) -> None:
+        client = AsyncBrowserUse(base_url=base_url, api_key=api_key, _strict_response_validation=True)
+        request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
+        assert request.headers.get("X-Browser-Use-API-Key") == api_key
+
+        with pytest.raises(BrowserUseError):
+            with update_env(**{"BROWSER_USE_API_KEY": Omit()}):
+                client2 = AsyncBrowserUse(base_url=base_url, api_key=None, _strict_response_validation=True)
+            _ = client2
 
     def test_default_query_option(self) -> None:
         client = AsyncBrowserUse(
@@ -1519,10 +1539,10 @@ class TestAsyncBrowserUse:
     async def test_retrying_timeout_errors_doesnt_leak(
         self, respx_mock: MockRouter, async_client: AsyncBrowserUse
     ) -> None:
-        respx_mock.get("/tasks").mock(side_effect=httpx.TimeoutException("Test timeout error"))
+        respx_mock.get("/users/me").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await async_client.tasks.with_streaming_response.list().__aenter__()
+            await async_client.users.me.with_streaming_response.retrieve().__aenter__()
 
         assert _get_open_connections(self.client) == 0
 
@@ -1531,10 +1551,10 @@ class TestAsyncBrowserUse:
     async def test_retrying_status_errors_doesnt_leak(
         self, respx_mock: MockRouter, async_client: AsyncBrowserUse
     ) -> None:
-        respx_mock.get("/tasks").mock(return_value=httpx.Response(500))
+        respx_mock.get("/users/me").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await async_client.tasks.with_streaming_response.list().__aenter__()
+            await async_client.users.me.with_streaming_response.retrieve().__aenter__()
         assert _get_open_connections(self.client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1562,9 +1582,9 @@ class TestAsyncBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = await client.tasks.with_raw_response.list()
+        response = await client.users.me.with_raw_response.retrieve()
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1587,9 +1607,9 @@ class TestAsyncBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = await client.tasks.with_raw_response.list(extra_headers={"x-stainless-retry-count": Omit()})
+        response = await client.users.me.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": Omit()})
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
@@ -1611,9 +1631,9 @@ class TestAsyncBrowserUse:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/tasks").mock(side_effect=retry_handler)
+        respx_mock.get("/users/me").mock(side_effect=retry_handler)
 
-        response = await client.tasks.with_raw_response.list(extra_headers={"x-stainless-retry-count": "42"})
+        response = await client.users.me.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 

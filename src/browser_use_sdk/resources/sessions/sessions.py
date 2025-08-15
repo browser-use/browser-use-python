@@ -8,7 +8,7 @@ from typing_extensions import Literal
 import httpx
 
 from ...types import SessionStatus, session_list_params, session_update_params, session_retrieve_params
-from ..._types import NOT_GIVEN, Body, Query, Headers, NotGiven
+from ..._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -242,6 +242,52 @@ class SessionsResource(SyncAPIResource):
             cast_to=SessionListResponse,
         )
 
+    def delete(
+        self,
+        session_id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> None:
+        """
+        Delete a session and all its associated data.
+
+        Permanently removes a session and all its tasks, browser data, and public
+        shares. This action cannot be undone. Use this endpoint to clean up old sessions
+        and free up storage space.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not session_id:
+            raise ValueError(f"Expected a non-empty value for `session_id` but received {session_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return self._delete(
+            f"/sessions/{session_id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=NoneType,
+        )
+
 
 class AsyncSessionsResource(AsyncAPIResource):
     @cached_property
@@ -453,6 +499,52 @@ class AsyncSessionsResource(AsyncAPIResource):
             cast_to=SessionListResponse,
         )
 
+    async def delete(
+        self,
+        session_id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> None:
+        """
+        Delete a session and all its associated data.
+
+        Permanently removes a session and all its tasks, browser data, and public
+        shares. This action cannot be undone. Use this endpoint to clean up old sessions
+        and free up storage space.
+
+        Args:
+
+        - session_id: The unique identifier of the agent session to delete
+
+        Returns:
+
+        - 204 No Content on successful deletion (idempotent)
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not session_id:
+            raise ValueError(f"Expected a non-empty value for `session_id` but received {session_id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return await self._delete(
+            f"/sessions/{session_id}",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=NoneType,
+        )
+
 
 class SessionsResourceWithRawResponse:
     def __init__(self, sessions: SessionsResource) -> None:
@@ -466,6 +558,9 @@ class SessionsResourceWithRawResponse:
         )
         self.list = to_raw_response_wrapper(
             sessions.list,
+        )
+        self.delete = to_raw_response_wrapper(
+            sessions.delete,
         )
 
     @cached_property
@@ -486,6 +581,9 @@ class AsyncSessionsResourceWithRawResponse:
         self.list = async_to_raw_response_wrapper(
             sessions.list,
         )
+        self.delete = async_to_raw_response_wrapper(
+            sessions.delete,
+        )
 
     @cached_property
     def public_share(self) -> AsyncPublicShareResourceWithRawResponse:
@@ -505,6 +603,9 @@ class SessionsResourceWithStreamingResponse:
         self.list = to_streamed_response_wrapper(
             sessions.list,
         )
+        self.delete = to_streamed_response_wrapper(
+            sessions.delete,
+        )
 
     @cached_property
     def public_share(self) -> PublicShareResourceWithStreamingResponse:
@@ -523,6 +624,9 @@ class AsyncSessionsResourceWithStreamingResponse:
         )
         self.list = async_to_streamed_response_wrapper(
             sessions.list,
+        )
+        self.delete = async_to_streamed_response_wrapper(
+            sessions.delete,
         )
 
     @cached_property
