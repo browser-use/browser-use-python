@@ -4,8 +4,8 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["TaskRetrieveLogsResponse"]
+__all__ = ["TaskGetLogsResponse"]
 
 
-class TaskRetrieveLogsResponse(BaseModel):
+class TaskGetLogsResponse(BaseModel):
     download_url: str = FieldInfo(alias="downloadUrl")

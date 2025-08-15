@@ -12,7 +12,9 @@ from browser_use_sdk import BrowserUse, AsyncBrowserUse
 from browser_use_sdk.types import (
     TaskView,
     TaskListResponse,
-    TaskRetrieveLogsResponse,
+    TaskGetLogsResponse,
+    TaskGetOutputFileResponse,
+    TaskGetUserUploadedFileResponse,
 )
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -208,44 +210,148 @@ class TestTasks:
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    def test_method_retrieve_logs(self, client: BrowserUse) -> None:
-        task = client.tasks.retrieve_logs(
+    def test_method_get_logs(self, client: BrowserUse) -> None:
+        task = client.tasks.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+        assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    def test_raw_response_retrieve_logs(self, client: BrowserUse) -> None:
-        response = client.tasks.with_raw_response.retrieve_logs(
+    def test_raw_response_get_logs(self, client: BrowserUse) -> None:
+        response = client.tasks.with_raw_response.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         task = response.parse()
-        assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+        assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    def test_streaming_response_retrieve_logs(self, client: BrowserUse) -> None:
-        with client.tasks.with_streaming_response.retrieve_logs(
+    def test_streaming_response_get_logs(self, client: BrowserUse) -> None:
+        with client.tasks.with_streaming_response.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             task = response.parse()
-            assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+            assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    def test_path_params_retrieve_logs(self, client: BrowserUse) -> None:
+    def test_path_params_get_logs(self, client: BrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
-            client.tasks.with_raw_response.retrieve_logs(
+            client.tasks.with_raw_response.get_logs(
                 "",
+            )
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_method_get_output_file(self, client: BrowserUse) -> None:
+        task = client.tasks.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+        assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_raw_response_get_output_file(self, client: BrowserUse) -> None:
+        response = client.tasks.with_raw_response.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        task = response.parse()
+        assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_streaming_response_get_output_file(self, client: BrowserUse) -> None:
+        with client.tasks.with_streaming_response.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            task = response.parse()
+            assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_path_params_get_output_file(self, client: BrowserUse) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
+            client.tasks.with_raw_response.get_output_file(
+                file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                task_id="",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `file_id` but received ''"):
+            client.tasks.with_raw_response.get_output_file(
+                file_id="",
+                task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            )
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_method_get_user_uploaded_file(self, client: BrowserUse) -> None:
+        task = client.tasks.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+        assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_raw_response_get_user_uploaded_file(self, client: BrowserUse) -> None:
+        response = client.tasks.with_raw_response.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        task = response.parse()
+        assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_streaming_response_get_user_uploaded_file(self, client: BrowserUse) -> None:
+        with client.tasks.with_streaming_response.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            task = response.parse()
+            assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    def test_path_params_get_user_uploaded_file(self, client: BrowserUse) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
+            client.tasks.with_raw_response.get_user_uploaded_file(
+                file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                task_id="",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `file_id` but received ''"):
+            client.tasks.with_raw_response.get_user_uploaded_file(
+                file_id="",
+                task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
             )
 
 
@@ -441,42 +547,146 @@ class TestAsyncTasks:
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    async def test_method_retrieve_logs(self, async_client: AsyncBrowserUse) -> None:
-        task = await async_client.tasks.retrieve_logs(
+    async def test_method_get_logs(self, async_client: AsyncBrowserUse) -> None:
+        task = await async_client.tasks.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
-        assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+        assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    async def test_raw_response_retrieve_logs(self, async_client: AsyncBrowserUse) -> None:
-        response = await async_client.tasks.with_raw_response.retrieve_logs(
+    async def test_raw_response_get_logs(self, async_client: AsyncBrowserUse) -> None:
+        response = await async_client.tasks.with_raw_response.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         task = await response.parse()
-        assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+        assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    async def test_streaming_response_retrieve_logs(self, async_client: AsyncBrowserUse) -> None:
-        async with async_client.tasks.with_streaming_response.retrieve_logs(
+    async def test_streaming_response_get_logs(self, async_client: AsyncBrowserUse) -> None:
+        async with async_client.tasks.with_streaming_response.get_logs(
             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             task = await response.parse()
-            assert_matches_type(TaskRetrieveLogsResponse, task, path=["response"])
+            assert_matches_type(TaskGetLogsResponse, task, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
-    async def test_path_params_retrieve_logs(self, async_client: AsyncBrowserUse) -> None:
+    async def test_path_params_get_logs(self, async_client: AsyncBrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
-            await async_client.tasks.with_raw_response.retrieve_logs(
+            await async_client.tasks.with_raw_response.get_logs(
                 "",
+            )
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_method_get_output_file(self, async_client: AsyncBrowserUse) -> None:
+        task = await async_client.tasks.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+        assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_raw_response_get_output_file(self, async_client: AsyncBrowserUse) -> None:
+        response = await async_client.tasks.with_raw_response.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        task = await response.parse()
+        assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_streaming_response_get_output_file(self, async_client: AsyncBrowserUse) -> None:
+        async with async_client.tasks.with_streaming_response.get_output_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            task = await response.parse()
+            assert_matches_type(TaskGetOutputFileResponse, task, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_path_params_get_output_file(self, async_client: AsyncBrowserUse) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
+            await async_client.tasks.with_raw_response.get_output_file(
+                file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                task_id="",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `file_id` but received ''"):
+            await async_client.tasks.with_raw_response.get_output_file(
+                file_id="",
+                task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            )
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_method_get_user_uploaded_file(self, async_client: AsyncBrowserUse) -> None:
+        task = await async_client.tasks.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+        assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_raw_response_get_user_uploaded_file(self, async_client: AsyncBrowserUse) -> None:
+        response = await async_client.tasks.with_raw_response.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        task = await response.parse()
+        assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_streaming_response_get_user_uploaded_file(self, async_client: AsyncBrowserUse) -> None:
+        async with async_client.tasks.with_streaming_response.get_user_uploaded_file(
+            file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            task = await response.parse()
+            assert_matches_type(TaskGetUserUploadedFileResponse, task, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Prism tests are disabled")
+    @parametrize
+    async def test_path_params_get_user_uploaded_file(self, async_client: AsyncBrowserUse) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `task_id` but received ''"):
+            await async_client.tasks.with_raw_response.get_user_uploaded_file(
+                file_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+                task_id="",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `file_id` but received ''"):
+            await async_client.tasks.with_raw_response.get_user_uploaded_file(
+                file_id="",
+                task_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
             )

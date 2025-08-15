@@ -25,32 +25,39 @@ pip install browser-use-sdk
 The full API of this library can be found in [api.md](api.md).
 
 ```python
+import os
 from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
-    api_key="My API Key",
+    api_key=os.environ.get("BROWSER_USE_API_KEY"),  # This is the default and can be omitted
 )
 
-tasks = client.tasks.list()
-print(tasks.items)
+me = client.users.me.retrieve()
+print(me.additional_credits_balance_usd)
 ```
+
+While you can provide an `api_key` keyword argument,
+we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
+to add `BROWSER_USE_API_KEY="My API Key"` to your `.env` file
+so that your API Key is not stored in source control.
 
 ## Async usage
 
 Simply import `AsyncBrowserUse` instead of `BrowserUse` and use `await` with each API call:
 
 ```python
+import os
 import asyncio
 from browser_use_sdk import AsyncBrowserUse
 
 client = AsyncBrowserUse(
-    api_key="My API Key",
+    api_key=os.environ.get("BROWSER_USE_API_KEY"),  # This is the default and can be omitted
 )
 
 
 async def main() -> None:
-    tasks = await client.tasks.list()
-    print(tasks.items)
+    me = await client.users.me.retrieve()
+    print(me.additional_credits_balance_usd)
 
 
 asyncio.run(main())
@@ -82,8 +89,8 @@ async def main() -> None:
         api_key="My API Key",
         http_client=DefaultAioHttpClient(),
     ) as client:
-        tasks = await client.tasks.list()
-        print(tasks.items)
+        me = await client.users.me.retrieve()
+        print(me.additional_credits_balance_usd)
 
 
 asyncio.run(main())
@@ -105,9 +112,7 @@ Nested parameters are dictionaries, typed using `TypedDict`, for example:
 ```python
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse(
-    api_key="My API Key",
-)
+client = BrowserUse()
 
 task_view = client.tasks.create(
     task="x",
@@ -129,12 +134,10 @@ All errors inherit from `browser_use_sdk.APIError`.
 import browser_use_sdk
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse(
-    api_key="My API Key",
-)
+client = BrowserUse()
 
 try:
-    client.tasks.list()
+    client.users.me.retrieve()
 except browser_use_sdk.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -172,13 +175,12 @@ from browser_use_sdk import BrowserUse
 
 # Configure the default for all requests:
 client = BrowserUse(
-    api_key="My API Key",
     # default is 2
     max_retries=0,
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).tasks.list()
+client.with_options(max_retries=5).users.me.retrieve()
 ```
 
 ### Timeouts
@@ -191,19 +193,17 @@ from browser_use_sdk import BrowserUse
 
 # Configure the default for all requests:
 client = BrowserUse(
-    api_key="My API Key",
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
 # More granular control:
 client = BrowserUse(
-    api_key="My API Key",
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).tasks.list()
+client.with_options(timeout=5.0).users.me.retrieve()
 ```
 
 On timeout, an `APITimeoutError` is thrown.
@@ -243,14 +243,12 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 ```py
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse(
-    api_key="My API Key",
-)
-response = client.tasks.with_raw_response.list()
+client = BrowserUse()
+response = client.users.me.with_raw_response.retrieve()
 print(response.headers.get('X-My-Header'))
 
-task = response.parse()  # get the object that `tasks.list()` would have returned
-print(task.items)
+me = response.parse()  # get the object that `users.me.retrieve()` would have returned
+print(me.additional_credits_balance_usd)
 ```
 
 These methods return an [`APIResponse`](https://github.com/browser-use/browser-use-python/tree/main/src/browser_use_sdk/_response.py) object.
@@ -264,7 +262,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.tasks.with_streaming_response.list() as response:
+with client.users.me.with_streaming_response.retrieve() as response:
     print(response.headers.get("X-My-Header"))
 
     for line in response.iter_lines():
@@ -320,7 +318,6 @@ import httpx
 from browser_use_sdk import BrowserUse, DefaultHttpxClient
 
 client = BrowserUse(
-    api_key="My API Key",
     # Or use the `BROWSER_USE_BASE_URL` env var
     base_url="http://my.test.server.example.com:8083",
     http_client=DefaultHttpxClient(
@@ -343,9 +340,7 @@ By default the library closes underlying HTTP connections whenever the client is
 ```py
 from browser_use_sdk import BrowserUse
 
-with BrowserUse(
-    api_key="My API Key",
-) as client:
+with BrowserUse() as client:
   # make requests here
   ...
 
