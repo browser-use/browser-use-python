@@ -36,6 +36,7 @@ from browser_use_sdk.types import (
     TaskStatus,
     TaskStepView,
     TaskView,
+    TaskCreateResponse,
     TaskListResponse,
     TaskGetLogsResponse,
     TaskGetOutputFileResponse,
@@ -45,7 +46,7 @@ from browser_use_sdk.types import (
 
 Methods:
 
-- <code title="post /tasks">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">create</a>(\*\*<a href="src/browser_use_sdk/types/task_create_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_view.py">TaskView</a></code>
+- <code title="post /tasks">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">create</a>(\*\*<a href="src/browser_use_sdk/types/task_create_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_create_response.py">TaskCreateResponse</a></code>
 - <code title="get /tasks/{task_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">retrieve</a>(task_id) -> <a href="./src/browser_use_sdk/types/task_view.py">TaskView</a></code>
 - <code title="patch /tasks/{task_id}">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">update</a>(task_id, \*\*<a href="src/browser_use_sdk/types/task_update_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_view.py">TaskView</a></code>
 - <code title="get /tasks">client.tasks.<a href="./src/browser_use_sdk/resources/tasks.py">list</a>(\*\*<a href="src/browser_use_sdk/types/task_list_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/task_list_response.py">TaskListResponse</a></code>

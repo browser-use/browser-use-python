@@ -114,11 +114,11 @@ from browser_use_sdk import BrowserUse
 
 client = BrowserUse()
 
-task_view = client.tasks.create(
+task = client.tasks.create(
     task="x",
     agent_settings={},
 )
-print(task_view.agent_settings)
+print(task.agent_settings)
 ```
 
 ## Handling errors

@@ -21,6 +21,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.task_view import TaskView
 from ..types.task_list_response import TaskListResponse
+from ..types.task_create_response import TaskCreateResponse
 from ..types.task_get_logs_response import TaskGetLogsResponse
 from ..types.task_get_output_file_response import TaskGetOutputFileResponse
 from ..types.task_get_user_uploaded_file_response import TaskGetUserUploadedFileResponse
@@ -64,7 +65,7 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskView:
+    ) -> TaskCreateResponse:
         """
         Create and start a new AI agent task.
 
@@ -103,7 +104,7 @@ class TasksResource(SyncAPIResource):
 
         Returns:
 
-        - The created task with its initial details
+        - The created task ID together with the task's session ID
 
         Raises:
 
@@ -148,7 +149,7 @@ class TasksResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=TaskView,
+            cast_to=TaskCreateResponse,
         )
 
     def retrieve(
@@ -567,7 +568,7 @@ class AsyncTasksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskView:
+    ) -> TaskCreateResponse:
         """
         Create and start a new AI agent task.
 
@@ -606,7 +607,7 @@ class AsyncTasksResource(AsyncAPIResource):
 
         Returns:
 
-        - The created task with its initial details
+        - The created task ID together with the task's session ID
 
         Raises:
 
@@ -651,7 +652,7 @@ class AsyncTasksResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=TaskView,
+            cast_to=TaskCreateResponse,
         )
 
     async def retrieve(

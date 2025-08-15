@@ -12,6 +12,7 @@ from browser_use_sdk import BrowserUse, AsyncBrowserUse
 from browser_use_sdk.types import (
     TaskView,
     TaskListResponse,
+    TaskCreateResponse,
     TaskGetLogsResponse,
     TaskGetOutputFileResponse,
     TaskGetUserUploadedFileResponse,
@@ -29,7 +30,7 @@ class TestTasks:
         task = client.tasks.create(
             task="x",
         )
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -50,7 +51,7 @@ class TestTasks:
             secrets={"foo": "string"},
             structured_output_json="structuredOutputJson",
         )
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -62,7 +63,7 @@ class TestTasks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         task = response.parse()
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -74,7 +75,7 @@ class TestTasks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             task = response.parse()
-            assert_matches_type(TaskView, task, path=["response"])
+            assert_matches_type(TaskCreateResponse, task, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -366,7 +367,7 @@ class TestAsyncTasks:
         task = await async_client.tasks.create(
             task="x",
         )
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -387,7 +388,7 @@ class TestAsyncTasks:
             secrets={"foo": "string"},
             structured_output_json="structuredOutputJson",
         )
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -399,7 +400,7 @@ class TestAsyncTasks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         task = await response.parse()
-        assert_matches_type(TaskView, task, path=["response"])
+        assert_matches_type(TaskCreateResponse, task, path=["response"])
 
     @pytest.mark.skip(reason="Prism tests are disabled")
     @parametrize
@@ -411,7 +412,7 @@ class TestAsyncTasks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             task = await response.parse()
-            assert_matches_type(TaskView, task, path=["response"])
+            assert_matches_type(TaskCreateResponse, task, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
