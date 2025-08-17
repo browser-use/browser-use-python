@@ -22,12 +22,6 @@ class TaskListParams(TypedDict, total=False):
     UNSUCCESSFUL: All unsuccessful tasks
     """
 
-    include_output_files: Annotated[bool, PropertyInfo(alias="includeOutputFiles")]
-
-    include_steps: Annotated[bool, PropertyInfo(alias="includeSteps")]
-
-    include_user_uploaded_files: Annotated[bool, PropertyInfo(alias="includeUserUploadedFiles")]
-
     page_number: Annotated[int, PropertyInfo(alias="pageNumber")]
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]

@@ -7,7 +7,7 @@ from typing_extensions import Literal
 
 import httpx
 
-from ...types import SessionStatus, session_list_params, session_update_params, session_retrieve_params
+from ...types import SessionStatus, session_list_params, session_update_params
 from ..._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
@@ -62,7 +62,6 @@ class SessionsResource(SyncAPIResource):
         self,
         session_id: str,
         *,
-        include_tasks: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -105,11 +104,7 @@ class SessionsResource(SyncAPIResource):
         return self._get(
             f"/sessions/{session_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform({"include_tasks": include_tasks}, session_retrieve_params.SessionRetrieveParams),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SessionView,
         )
@@ -181,7 +176,6 @@ class SessionsResource(SyncAPIResource):
         self,
         *,
         filter_by: Optional[SessionStatus] | NotGiven = NOT_GIVEN,
-        include_tasks: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -232,7 +226,6 @@ class SessionsResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "filter_by": filter_by,
-                        "include_tasks": include_tasks,
                         "page_number": page_number,
                         "page_size": page_size,
                     },
@@ -317,7 +310,6 @@ class AsyncSessionsResource(AsyncAPIResource):
         self,
         session_id: str,
         *,
-        include_tasks: bool | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -360,13 +352,7 @@ class AsyncSessionsResource(AsyncAPIResource):
         return await self._get(
             f"/sessions/{session_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {"include_tasks": include_tasks}, session_retrieve_params.SessionRetrieveParams
-                ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SessionView,
         )
@@ -438,7 +424,6 @@ class AsyncSessionsResource(AsyncAPIResource):
         self,
         *,
         filter_by: Optional[SessionStatus] | NotGiven = NOT_GIVEN,
-        include_tasks: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -489,7 +474,6 @@ class AsyncSessionsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "filter_by": filter_by,
-                        "include_tasks": include_tasks,
                         "page_number": page_number,
                         "page_size": page_size,
                     },

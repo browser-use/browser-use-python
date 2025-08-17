@@ -22,7 +22,6 @@ from .task_create_response import TaskCreateResponse as TaskCreateResponse
 from .session_list_response import SessionListResponse as SessionListResponse
 from .session_update_params import SessionUpdateParams as SessionUpdateParams
 from .task_get_logs_response import TaskGetLogsResponse as TaskGetLogsResponse
-from .session_retrieve_params import SessionRetrieveParams as SessionRetrieveParams
 from .agent_profile_list_params import AgentProfileListParams as AgentProfileListParams
 from .agent_profile_create_params import AgentProfileCreateParams as AgentProfileCreateParams
 from .agent_profile_list_response import AgentProfileListResponse as AgentProfileListResponse

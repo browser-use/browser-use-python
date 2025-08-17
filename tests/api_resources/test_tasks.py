@@ -178,9 +178,6 @@ class TestTasks:
     def test_method_list_with_all_params(self, client: BrowserUse) -> None:
         task = client.tasks.list(
             filter_by="started",
-            include_output_files=True,
-            include_steps=True,
-            include_user_uploaded_files=True,
             page_number=1,
             page_size=1,
             session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
@@ -515,9 +512,6 @@ class TestAsyncTasks:
     async def test_method_list_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         task = await async_client.tasks.list(
             filter_by="started",
-            include_output_files=True,
-            include_steps=True,
-            include_user_uploaded_files=True,
             page_number=1,
             page_size=1,
             session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
