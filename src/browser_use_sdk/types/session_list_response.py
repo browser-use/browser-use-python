@@ -7,7 +7,6 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 from .session_status import SessionStatus
-from .task_item_view import TaskItemView
 
 __all__ = ["SessionListResponse", "Item"]
 
@@ -27,8 +26,6 @@ class Item(BaseModel):
     finished_at: Optional[datetime] = FieldInfo(alias="finishedAt", default=None)
 
     live_url: Optional[str] = FieldInfo(alias="liveUrl", default=None)
-
-    tasks: Optional[List[TaskItemView]] = None
 
 
 class SessionListResponse(BaseModel):

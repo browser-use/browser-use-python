@@ -24,16 +24,7 @@ class TestSessions:
     @parametrize
     def test_method_retrieve(self, client: BrowserUse) -> None:
         session = client.sessions.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-        )
-        assert_matches_type(SessionView, session, path=["response"])
-
-    @pytest.mark.skip(reason="Prism tests are disabled")
-    @parametrize
-    def test_method_retrieve_with_all_params(self, client: BrowserUse) -> None:
-        session = client.sessions.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-            include_tasks=True,
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
         assert_matches_type(SessionView, session, path=["response"])
 
@@ -41,7 +32,7 @@ class TestSessions:
     @parametrize
     def test_raw_response_retrieve(self, client: BrowserUse) -> None:
         response = client.sessions.with_raw_response.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
 
         assert response.is_closed is True
@@ -53,7 +44,7 @@ class TestSessions:
     @parametrize
     def test_streaming_response_retrieve(self, client: BrowserUse) -> None:
         with client.sessions.with_streaming_response.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -68,7 +59,7 @@ class TestSessions:
     def test_path_params_retrieve(self, client: BrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             client.sessions.with_raw_response.retrieve(
-                session_id="",
+                "",
             )
 
     @pytest.mark.skip(reason="Prism tests are disabled")
@@ -128,7 +119,6 @@ class TestSessions:
     def test_method_list_with_all_params(self, client: BrowserUse) -> None:
         session = client.sessions.list(
             filter_by="active",
-            include_tasks=True,
             page_number=1,
             page_size=1,
         )
@@ -208,16 +198,7 @@ class TestAsyncSessions:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncBrowserUse) -> None:
         session = await async_client.sessions.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-        )
-        assert_matches_type(SessionView, session, path=["response"])
-
-    @pytest.mark.skip(reason="Prism tests are disabled")
-    @parametrize
-    async def test_method_retrieve_with_all_params(self, async_client: AsyncBrowserUse) -> None:
-        session = await async_client.sessions.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-            include_tasks=True,
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
         assert_matches_type(SessionView, session, path=["response"])
 
@@ -225,7 +206,7 @@ class TestAsyncSessions:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncBrowserUse) -> None:
         response = await async_client.sessions.with_raw_response.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         )
 
         assert response.is_closed is True
@@ -237,7 +218,7 @@ class TestAsyncSessions:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncBrowserUse) -> None:
         async with async_client.sessions.with_streaming_response.retrieve(
-            session_id="182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
+            "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -252,7 +233,7 @@ class TestAsyncSessions:
     async def test_path_params_retrieve(self, async_client: AsyncBrowserUse) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `session_id` but received ''"):
             await async_client.sessions.with_raw_response.retrieve(
-                session_id="",
+                "",
             )
 
     @pytest.mark.skip(reason="Prism tests are disabled")
@@ -312,7 +293,6 @@ class TestAsyncSessions:
     async def test_method_list_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         session = await async_client.sessions.list(
             filter_by="active",
-            include_tasks=True,
             page_number=1,
             page_size=1,
         )

@@ -281,9 +281,6 @@ class TasksResource(SyncAPIResource):
         *,
         filter_by: Optional[Literal["started", "paused", "stopped", "finished", "successful", "unsuccessful"]]
         | NotGiven = NOT_GIVEN,
-        include_output_files: bool | NotGiven = NOT_GIVEN,
-        include_steps: bool | NotGiven = NOT_GIVEN,
-        include_user_uploaded_files: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
         session_id: Optional[str] | NotGiven = NOT_GIVEN,
@@ -340,9 +337,6 @@ class TasksResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "filter_by": filter_by,
-                        "include_output_files": include_output_files,
-                        "include_steps": include_steps,
-                        "include_user_uploaded_files": include_user_uploaded_files,
                         "page_number": page_number,
                         "page_size": page_size,
                         "session_id": session_id,
@@ -784,9 +778,6 @@ class AsyncTasksResource(AsyncAPIResource):
         *,
         filter_by: Optional[Literal["started", "paused", "stopped", "finished", "successful", "unsuccessful"]]
         | NotGiven = NOT_GIVEN,
-        include_output_files: bool | NotGiven = NOT_GIVEN,
-        include_steps: bool | NotGiven = NOT_GIVEN,
-        include_user_uploaded_files: bool | NotGiven = NOT_GIVEN,
         page_number: int | NotGiven = NOT_GIVEN,
         page_size: int | NotGiven = NOT_GIVEN,
         session_id: Optional[str] | NotGiven = NOT_GIVEN,
@@ -843,9 +834,6 @@ class AsyncTasksResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "filter_by": filter_by,
-                        "include_output_files": include_output_files,
-                        "include_steps": include_steps,
-                        "include_user_uploaded_files": include_user_uploaded_files,
                         "page_number": page_number,
                         "page_size": page_size,
                         "session_id": session_id,

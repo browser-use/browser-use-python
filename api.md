@@ -64,7 +64,7 @@ from browser_use_sdk.types import SessionStatus, SessionView, SessionListRespons
 
 Methods:
 
-- <code title="get /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">retrieve</a>(session_id, \*\*<a href="src/browser_use_sdk/types/session_retrieve_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_view.py">SessionView</a></code>
+- <code title="get /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">retrieve</a>(session_id) -> <a href="./src/browser_use_sdk/types/session_view.py">SessionView</a></code>
 - <code title="patch /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">update</a>(session_id, \*\*<a href="src/browser_use_sdk/types/session_update_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_view.py">SessionView</a></code>
 - <code title="get /sessions">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">list</a>(\*\*<a href="src/browser_use_sdk/types/session_list_params.py">params</a>) -> <a href="./src/browser_use_sdk/types/session_list_response.py">SessionListResponse</a></code>
 - <code title="delete /sessions/{session_id}">client.sessions.<a href="./src/browser_use_sdk/resources/sessions/sessions.py">delete</a>(session_id) -> None</code>

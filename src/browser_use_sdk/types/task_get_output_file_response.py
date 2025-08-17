@@ -8,4 +8,8 @@ __all__ = ["TaskGetOutputFileResponse"]
 
 
 class TaskGetOutputFileResponse(BaseModel):
+    id: str
+
     download_url: str = FieldInfo(alias="downloadUrl")
+
+    file_name: str = FieldInfo(alias="fileName")

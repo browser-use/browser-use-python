@@ -2,6 +2,7 @@
 
 from typing import Dict, List, Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -11,7 +12,24 @@ from .llm_model import LlmModel
 from .task_status import TaskStatus
 from .task_step_view import TaskStepView
 
-__all__ = ["TaskView"]
+__all__ = ["TaskView", "Session"]
+
+
+class Session(BaseModel):
+    id: str
+
+    started_at: datetime = FieldInfo(alias="startedAt")
+
+    status: Literal["active", "stopped"]
+    """Enumeration of possible (browser) session states
+
+    Attributes: ACTIVE: Session is currently active and running (browser is running)
+    STOPPED: Session has been stopped and is no longer active (browser is stopped)
+    """
+
+    finished_at: Optional[datetime] = FieldInfo(alias="finishedAt", default=None)
+
+    live_url: Optional[str] = FieldInfo(alias="liveUrl", default=None)
 
 
 class TaskView(BaseModel):
@@ -22,6 +40,15 @@ class TaskView(BaseModel):
     llm: LlmModel
 
     output_files: List[FileView] = FieldInfo(alias="outputFiles")
+
+    session: Session
+    """View model for representing a session that a task belongs to
+
+    Attributes: id: Unique identifier for the session status: Current status of the
+    session live_url: URL where the browser can be viewed live in real-time.
+    started_at: Timestamp when the session was created and started. finished_at:
+    Timestamp when the session was stopped (None if still active).
+    """
 
     session_id: str = FieldInfo(alias="sessionId")
 
@@ -50,5 +77,3 @@ class TaskView(BaseModel):
     is_success: Optional[bool] = FieldInfo(alias="isSuccess", default=None)
 
     metadata: Optional[Dict[str, object]] = None
-
-    session_live_url: Optional[str] = FieldInfo(alias="sessionLiveUrl", default=None)

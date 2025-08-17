@@ -19,8 +19,6 @@ class SessionListParams(TypedDict, total=False):
     STOPPED: Session has been stopped and is no longer active (browser is stopped)
     """
 
-    include_tasks: Annotated[bool, PropertyInfo(alias="includeTasks")]
-
     page_number: Annotated[int, PropertyInfo(alias="pageNumber")]
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
