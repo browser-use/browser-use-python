@@ -61,6 +61,6 @@
   ],
   "release-type": "python",
   "extra-files": [
-    "src/browser_use/_version.py"
+    "src/browser_use_sdk/_version.py"
   ]
 }

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from browser_use._utils import required_args
+from browser_use_sdk._utils import required_args
 
 
 def test_too_many_positional_params() -> None:
