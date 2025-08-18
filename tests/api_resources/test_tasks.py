@@ -17,6 +17,7 @@ from browser_use_sdk.types import (
     TaskGetOutputFileResponse,
     TaskGetUserUploadedFileResponse,
 )
+from browser_use_sdk._utils import parse_datetime
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -177,6 +178,8 @@ class TestTasks:
     @parametrize
     def test_method_list_with_all_params(self, client: BrowserUse) -> None:
         task = client.tasks.list(
+            after=parse_datetime("2019-12-27T18:11:19.117Z"),
+            before=parse_datetime("2019-12-27T18:11:19.117Z"),
             filter_by="started",
             page_number=1,
             page_size=1,
@@ -511,6 +514,8 @@ class TestAsyncTasks:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncBrowserUse) -> None:
         task = await async_client.tasks.list(
+            after=parse_datetime("2019-12-27T18:11:19.117Z"),
+            before=parse_datetime("2019-12-27T18:11:19.117Z"),
             filter_by="started",
             page_number=1,
             page_size=1,
