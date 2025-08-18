@@ -15,18 +15,19 @@ class TaskCreateParams(TypedDict, total=False):
     task: Required[str]
 
     agent_settings: Annotated[AgentSettings, PropertyInfo(alias="agentSettings")]
-    """Configuration settings for the AI agent
+    """Configuration settings for the agent
 
-    Attributes: llm: The LLM model to use for the agent profile_id: Unique
-    identifier of the agent profile to use for the task
+    Attributes: llm: The LLM model to use for the agent start_url: Optional URL to
+    start the agent on (will not be changed as a step) profile_id: Unique identifier
+    of the agent profile to use for the task
     """
 
     browser_settings: Annotated[BrowserSettings, PropertyInfo(alias="browserSettings")]
     """Configuration settings for the browser session
 
     Attributes: session_id: Unique identifier of existing session to continue
-    profile_id: Unique identifier of browser profile to use save_browser_data:
-    Whether to save browser state/data for the user to download later
+    profile_id: Unique identifier of browser profile to use (use if you want to
+    start a new session)
     """
 
     included_file_names: Annotated[Optional[List[str]], PropertyInfo(alias="includedFileNames")]
@@ -43,10 +44,10 @@ class AgentSettings(TypedDict, total=False):
 
     profile_id: Annotated[Optional[str], PropertyInfo(alias="profileId")]
 
+    start_url: Annotated[Optional[str], PropertyInfo(alias="startUrl")]
+
 
 class BrowserSettings(TypedDict, total=False):
     profile_id: Annotated[Optional[str], PropertyInfo(alias="profileId")]
-
-    save_browser_data: Annotated[bool, PropertyInfo(alias="saveBrowserData")]
 
     session_id: Annotated[Optional[str], PropertyInfo(alias="sessionId")]

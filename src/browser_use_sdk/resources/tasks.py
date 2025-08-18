@@ -113,16 +113,17 @@ class TasksResource(SyncAPIResource):
         - 400: If session is stopped or already has a running task
 
         Args:
-          agent_settings: Configuration settings for the AI agent
+          agent_settings: Configuration settings for the agent
 
-              Attributes: llm: The LLM model to use for the agent profile_id: Unique
-              identifier of the agent profile to use for the task
+              Attributes: llm: The LLM model to use for the agent start_url: Optional URL to
+              start the agent on (will not be changed as a step) profile_id: Unique identifier
+              of the agent profile to use for the task
 
           browser_settings: Configuration settings for the browser session
 
               Attributes: session_id: Unique identifier of existing session to continue
-              profile_id: Unique identifier of browser profile to use save_browser_data:
-              Whether to save browser state/data for the user to download later
+              profile_id: Unique identifier of browser profile to use (use if you want to
+              start a new session)
 
           extra_headers: Send extra headers
 
@@ -610,16 +611,17 @@ class AsyncTasksResource(AsyncAPIResource):
         - 400: If session is stopped or already has a running task
 
         Args:
-          agent_settings: Configuration settings for the AI agent
+          agent_settings: Configuration settings for the agent
 
-              Attributes: llm: The LLM model to use for the agent profile_id: Unique
-              identifier of the agent profile to use for the task
+              Attributes: llm: The LLM model to use for the agent start_url: Optional URL to
+              start the agent on (will not be changed as a step) profile_id: Unique identifier
+              of the agent profile to use for the task
 
           browser_settings: Configuration settings for the browser session
 
               Attributes: session_id: Unique identifier of existing session to continue
-              profile_id: Unique identifier of browser profile to use save_browser_data:
-              Whether to save browser state/data for the user to download later
+              profile_id: Unique identifier of browser profile to use (use if you want to
+              start a new session)
 
           extra_headers: Send extra headers
 

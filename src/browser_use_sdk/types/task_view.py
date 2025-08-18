@@ -45,9 +45,9 @@ class TaskView(BaseModel):
     """View model for representing a session that a task belongs to
 
     Attributes: id: Unique identifier for the session status: Current status of the
-    session live_url: URL where the browser can be viewed live in real-time.
-    started_at: Timestamp when the session was created and started. finished_at:
-    Timestamp when the session was stopped (None if still active).
+    session (active/stopped) live_url: URL where the browser can be viewed live in
+    real-time. started_at: Timestamp when the session was created and started.
+    finished_at: Timestamp when the session was stopped (None if still active).
     """
 
     session_id: str = FieldInfo(alias="sessionId")
