@@ -26,9 +26,10 @@ class TaskItemView(BaseModel):
     status: TaskStatus
     """Enumeration of possible task execution states
 
-    Attributes: STARTED: Task has been started and is currently running PAUSED: Task
-    execution has been temporarily paused (can be resumed) STOPPED: Task execution
-    has been stopped (cannot be resumed) FINISHED: Task has completed successfully
+    Attributes: STARTED: Task has been started and is currently running. PAUSED:
+    Task execution has been temporarily paused (can be resumed) FINISHED: Task has
+    finished and the agent has completed the task. STOPPED: Task execution has been
+    manually stopped (cannot be resumed).
     """
 
     task: str
