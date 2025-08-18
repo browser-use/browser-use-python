@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.1.0 (2025-08-18)
+
+Full Changelog: [v0.0.2...v0.1.0](https://github.com/browser-use/browser-use-python/compare/v0.0.2...v0.1.0)
+
+### Features
+
+* Add start_url ([2ede0a9](https://github.com/browser-use/browser-use-python/commit/2ede0a9089bfbba1eca207508a52ee36b4ef18ac))
+* Align Task Filtering by Status with `status` Field ([29b4590](https://github.com/browser-use/browser-use-python/commit/29b4590c69f13fbf7f855888862ef77a9e704172))
+* **api:** api update ([5867532](https://github.com/browser-use/browser-use-python/commit/58675327b6a0e7ba41f312e4887062a9b6dc2852))
+* **api:** manual updates ([78727c0](https://github.com/browser-use/browser-use-python/commit/78727c02cefa53fd0dd877e137b7b6f92e14fce8))
+* **api:** update via SDK Studio ([b283386](https://github.com/browser-use/browser-use-python/commit/b283386b805435a87114e807f8919185cb6a5b7b))
+* Fix Stainless GitHub Action ([5dcf360](https://github.com/browser-use/browser-use-python/commit/5dcf360ccfe40f45962ecaa64b8a5aacf55778d4))
+* Update param and response views ([44b4c5d](https://github.com/browser-use/browser-use-python/commit/44b4c5d7ed416f9f5c37afb3287cdaa6f22a30cd))
+
+
+### Chores
+
+* **internal:** codegen related update ([151d56b](https://github.com/browser-use/browser-use-python/commit/151d56ba67c2d09970ff415472c0a1d259716bbc))
+
 ## 0.0.2 (2025-08-09)
 
 Full Changelog: [v0.0.1...v0.0.2](https://github.com/browser-use/browser-use-python/compare/v0.0.1...v0.0.2)
