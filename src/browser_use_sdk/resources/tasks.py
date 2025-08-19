@@ -69,12 +69,12 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskCreateResponse:
         """
-        Create and start a new AI agent task.
+        Create and start a new Browser Use Agent task.
 
         This is the main endpoint for running AI agents. You can either:
 
-        1. Start a new session with a new task
-        2. Add a follow-up task to an existing session
+        1. Start a new session with a new task.
+        2. Add a follow-up task to an existing session.
 
         When starting a new session:
 
@@ -95,9 +95,8 @@ class TasksResource(SyncAPIResource):
         - Browser profiles: Control browser settings and environment (only used for new
           sessions)
         - File uploads: Include documents for the agent to work with
-        - Structured output: Define the format you want results in
-        - Task metadata: Add custom data for tracking and organization (useful when
-          using webhooks)
+        - Structured output: Define the format of the task result
+        - Task metadata: Add custom data for tracking and organization
 
         Args:
 
@@ -564,12 +563,12 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> TaskCreateResponse:
         """
-        Create and start a new AI agent task.
+        Create and start a new Browser Use Agent task.
 
         This is the main endpoint for running AI agents. You can either:
 
-        1. Start a new session with a new task
-        2. Add a follow-up task to an existing session
+        1. Start a new session with a new task.
+        2. Add a follow-up task to an existing session.
 
         When starting a new session:
 
@@ -590,9 +589,8 @@ class AsyncTasksResource(AsyncAPIResource):
         - Browser profiles: Control browser settings and environment (only used for new
           sessions)
         - File uploads: Include documents for the agent to work with
-        - Structured output: Define the format you want results in
-        - Task metadata: Add custom data for tracking and organization (useful when
-          using webhooks)
+        - Structured output: Define the format of the task result
+        - Task metadata: Add custom data for tracking and organization
 
         Args:
 
