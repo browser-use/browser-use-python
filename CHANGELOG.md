@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 (2025-08-19)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/browser-use/browser-use-python/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** manual updates ([6266282](https://github.com/browser-use/browser-use-python/commit/6266282a615344fdab0737d29adc9124a3bf8b8d))
+* **api:** manual updates ([2d9ba52](https://github.com/browser-use/browser-use-python/commit/2d9ba52b23e53c581360afc655fa8d665a106814))
+* Improve Docs ([6e79b7c](https://github.com/browser-use/browser-use-python/commit/6e79b7c5cfc7cf54f1474521025fa713f200bc3b))
+
 ## 0.1.0 (2025-08-18)
 
 Full Changelog: [v0.0.2...v0.1.0](https://github.com/browser-use/browser-use-python/compare/v0.0.2...v0.1.0)
