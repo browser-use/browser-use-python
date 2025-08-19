@@ -33,7 +33,7 @@ client = BrowserUse(
 )
 
 task = client.tasks.create(
-    task="x",
+    task="Search for the top 10 Hacker News posts and return the title and url.",
 )
 print(task.id)
 ```
@@ -59,7 +59,7 @@ client = AsyncBrowserUse(
 
 async def main() -> None:
     task = await client.tasks.create(
-        task="x",
+        task="Search for the top 10 Hacker News posts and return the title and url.",
     )
     print(task.id)
 
@@ -94,7 +94,7 @@ async def main() -> None:
         http_client=DefaultAioHttpClient(),
     ) as client:
         task = await client.tasks.create(
-            task="x",
+            task="Search for the top 10 Hacker News posts and return the title and url.",
         )
         print(task.id)
 
@@ -144,7 +144,7 @@ client = BrowserUse()
 
 try:
     client.tasks.create(
-        task="x",
+        task="Search for the top 10 Hacker News posts and return the title and url.",
     )
 except browser_use_sdk.APIConnectionError as e:
     print("The server could not be reached")
@@ -189,7 +189,7 @@ client = BrowserUse(
 
 # Or, configure per-request:
 client.with_options(max_retries=5).tasks.create(
-    task="x",
+    task="Search for the top 10 Hacker News posts and return the title and url.",
 )
 ```
 
@@ -214,7 +214,7 @@ client = BrowserUse(
 
 # Override per-request:
 client.with_options(timeout=5.0).tasks.create(
-    task="x",
+    task="Search for the top 10 Hacker News posts and return the title and url.",
 )
 ```
 
@@ -257,7 +257,7 @@ from browser_use_sdk import BrowserUse
 
 client = BrowserUse()
 response = client.tasks.with_raw_response.create(
-    task="x",
+    task="Search for the top 10 Hacker News posts and return the title and url.",
 )
 print(response.headers.get('X-My-Header'))
 
@@ -277,7 +277,7 @@ To stream the response body, use `.with_streaming_response` instead, which requi
 
 ```python
 with client.tasks.with_streaming_response.create(
-    task="x",
+    task="Search for the top 10 Hacker News posts and return the title and url.",
 ) as response:
     print(response.headers.get("X-My-Header"))
 
