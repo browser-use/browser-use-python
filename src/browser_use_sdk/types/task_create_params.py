@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 from typing import Dict, List, Optional
-from typing_extensions import Required, Annotated, TypedDict
+from typing_extensions import Literal, Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
-from .llm_model import LlmModel
 
 __all__ = ["TaskCreateParams", "AgentSettings", "BrowserSettings"]
 
@@ -40,7 +39,19 @@ class TaskCreateParams(TypedDict, total=False):
 
 
 class AgentSettings(TypedDict, total=False):
-    llm: LlmModel
+    llm: Literal[
+        "gpt-4.1",
+        "gpt-4.1-mini",
+        "o4-mini",
+        "o3",
+        "gemini-2.5-flash",
+        "gemini-2.5-pro",
+        "claude-sonnet-4-20250514",
+        "gpt-4o",
+        "gpt-4o-mini",
+        "llama-4-maverick-17b-128e-instruct",
+        "claude-3-7-sonnet-20250219",
+    ]
 
     profile_id: Annotated[Optional[str], PropertyInfo(alias="profileId")]
 
