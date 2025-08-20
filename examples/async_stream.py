@@ -48,7 +48,7 @@ async def stream_structured_task() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gemini-2.5-flash"},
+        agent_settings={"llm": "gpt-4.1"},
         structured_output_json=SearchResult,
     )
 
