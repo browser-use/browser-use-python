@@ -31,7 +31,10 @@ def stream_regular_task() -> None:
             for action in last_step.actions:
                 print(f" - {action}")
 
-    print("Done")
+        if res.status == "finished":
+            print(res.done_output)
+
+    print("Regular: DONE")
 
 
 stream_regular_task()
@@ -50,6 +53,7 @@ def stream_structured_task() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
+        agent_settings={"llm": "gpt-4.1"},
         structured_output_json=SearchResult,
     )
 
