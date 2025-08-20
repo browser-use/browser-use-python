@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 import time
-import hashlib
-from typing import Any, Dict, List, Union, TypeVar, Optional, Generator, overload
+import asyncio
+from typing import Dict, List, Union, TypeVar, Optional, Generator, AsyncGenerator, overload
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -23,7 +23,7 @@ from .._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from ..lib.parse import TaskViewWithOutput
+from ..lib.parse import TaskViewWithOutput, hash_task_view
 from .._base_client import make_request_options
 from ..types.task_view import TaskView
 from ..types.task_status import TaskStatus
@@ -480,21 +480,6 @@ class TasksResource(SyncAPIResource):
             else:
                 yield res
 
-    class CustomJSONEncoder(json.JSONEncoder):
-        """Custom JSON encoder to handle datetime objects."""
-
-        # NOTE: Python doesn't have the override decorator in 3.8, that's why we ignore it.
-        def default(self, o: Any) -> Any:  # type: ignore[override]
-            if isinstance(o, datetime):
-                return o.isoformat()
-            return super().default(o)
-
-    def _hash(self, task_view: TaskView) -> str:
-        """Hashes the task view to detect changes."""
-        return hashlib.sha256(
-            json.dumps(task_view.model_dump(), sort_keys=True, cls=self.CustomJSONEncoder).encode()
-        ).hexdigest()
-
     def _watch(
         self,
         task_id: str,
@@ -519,7 +504,7 @@ class TasksResource(SyncAPIResource):
                 timeout=timeout,
             )
 
-            res_hash = self._hash(res)
+            res_hash = hash_task_view(res)
 
             if hash is None or res_hash != hash:
                 hash = res_hash
@@ -865,6 +850,107 @@ class AsyncTasksResource(AsyncAPIResource):
         """
         return AsyncTasksResourceWithStreamingResponse(self)
 
+    @overload
+    async def run(
+        self,
+        *,
+        task: str,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        structured_output_json: Optional[str] | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskView: ...
+
+    @overload
+    async def run(
+        self,
+        *,
+        task: str,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        structured_output_json: type[T],
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithOutput[T]: ...
+
+    async def run(
+        self,
+        *,
+        task: str,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        structured_output_json: Optional[Union[type[BaseModel], str]] | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> Union[TaskView, TaskViewWithOutput[BaseModel]]:
+        """
+        Run a new Browser Use Agent task.
+        """
+        if structured_output_json is not None and isinstance(structured_output_json, type):
+            create_task_res = await self.create(
+                task=task,
+                agent_settings=agent_settings,
+                browser_settings=browser_settings,
+                included_file_names=included_file_names,
+                metadata=metadata,
+                secrets=secrets,
+                structured_output_json=structured_output_json,
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+            )
+
+            async for structured_msg in self.stream(create_task_res.id, structured_output_json=structured_output_json):
+                if structured_msg.status == "finished":
+                    return structured_msg
+
+            raise ValueError("Task did not finish")
+
+        else:
+            create_task_res = await self.create(
+                task=task,
+                agent_settings=agent_settings,
+                browser_settings=browser_settings,
+                included_file_names=included_file_names,
+                metadata=metadata,
+                secrets=secrets,
+                structured_output_json=structured_output_json,
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+            )
+
+            async for msg in self.stream(create_task_res.id):
+                if msg.status == "finished":
+                    return msg
+
+            raise ValueError("Task did not finish")
+
+    @overload
     async def create(
         self,
         *,
@@ -875,6 +961,43 @@ class AsyncTasksResource(AsyncAPIResource):
         metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
         secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
         structured_output_json: Optional[str] | NotGiven = NOT_GIVEN,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskCreateResponse: ...
+
+    @overload
+    async def create(
+        self,
+        *,
+        task: str,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        structured_output_json: type[BaseModel],
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskCreateResponse: ...
+
+    async def create(
+        self,
+        *,
+        task: str,
+        agent_settings: task_create_params.AgentSettings | NotGiven = NOT_GIVEN,
+        browser_settings: task_create_params.BrowserSettings | NotGiven = NOT_GIVEN,
+        included_file_names: Optional[List[str]] | NotGiven = NOT_GIVEN,
+        metadata: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        secrets: Optional[Dict[str, str]] | NotGiven = NOT_GIVEN,
+        structured_output_json: Optional[Union[type[BaseModel], str]] | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -948,6 +1071,14 @@ class AsyncTasksResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+
+        if (
+            structured_output_json is not None
+            and not isinstance(structured_output_json, str)
+            and isinstance(structured_output_json, type)
+        ):
+            structured_output_json = json.dumps(structured_output_json.model_json_schema())
+
         return await self._post(
             "/tasks",
             body=await async_maybe_transform(
@@ -968,6 +1099,21 @@ class AsyncTasksResource(AsyncAPIResource):
             cast_to=TaskCreateResponse,
         )
 
+    @overload
+    async def retrieve(
+        self,
+        task_id: str,
+        structured_output_json: type[T],
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> TaskViewWithOutput[T]: ...
+
+    @overload
     async def retrieve(
         self,
         task_id: str,
@@ -978,7 +1124,20 @@ class AsyncTasksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskView:
+    ) -> TaskView: ...
+
+    async def retrieve(
+        self,
+        task_id: str,
+        structured_output_json: Optional[type[BaseModel]] | NotGiven = NOT_GIVEN,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> Union[TaskView, TaskViewWithOutput[BaseModel]]:
         """
         Get detailed information about a specific AI agent task.
 
@@ -1016,6 +1175,29 @@ class AsyncTasksResource(AsyncAPIResource):
         """
         if not task_id:
             raise ValueError(f"Expected a non-empty value for `task_id` but received {task_id!r}")
+
+        if structured_output_json is not None and isinstance(structured_output_json, type):
+            res = await self._get(
+                f"/tasks/{task_id}",
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=TaskView,
+            )
+
+            if res.done_output is None:
+                return TaskViewWithOutput[BaseModel](
+                    **res.model_dump(),
+                    parsed_output=None,
+                )
+
+            parsed_output = structured_output_json.model_validate_json(res.done_output)
+
+            return TaskViewWithOutput[BaseModel](
+                **res.model_dump(),
+                parsed_output=parsed_output,
+            )
+
         return await self._get(
             f"/tasks/{task_id}",
             options=make_request_options(
@@ -1023,6 +1205,108 @@ class AsyncTasksResource(AsyncAPIResource):
             ),
             cast_to=TaskView,
         )
+
+    @overload
+    async def stream(
+        self,
+        task_id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncGenerator[TaskView, None]: ...
+
+    @overload
+    async def stream(
+        self,
+        task_id: str,
+        structured_output_json: type[T],
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncGenerator[TaskViewWithOutput[T], None]: ...
+
+    async def stream(
+        self,
+        task_id: str,
+        structured_output_json: Optional[type[BaseModel]] | NotGiven = NOT_GIVEN,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncGenerator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+        """
+        Stream the task view as it is updated until the task is finished.
+        """
+
+        async for res in self._watch(
+            task_id=task_id,
+            extra_headers=extra_headers,
+            extra_query=extra_query,
+            extra_body=extra_body,
+            timeout=timeout,
+        ):
+            if structured_output_json is not None and isinstance(structured_output_json, type):
+                if res.done_output is None:
+                    yield TaskViewWithOutput[BaseModel](
+                        **res.model_dump(),
+                        parsed_output=None,
+                    )
+                else:
+                    parsed_output = structured_output_json.model_validate_json(res.done_output)
+
+                    yield TaskViewWithOutput[BaseModel](
+                        **res.model_dump(),
+                        parsed_output=parsed_output,
+                    )
+
+            else:
+                yield res
+
+    async def _watch(
+        self,
+        task_id: str,
+        interval: float = 1,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncGenerator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+        """Converts a polling loop into a generator loop."""
+        hash: str | None = None
+
+        while True:
+            res = await self.retrieve(
+                task_id=task_id,
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+            )
+
+            res_hash = hash_task_view(res)
+
+            if hash is None or res_hash != hash:
+                hash = res_hash
+                yield res
+
+            if res.status == "finished":
+                break
+
+            await asyncio.sleep(interval)
 
     async def update(
         self,

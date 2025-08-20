@@ -1,48 +1,45 @@
 #!/usr/bin/env -S rye run python
 
-import time
+import asyncio
 from typing import List
 
 from pydantic import BaseModel
 
-from browser_use_sdk import BrowserUse
+from browser_use_sdk import AsyncBrowserUse
 
 # gets API Key from environment variable BROWSER_USE_API_KEY
-client = BrowserUse()
+client = AsyncBrowserUse()
 
 
 # Regular Task
-def retrieve_regular_task():
+async def retrieve_regular_task():
     """
     Retrieves a regular task and waits for it to finish.
     """
 
     print("Retrieving regular task...")
 
-    regular_task = client.tasks.create(
+    regular_task = await client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """
     )
 
-    print(f"Task ID: {regular_task.id}")
+    print(f"Regular Task ID: {regular_task.id}")
 
     while True:
-        regular_status = client.tasks.retrieve(regular_task.id)
-        print(regular_status.status)
+        regular_status = await client.tasks.retrieve(regular_task.id)
+        print(f"Regular Task Status: {regular_status.status}")
         if regular_status.status == "finished":
-            print(regular_status.done_output)
+            print(f"Regular Task Output: {regular_status.done_output}")
             break
 
-        time.sleep(1)
+        await asyncio.sleep(1)
 
     print("Done")
 
 
-retrieve_regular_task()
-
-
-def retrieve_structured_task():
+async def retrieve_structured_task():
     """
     Retrieves a structured task and waits for it to finish.
     """
@@ -57,31 +54,42 @@ def retrieve_structured_task():
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_task = client.tasks.create(
+    structured_task = await client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         structured_output_json=SearchResult,
     )
 
-    print(f"Task ID: {structured_task.id}")
+    print(f"Structured Task ID: {structured_task.id}")
 
     while True:
-        structured_status = client.tasks.retrieve(task_id=structured_task.id, structured_output_json=SearchResult)
-        print(structured_status.status)
+        structured_status = await client.tasks.retrieve(task_id=structured_task.id, structured_output_json=SearchResult)
+        print(f"Structured Task Status: {structured_status.status}")
 
         if structured_status.status == "finished":
             if structured_status.parsed_output is None:
-                print("No output")
+                print("Structured Task No output")
             else:
                 for post in structured_status.parsed_output.posts:
                     print(f" - {post.title} - {post.url}")
 
             break
 
-        time.sleep(1)
+        await asyncio.sleep(1)
 
     print("Done")
 
 
-retrieve_structured_task()
+# Main
+
+
+async def main():
+    await asyncio.gather(
+        #
+        retrieve_regular_task(),
+        retrieve_structured_task(),
+    )
+
+
+asyncio.run(main())

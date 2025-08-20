@@ -1,31 +1,29 @@
 #!/usr/bin/env -S rye run python
 
+import asyncio
 from typing import List
 
 from pydantic import BaseModel
 
-from browser_use_sdk import BrowserUse
+from browser_use_sdk import AsyncBrowserUse
 
 # gets API Key from environment variable BROWSER_USE_API_KEY
-client = BrowserUse()
+client = AsyncBrowserUse()
 
 
 # Regular Task
-def create_regular_task():
-    res = client.tasks.create(
+async def create_regular_task():
+    res = await client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """
     )
 
-    print(res.id)
-
-
-create_regular_task()
+    print(f"Regular Task ID: {res.id}")
 
 
 # Structured Output
-def create_structured_task():
+async def create_structured_task():
     class HackerNewsPost(BaseModel):
         title: str
         url: str
@@ -33,14 +31,25 @@ def create_structured_task():
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    res = client.tasks.create(
+    res = await client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         structured_output_json=SearchResult,
     )
 
-    print(res.id)
+    print(f"Structured Task ID: {res.id}")
 
 
-create_structured_task()
+# Main
+
+
+async def main():
+    await asyncio.gather(
+        #
+        create_regular_task(),
+        create_structured_task(),
+    )
+
+
+asyncio.run(main())
