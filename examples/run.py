@@ -15,7 +15,8 @@ def run_regular_task() -> None:
     regular_result = client.tasks.run(
         task="""
         Find top 10 Hacker News articles and return the title and url.
-        """
+        """,
+        agent_settings={"llm": "gemini-2.5-flash"},
     )
 
     print(f"Task ID: {regular_result.id}")
@@ -41,6 +42,7 @@ def run_structured_task() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
+        agent_settings={"llm": "gemini-2.5-flash"},
         structured_output_json=SearchResult,
     )
 

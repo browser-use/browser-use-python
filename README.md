@@ -1,47 +1,28 @@
-# Browser Use Python API library
+<img src="./assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
 
-<!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable))](https://pypi.org/project/browser-use-sdk/)
-
-The Browser Use Python library provides convenient access to the Browser Use REST API from any Python 3.8+
-application. The library includes type definitions for all request params and response fields,
-and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
-
-It is generated with [Stainless](https://www.stainless.com/).
-
-## Documentation
-
-The REST API documentation can be found on [docs.browser-use.com](https://docs.browser-use.com/cloud/). The full API of this library can be found in [api.md](api.md).
-
-## Installation
+[![PyPI version](<https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/browser-use-sdk/)
 
 ```sh
-# install from PyPI
 pip install browser-use-sdk
 ```
 
-## Usage
+## Quick Start
 
-The full API of this library can be found in [api.md](api.md).
+> Get your API Key at [Browser Use Cloud](https://cloud.browser-use.com)!
 
 ```python
-import os
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse(
-    api_key=os.environ.get("BROWSER_USE_API_KEY"),  # This is the default and can be omitted
+client = BrowserUse()
+
+run = client.tasks.run(
+    task="Search for the top 10 Hacker News posts and return the title and url."
 )
 
-task = client.tasks.create(
-    task="Search for the top 10 Hacker News posts and return the title and url.",
-)
-print(task.id)
+run.done_output
 ```
 
-While you can provide an `api_key` keyword argument,
-we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `BROWSER_USE_API_KEY="My API Key"` to your `.env` file
-so that your API Key is not stored in source control.
+> The full API of this library can be found in [api.md](api.md).
 
 ## Async usage
 
@@ -58,10 +39,10 @@ client = AsyncBrowserUse(
 
 
 async def main() -> None:
-    task = await client.tasks.create(
+    task = await client.tasks.run(
         task="Search for the top 10 Hacker News posts and return the title and url.",
     )
-    print(task.id)
+    print(task.done_output)
 
 
 asyncio.run(main())
@@ -93,38 +74,80 @@ async def main() -> None:
         api_key="My API Key",
         http_client=DefaultAioHttpClient(),
     ) as client:
-        task = await client.tasks.create(
+        task = await client.tasks.run(
             task="Search for the top 10 Hacker News posts and return the title and url.",
         )
-        print(task.id)
+        print(task.done_output)
 
 
 asyncio.run(main())
 ```
 
-## Using types
+## Structured Output with Pydantic
 
-Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict). Responses are [Pydantic models](https://docs.pydantic.dev) which also provide helper methods for things like:
+Browser Use Python SDK provides first class support for Pydantic models.
 
-- Serializing back into JSON, `model.to_json()`
-- Converting to a dictionary, `model.to_dict()`
+```py
+class HackerNewsPost(BaseModel):
+    title: str
+    url: str
 
-Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
+class SearchResult(BaseModel):
+    posts: List[HackerNewsPost]
 
-## Nested params
+async def main() -> None:
+    result = await client.tasks.run(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        structured_output_json=SearchResult,
+    )
 
-Nested parameters are dictionaries, typed using `TypedDict`, for example:
+    if structured_result.parsed_output is not None:
+        print("Top HackerNews Posts:")
+        for post in structured_result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
 
-```python
-from browser_use_sdk import BrowserUse
+asyncio.run(main())
+```
 
-client = BrowserUse()
+## Streaming Updates with Async Iterators
 
-task = client.tasks.create(
-    task="x",
-    agent_settings={},
-)
-print(task.agent_settings)
+```py
+class HackerNewsPost(BaseModel):
+    title: str
+    url: str
+
+class SearchResult(BaseModel):
+    posts: List[HackerNewsPost]
+
+
+async def main() -> None:
+    task = await client.tasks.create(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        structured_output_json=SearchResult,
+    )
+
+    async for update in client.tasks.stream(structured_task.id, structured_output_json=SearchResult):
+        if len(update.steps) > 0:
+            last_step = update.steps[-1]
+            print(f"{update.status}: {last_step.url} ({last_step.next_goal})")
+        else:
+            print(f"{update.status}")
+
+        if update.status == "finished":
+            if update.parsed_output is None:
+                print("No output...")
+            else:
+                print("Top HackerNews Posts:")
+                for post in update.parsed_output.posts:
+                    print(f" - {post.title} - {post.url}")
+
+                break
+
+asyncio.run(main())
 ```
 
 ## Handling errors

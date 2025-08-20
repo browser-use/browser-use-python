@@ -16,7 +16,8 @@ async def create_regular_task() -> None:
     res = await client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
-        """
+        """,
+        agent_settings={"llm": "gemini-2.5-flash"},
     )
 
     print(f"Regular Task ID: {res.id}")
@@ -35,6 +36,7 @@ async def create_structured_task() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
+        agent_settings={"llm": "gemini-2.5-flash"},
         structured_output_json=SearchResult,
     )
 
