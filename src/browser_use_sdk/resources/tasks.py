@@ -113,6 +113,9 @@ class TasksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Union[TaskView, TaskViewWithOutput[BaseModel]]:
+        """
+        Run a new task and return the task view.
+        """
         if structured_output_json is not None and isinstance(structured_output_json, type):
             create_task_res = self.create(
                 task=task,
@@ -128,9 +131,9 @@ class TasksResource(SyncAPIResource):
                 timeout=timeout,
             )
 
-            for msg in self.stream(create_task_res.id, structured_output_json=structured_output_json):
-                if msg.status == "finished":
-                    return msg
+            for structured_msg in self.stream(create_task_res.id, structured_output_json=structured_output_json):
+                if structured_msg.status == "finished":
+                    return structured_msg
 
             raise ValueError("Task did not finish")
 
@@ -341,7 +344,7 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> TaskView:
+    ) -> Union[TaskView, TaskViewWithOutput[BaseModel]]:
         """
         Get detailed information about a specific AI agent task.
 
@@ -390,14 +393,14 @@ class TasksResource(SyncAPIResource):
             )
 
             if res.done_output is None:
-                return TaskViewWithOutput[structured_output_json](
+                return TaskViewWithOutput[BaseModel](
                     **res.model_dump(),
                     parsed_output=None,
                 )
 
             parsed_output = structured_output_json.model_validate_json(res.done_output)
 
-            return TaskViewWithOutput[structured_output_json](
+            return TaskViewWithOutput[BaseModel](
                 **res.model_dump(),
                 parsed_output=parsed_output,
             )
@@ -462,14 +465,14 @@ class TasksResource(SyncAPIResource):
         ):
             if structured_output_json is not None and isinstance(structured_output_json, type):
                 if res.done_output is None:
-                    yield TaskViewWithOutput[structured_output_json](
+                    yield TaskViewWithOutput[BaseModel](
                         **res.model_dump(),
                         parsed_output=None,
                     )
                 else:
                     parsed_output = structured_output_json.model_validate_json(res.done_output)
 
-                    yield TaskViewWithOutput[structured_output_json](
+                    yield TaskViewWithOutput[BaseModel](
                         **res.model_dump(),
                         parsed_output=parsed_output,
                     )

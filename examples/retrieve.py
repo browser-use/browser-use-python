@@ -11,19 +11,19 @@ from browser_use_sdk import BrowserUse
 client = BrowserUse()
 
 # Regular Task
-task = client.tasks.create(
+regular_task = client.tasks.create(
     task="""
     Find top 10 Hacker News articles and return the title and url.
     """
 )
 
-print(f"Task ID: {task.id}")
+print(f"Task ID: {regular_task.id}")
 
 while True:
-    regular = client.tasks.retrieve(task.id)
-    print(regular.status)
-    if regular.status == "finished":
-        print(regular.done_output)
+    regular_status = client.tasks.retrieve(regular_task.id)
+    print(regular_status.status)
+    if regular_status.status == "finished":
+        print(regular_status.done_output)
         break
 
     time.sleep(1)
@@ -39,24 +39,24 @@ class SearchResult(BaseModel):
     posts: List[HackerNewsPost]
 
 
-structured = client.tasks.create(
+structured_task = client.tasks.create(
     task="""
     Find top 10 Hacker News articles and return the title and url.
     """,
     structured_output_json=SearchResult,
 )
 
-print(f"Task ID: {structured.id}")
+print(f"Task ID: {structured_task.id}")
 
 while True:
-    structured = client.tasks.retrieve(task_id=structured.id, structured_output_json=SearchResult)
-    print(structured.status)
+    structured_status = client.tasks.retrieve(task_id=structured_task.id, structured_output_json=SearchResult)
+    print(structured_status.status)
 
-    if structured.status == "finished":
-        if structured.parsed_output is None:
+    if structured_status.status == "finished":
+        if structured_status.parsed_output is None:
             print("No output")
         else:
-            for post in structured.parsed_output.posts:
+            for post in structured_status.parsed_output.posts:
                 print(f" - {post.title} - {post.url}")
 
         break
