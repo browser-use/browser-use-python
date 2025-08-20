@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import time
 import asyncio
-from typing import Dict, List, Union, TypeVar, Optional, Generator, AsyncGenerator, overload
+from typing import Dict, List, Union, TypeVar, Iterator, Optional, AsyncIterator, overload
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -417,6 +417,7 @@ class TasksResource(SyncAPIResource):
     def stream(
         self,
         task_id: str,
+        structured_output_json: None | NotGiven = NOT_GIVEN,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -424,7 +425,7 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Generator[TaskView, None]: ...
+    ) -> Iterator[TaskView]: ...
 
     @overload
     def stream(
@@ -438,12 +439,12 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Generator[TaskViewWithOutput[T], None]: ...
+    ) -> Iterator[TaskViewWithOutput[T]]: ...
 
     def stream(
         self,
         task_id: str,
-        structured_output_json: Optional[type[BaseModel]] | NotGiven = NOT_GIVEN,
+        structured_output_json: type[BaseModel] | None | NotGiven = NOT_GIVEN,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -451,7 +452,7 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Generator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+    ) -> Iterator[Union[TaskView, TaskViewWithOutput[BaseModel]]]:
         """
         Stream the task view as it is updated until the task is finished.
         """
@@ -491,7 +492,7 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Generator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+    ) -> Iterator[TaskView]:
         """Converts a polling loop into a generator loop."""
         hash: str | None = None
 
@@ -1207,20 +1208,7 @@ class AsyncTasksResource(AsyncAPIResource):
         )
 
     @overload
-    async def stream(
-        self,
-        task_id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> AsyncGenerator[TaskView, None]: ...
-
-    @overload
-    async def stream(
+    def stream(
         self,
         task_id: str,
         structured_output_json: type[T],
@@ -1231,12 +1219,13 @@ class AsyncTasksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> AsyncGenerator[TaskViewWithOutput[T], None]: ...
+    ) -> AsyncIterator[TaskViewWithOutput[T]]: ...
 
-    async def stream(
+    @overload
+    def stream(
         self,
         task_id: str,
-        structured_output_json: Optional[type[BaseModel]] | NotGiven = NOT_GIVEN,
+        structured_output_json: None | NotGiven = NOT_GIVEN,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -1244,49 +1233,64 @@ class AsyncTasksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> AsyncGenerator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+    ) -> AsyncIterator[TaskView]: ...
+
+    def stream(
+        self,
+        task_id: str,
+        structured_output_json: type[T] | None | NotGiven = NOT_GIVEN,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> AsyncIterator[TaskView] | AsyncIterator[TaskViewWithOutput[T]]:
         """
         Stream the task view as it is updated until the task is finished.
         """
 
-        async for res in self._watch(
-            task_id=task_id,
-            extra_headers=extra_headers,
-            extra_query=extra_query,
-            extra_body=extra_body,
-            timeout=timeout,
-        ):
-            if structured_output_json is not None and isinstance(structured_output_json, type):
-                if res.done_output is None:
-                    yield TaskViewWithOutput[BaseModel](
-                        **res.model_dump(),
-                        parsed_output=None,
-                    )
+        async def _gen() -> AsyncIterator[TaskView | TaskViewWithOutput[T]]:
+            async for res in self._watch(
+                task_id=task_id,
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+            ):
+                # If a schema (type[T]) is passed, wrap with parsed_output[T]
+                if structured_output_json is not None and isinstance(structured_output_json, type):
+                    if res.done_output is None:
+                        yield TaskViewWithOutput[T](
+                            **res.model_dump(),
+                            parsed_output=None,
+                        )
+                    else:
+                        schema: type[T] = structured_output_json
+                        # pydantic returns the model instance, but the type checker can’t infer it.
+                        parsed_output: T = schema.model_validate_json(res.done_output)
+                        yield TaskViewWithOutput[T](
+                            **res.model_dump(),
+                            parsed_output=parsed_output,
+                        )
                 else:
-                    parsed_output = structured_output_json.model_validate_json(res.done_output)
+                    yield res
 
-                    yield TaskViewWithOutput[BaseModel](
-                        **res.model_dump(),
-                        parsed_output=parsed_output,
-                    )
-
-            else:
-                yield res
+        return _gen()
 
     async def _watch(
         self,
         task_id: str,
         interval: float = 1,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> AsyncGenerator[Union[TaskView, TaskViewWithOutput[BaseModel]], None]:
+    ) -> AsyncIterator[TaskView]:
         """Converts a polling loop into a generator loop."""
-        hash: str | None = None
+        prev_hash: str | None = None
 
         while True:
             res = await self.retrieve(
@@ -1298,9 +1302,8 @@ class AsyncTasksResource(AsyncAPIResource):
             )
 
             res_hash = hash_task_view(res)
-
-            if hash is None or res_hash != hash:
-                hash = res_hash
+            if prev_hash is None or res_hash != prev_hash:
+                prev_hash = res_hash
                 yield res
 
             if res.status == "finished":
