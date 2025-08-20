@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0 (2025-08-20)
+
+Full Changelog: [v0.3.0...v1.0.0](https://github.com/browser-use/browser-use-python/compare/v0.3.0...v1.0.0)
+
 ## 0.3.0 (2025-08-20)
 
 Full Changelog: [v0.2.0...v0.3.0](https://github.com/browser-use/browser-use-python/compare/v0.2.0...v0.3.0)
