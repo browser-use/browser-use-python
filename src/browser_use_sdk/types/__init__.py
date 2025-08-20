@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from .file_view import FileView as FileView
-from .llm_model import LlmModel as LlmModel
 from .task_view import TaskView as TaskView
 from .task_status import TaskStatus as TaskStatus
 from .session_view import SessionView as SessionView

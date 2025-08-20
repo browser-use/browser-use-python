@@ -39,7 +39,7 @@ class TestTasks:
         task = client.tasks.create(
             task="x",
             agent_settings={
-                "llm": "gpt-4o",
+                "llm": "gpt-4.1",
                 "profile_id": "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
                 "start_url": "startUrl",
             },
@@ -375,7 +375,7 @@ class TestAsyncTasks:
         task = await async_client.tasks.create(
             task="x",
             agent_settings={
-                "llm": "gpt-4o",
+                "llm": "gpt-4.1",
                 "profile_id": "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
                 "start_url": "startUrl",
             },

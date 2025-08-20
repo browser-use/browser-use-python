@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2025-08-20)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/browser-use/browser-use-python/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* LLM key strings over LLM model enum ([0f5930a](https://github.com/browser-use/browser-use-python/commit/0f5930a7760190523f1d3e969c66e0a34ff075b3))
+
 ## 0.2.0 (2025-08-19)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/browser-use/browser-use-python/compare/v0.1.0...v0.2.0)
