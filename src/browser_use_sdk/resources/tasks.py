@@ -1307,8 +1307,16 @@ class AsyncTasksResource(AsyncAPIResource):
 
             if res.status == "finished":
                 break
-
-            await asyncio.sleep(interval)
+            if res.status == "paused":
+                break
+            if res.status == "stopped":
+                break
+            if res.status == "started":
+                await asyncio.sleep(interval)
+            else:
+                raise ValueError(
+                    f"Expected one of 'finished', 'paused', 'stopped', or 'started' but received {res.status!r}"
+                )
 
     async def update(
         self,

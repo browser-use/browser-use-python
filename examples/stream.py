@@ -31,7 +31,10 @@ def stream_regular_task() -> None:
             for action in last_step.actions:
                 print(f" - {action}")
 
-    print("Done")
+        if res.status == "finished":
+            print(res.done_output)
+
+    print("Regular: DONE")
 
 
 stream_regular_task()
