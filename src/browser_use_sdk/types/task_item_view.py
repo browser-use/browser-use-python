@@ -6,7 +6,6 @@ from datetime import datetime
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
-from .llm_model import LlmModel
 from .task_status import TaskStatus
 
 __all__ = ["TaskItemView"]
@@ -17,7 +16,7 @@ class TaskItemView(BaseModel):
 
     is_scheduled: bool = FieldInfo(alias="isScheduled")
 
-    llm: LlmModel
+    llm: str
 
     session_id: str = FieldInfo(alias="sessionId")
 

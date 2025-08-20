@@ -8,7 +8,6 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 from .file_view import FileView
-from .llm_model import LlmModel
 from .task_status import TaskStatus
 from .task_step_view import TaskStepView
 
@@ -37,7 +36,7 @@ class TaskView(BaseModel):
 
     is_scheduled: bool = FieldInfo(alias="isScheduled")
 
-    llm: LlmModel
+    llm: str
 
     output_files: List[FileView] = FieldInfo(alias="outputFiles")
 

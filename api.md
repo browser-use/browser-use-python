@@ -31,7 +31,6 @@ Types:
 ```python
 from browser_use_sdk.types import (
     FileView,
-    LlmModel,
     TaskItemView,
     TaskStatus,
     TaskStepView,
