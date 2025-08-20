@@ -12,7 +12,7 @@ client = AsyncBrowserUse()
 
 
 # Regular Task
-async def retrieve_regular_task():
+async def retrieve_regular_task() -> None:
     """
     Retrieves a regular task and waits for it to finish.
     """
@@ -39,7 +39,7 @@ async def retrieve_regular_task():
     print("Done")
 
 
-async def retrieve_structured_task():
+async def retrieve_structured_task() -> None:
     """
     Retrieves a structured task and waits for it to finish.
     """
@@ -84,7 +84,7 @@ async def retrieve_structured_task():
 # Main
 
 
-async def main():
+async def main() -> None:
     await asyncio.gather(
         #
         retrieve_regular_task(),

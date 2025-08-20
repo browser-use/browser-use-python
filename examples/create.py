@@ -11,7 +11,7 @@ client = BrowserUse()
 
 
 # Regular Task
-def create_regular_task():
+def create_regular_task() -> None:
     res = client.tasks.create(
         task="""
         Find top 10 Hacker News articles and return the title and url.
@@ -25,7 +25,7 @@ create_regular_task()
 
 
 # Structured Output
-def create_structured_task():
+def create_structured_task() -> None:
     class HackerNewsPost(BaseModel):
         title: str
         url: str

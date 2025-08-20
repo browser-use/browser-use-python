@@ -12,7 +12,7 @@ client = AsyncBrowserUse()
 
 
 # Regular Task
-async def run_regular_task():
+async def run_regular_task() -> None:
     regular_result = await client.tasks.run(
         task="""
         Find top 10 Hacker News articles and return the title and url.
@@ -27,7 +27,7 @@ async def run_regular_task():
 
 
 # Structured Output
-async def run_structured_task():
+async def run_structured_task() -> None:
     class HackerNewsPost(BaseModel):
         title: str
         url: str
@@ -52,7 +52,7 @@ async def run_structured_task():
     print("Structured Task Done")
 
 
-async def main():
+async def main() -> None:
     await asyncio.gather(
         #
         run_regular_task(),

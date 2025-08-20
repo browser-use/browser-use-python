@@ -417,20 +417,6 @@ class TasksResource(SyncAPIResource):
     def stream(
         self,
         task_id: str,
-        structured_output_json: None | NotGiven = NOT_GIVEN,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Iterator[TaskView]: ...
-
-    @overload
-    def stream(
-        self,
-        task_id: str,
         structured_output_json: type[T],
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -441,10 +427,11 @@ class TasksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> Iterator[TaskViewWithOutput[T]]: ...
 
+    @overload
     def stream(
         self,
         task_id: str,
-        structured_output_json: type[BaseModel] | None | NotGiven = NOT_GIVEN,
+        structured_output_json: None | NotGiven = NOT_GIVEN,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -452,7 +439,20 @@ class TasksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> Iterator[Union[TaskView, TaskViewWithOutput[BaseModel]]]:
+    ) -> Iterator[TaskView]: ...
+
+    def stream(
+        self,
+        task_id: str,
+        structured_output_json: type[T] | None | NotGiven = NOT_GIVEN,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
+    ) -> Iterator[TaskView | TaskViewWithOutput[T]]:
         """
         Stream the task view as it is updated until the task is finished.
         """
@@ -466,14 +466,15 @@ class TasksResource(SyncAPIResource):
         ):
             if structured_output_json is not None and isinstance(structured_output_json, type):
                 if res.done_output is None:
-                    yield TaskViewWithOutput[BaseModel](
+                    yield TaskViewWithOutput[T](
                         **res.model_dump(),
                         parsed_output=None,
                     )
                 else:
-                    parsed_output = structured_output_json.model_validate_json(res.done_output)
+                    schema: type[T] = structured_output_json
+                    parsed_output: T = schema.model_validate_json(res.done_output)
 
-                    yield TaskViewWithOutput[BaseModel](
+                    yield TaskViewWithOutput[T](
                         **res.model_dump(),
                         parsed_output=parsed_output,
                     )
@@ -1246,7 +1247,7 @@ class AsyncTasksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> AsyncIterator[TaskView] | AsyncIterator[TaskViewWithOutput[T]]:
+    ) -> AsyncIterator[TaskView | TaskViewWithOutput[T]]:
         """
         Stream the task view as it is updated until the task is finished.
         """
@@ -1259,7 +1260,6 @@ class AsyncTasksResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
             ):
-                # If a schema (type[T]) is passed, wrap with parsed_output[T]
                 if structured_output_json is not None and isinstance(structured_output_json, type):
                     if res.done_output is None:
                         yield TaskViewWithOutput[T](

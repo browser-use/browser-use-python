@@ -12,7 +12,7 @@ client = BrowserUse()
 
 
 # Regular Task
-def retrieve_regular_task():
+def retrieve_regular_task() -> None:
     """
     Retrieves a regular task and waits for it to finish.
     """
@@ -42,7 +42,7 @@ def retrieve_regular_task():
 retrieve_regular_task()
 
 
-def retrieve_structured_task():
+def retrieve_structured_task() -> None:
     """
     Retrieves a structured task and waits for it to finish.
     """
