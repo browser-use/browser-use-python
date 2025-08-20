@@ -1236,7 +1236,7 @@ class AsyncTasksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
     ) -> AsyncIterator[TaskView]: ...
 
-    def stream(
+    async def stream(
         self,
         task_id: str,
         structured_output_json: type[T] | None | NotGiven = NOT_GIVEN,
@@ -1252,32 +1252,29 @@ class AsyncTasksResource(AsyncAPIResource):
         Stream the task view as it is updated until the task is finished.
         """
 
-        async def _gen() -> AsyncIterator[TaskView | TaskViewWithOutput[T]]:
-            async for res in self._watch(
-                task_id=task_id,
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-            ):
-                if structured_output_json is not None and isinstance(structured_output_json, type):
-                    if res.done_output is None:
-                        yield TaskViewWithOutput[T](
-                            **res.model_dump(),
-                            parsed_output=None,
-                        )
-                    else:
-                        schema: type[T] = structured_output_json
-                        # pydantic returns the model instance, but the type checker can’t infer it.
-                        parsed_output: T = schema.model_validate_json(res.done_output)
-                        yield TaskViewWithOutput[T](
-                            **res.model_dump(),
-                            parsed_output=parsed_output,
-                        )
+        async for res in self._watch(
+            task_id=task_id,
+            extra_headers=extra_headers,
+            extra_query=extra_query,
+            extra_body=extra_body,
+            timeout=timeout,
+        ):
+            if structured_output_json is not None and isinstance(structured_output_json, type):
+                if res.done_output is None:
+                    yield TaskViewWithOutput[T](
+                        **res.model_dump(),
+                        parsed_output=None,
+                    )
                 else:
-                    yield res
-
-        return _gen()
+                    schema: type[T] = structured_output_json
+                    # pydantic returns the model instance, but the type checker can’t infer it.
+                    parsed_output: T = schema.model_validate_json(res.done_output)
+                    yield TaskViewWithOutput[T](
+                        **res.model_dump(),
+                        parsed_output=parsed_output,
+                    )
+            else:
+                yield res
 
     async def _watch(
         self,
