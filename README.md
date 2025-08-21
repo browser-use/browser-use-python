@@ -6,20 +6,22 @@
 pip install browser-use-sdk
 ```
 
-## Quick Start
+## Two-Step QuickStart
 
-> Get your API Key at [Browser Use Cloud](https://cloud.browser-use.com)!
+1. ☝️ Get your API Key at [Browser Use Cloud](https://cloud.browser-use.com)...
+
+1. ✌️ Automate the web!
 
 ```python
 from browser_use_sdk import BrowserUse
 
-client = BrowserUse()
+client = BrowserUse(api_key="bu_...")
 
-run = client.tasks.run(
+result = client.tasks.run(
     task="Search for the top 10 Hacker News posts and return the title and url."
 )
 
-run.done_output
+result.done_output
 ```
 
 > The full API of this library can be found in [api.md](api.md).
