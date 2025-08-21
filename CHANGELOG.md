@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 (2025-08-21)
+
+Full Changelog: [v1.0.0...v1.0.1](https://github.com/browser-use/browser-use-python/compare/v1.0.0...v1.0.1)
+
+### Bug Fixes
+
+* Improve Quick Start Section ([c994ab2](https://github.com/browser-use/browser-use-python/commit/c994ab27ce570d95961f84d8e54a48dd04bd3dfc))
+
 ## 1.0.0 (2025-08-20)
 
 Full Changelog: [v0.3.0...v1.0.0](https://github.com/browser-use/browser-use-python/compare/v0.3.0...v1.0.0)
