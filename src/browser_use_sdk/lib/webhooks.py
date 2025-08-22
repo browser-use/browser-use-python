@@ -65,13 +65,15 @@ def create_webhook_signature(payload: Any, timestamp: str, secret: str) -> str:
     Returns:
         The HMAC-SHA256 signature as a hex string
     """
-    # Sort keys and use compact JSON format (equivalent to fast-json-stable-stringify)
+
     dump = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     message = f"{timestamp}.{dump}"
 
     # Create HMAC-SHA256 signature
     hmac_obj = hmac.new(secret.encode(), message.encode(), hashlib.sha256)
-    return hmac_obj.hexdigest()
+    signature = hmac_obj.hexdigest()
+
+    return signature
 
 
 def verify_webhook_event_signature(
@@ -94,20 +96,20 @@ def verify_webhook_event_signature(
         None if the signature is invalid, otherwise the parsed webhook event.
     """
     try:
-        # Parse body if it's a string
         if isinstance(body, str):
             json_data = json.loads(body)
         else:
             json_data = body
 
-        # Try to parse as each webhook type
+        # PARSE
+
         webhook_event: Optional[Webhook] = None
 
-        # Try test webhook first
-        try:
-            webhook_event = WebhookTest(**json_data)
-        except Exception:
-            pass
+        if webhook_event is None:
+            try:
+                webhook_event = WebhookTest(**json_data)
+            except Exception:
+                pass
 
         # Try agent task status update webhook
         if webhook_event is None:
@@ -119,10 +121,12 @@ def verify_webhook_event_signature(
         if webhook_event is None:
             return None
 
-        # Create expected signature
-        expected_signature = create_webhook_signature(payload=webhook_event.payload, timestamp=timestamp, secret=secret)
+        # Verify
 
-        # Compare signatures using timing-safe comparison
+        expected_signature = create_webhook_signature(
+            payload=webhook_event.payload.model_dump(), timestamp=timestamp, secret=secret
+        )
+
         if not hmac.compare_digest(signature, expected_signature):
             return None
 
