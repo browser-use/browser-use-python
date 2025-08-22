@@ -1,4 +1,4 @@
-<img src="./assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
+<img src="https://raw.githubusercontent.com/browser-use/browser-use-python/refs/heads/main/assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
 
 [![PyPI version](<https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/browser-use-sdk/)
 
