@@ -123,11 +123,11 @@ def verify_webhook_event_signature(
 
         # Verify
 
-        expected_signature = create_webhook_signature(
+        calculated_signature = create_webhook_signature(
             payload=webhook_event.payload.model_dump(), timestamp=timestamp, secret=secret
         )
 
-        if not hmac.compare_digest(expected_signature, expected_signature):
+        if not hmac.compare_digest(expected_signature, calculated_signature):
             return None
 
         return webhook_event
