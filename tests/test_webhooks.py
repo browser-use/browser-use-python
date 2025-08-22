@@ -5,6 +5,9 @@ from __future__ import annotations
 from typing import Any, Dict
 from datetime import datetime, timezone
 
+import pytest
+
+from browser_use_sdk._compat import PYDANTIC_V2
 from browser_use_sdk.lib.webhooks import (
     WebhookTest,
     WebhookTestPayload,
@@ -15,6 +18,7 @@ from browser_use_sdk.lib.webhooks import (
 # Signature Creation ---------------------------------------------------------
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_create_webhook_signature() -> None:
     """Test webhook signature creation."""
     secret = "test-secret-key"
@@ -38,6 +42,7 @@ def test_create_webhook_signature() -> None:
 # Webhook Verification --------------------------------------------------------
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_verify_webhook_event_signature_valid() -> None:
     """Test webhook signature verification with valid signature."""
     secret = "test-secret-key"
@@ -60,6 +65,7 @@ def test_verify_webhook_event_signature_valid() -> None:
     assert verified_webhook.payload.test == "ok"
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_verify_webhook_event_signature_invalid_signature() -> None:
     """Test webhook signature verification with invalid signature."""
     secret = "test-secret-key"
@@ -79,6 +85,7 @@ def test_verify_webhook_event_signature_invalid_signature() -> None:
     assert verified_webhook is None
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_verify_webhook_event_signature_wrong_secret() -> None:
     """Test webhook signature verification with wrong secret."""
 
@@ -106,6 +113,7 @@ def test_verify_webhook_event_signature_wrong_secret() -> None:
     assert verified_webhook is None
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_verify_webhook_event_signature_string_body() -> None:
     """Test webhook signature verification with string body."""
     secret = "test-secret-key"
@@ -127,6 +135,7 @@ def test_verify_webhook_event_signature_string_body() -> None:
     assert isinstance(verified_webhook, WebhookTest)
 
 
+@pytest.mark.skipif(not PYDANTIC_V2, reason="Webhook tests only run in Pydantic V2")
 def test_verify_webhook_event_signature_invalid_body() -> None:
     """Test webhook signature verification with invalid body."""
     secret = "test-secret-key"
