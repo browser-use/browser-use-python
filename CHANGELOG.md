@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.2 (2025-08-22)
+
+Full Changelog: [v1.0.1...v1.0.2](https://github.com/browser-use/browser-use-python/compare/v1.0.1...v1.0.2)
+
+### Chores
+
+* update github action ([655a660](https://github.com/browser-use/browser-use-python/commit/655a6600972aee2cefcf83c73fdfd9e1ae68b852))
+
 ## 1.0.1 (2025-08-21)
 
 Full Changelog: [v1.0.0...v1.0.1](https://github.com/browser-use/browser-use-python/compare/v1.0.0...v1.0.1)

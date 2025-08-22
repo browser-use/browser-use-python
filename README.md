@@ -1,4 +1,4 @@
-<img src="./assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
+<img src="https://raw.githubusercontent.com/browser-use/browser-use-python/refs/heads/main/assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
 
 [![PyPI version](<https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/browser-use-sdk/)
 
@@ -25,6 +25,119 @@ result.done_output
 ```
 
 > The full API of this library can be found in [api.md](api.md).
+
+## Structured Output with Pydantic
+
+Browser Use Python SDK provides first class support for Pydantic models.
+
+```py
+class HackerNewsPost(BaseModel):
+    title: str
+    url: str
+
+class SearchResult(BaseModel):
+    posts: List[HackerNewsPost]
+
+async def main() -> None:
+    result = await client.tasks.run(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        structured_output_json=SearchResult,
+    )
+
+    if structured_result.parsed_output is not None:
+        print("Top HackerNews Posts:")
+        for post in structured_result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
+
+asyncio.run(main())
+```
+
+## Streaming Updates with Async Iterators
+
+> When presenting a long running task you might want to show updates as they happen.
+
+Browser Use SDK exposes a `.stream` method that lets you subscribe to a sync or an async generator that automatically polls Browser Use Cloud servers and emits a new event when an update happens (e.g., live url becomes available, agent takes a new step, or agent completes the task).
+
+```py
+class HackerNewsPost(BaseModel):
+    title: str
+    url: str
+
+class SearchResult(BaseModel):
+    posts: List[HackerNewsPost]
+
+
+async def main() -> None:
+    task = await client.tasks.create(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        structured_output_json=SearchResult,
+    )
+
+    async for update in client.tasks.stream(task.id, structured_output_json=SearchResult):
+        if len(update.steps) > 0:
+            last_step = update.steps[-1]
+            print(f"{update.status}: {last_step.url} ({last_step.next_goal})")
+        else:
+            print(f"{update.status}")
+
+        if update.status == "finished":
+            if update.parsed_output is None:
+                print("No output...")
+            else:
+                print("Top HackerNews Posts:")
+                for post in update.parsed_output.posts:
+                    print(f" - {post.title} - {post.url}")
+
+                break
+
+asyncio.run(main())
+```
+
+## Verifying Webhook Events
+
+> You can configure Browser Use Cloud to emit Webhook events and process them easily with Browser Use Python SDK.
+
+Browser Use SDK lets you easily verify the signature and structure of the payload you receive in the webhook.
+
+```py
+import uvicorn
+import os
+from browser_use_sdk.lib.webhooks import Webhook, verify_webhook_event_signature
+
+from fastapi import FastAPI, Request, HTTPException
+
+app = FastAPI()
+
+SECRET_KEY = os.environ['SECRET_KEY']
+
+@app.post('/webhook')
+async def webhook(request: Request):
+    body = await request.json()
+
+    timestamp = request.headers.get('X-Browser-Use-Timestamp')
+    signature = request.headers.get('X-Browser-Use-Signature')
+
+    verified_webhook: Webhook = verify_webhook_event_signature(
+        body=body,
+        timestamp=timestamp,
+        secret=SECRET_KEY,
+        expected_signature=signature,
+    )
+
+    if verified_webhook is not None:
+        print('Webhook received:', verified_webhook)
+    else:
+        print('Invalid webhook received')
+
+    return {'status': 'success', 'message': 'Webhook received'}
+
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=8080)
+```
 
 ## Async usage
 
@@ -85,72 +198,7 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-## Structured Output with Pydantic
-
-Browser Use Python SDK provides first class support for Pydantic models.
-
-```py
-class HackerNewsPost(BaseModel):
-    title: str
-    url: str
-
-class SearchResult(BaseModel):
-    posts: List[HackerNewsPost]
-
-async def main() -> None:
-    result = await client.tasks.run(
-        task="""
-        Find top 10 Hacker News articles and return the title and url.
-        """,
-        structured_output_json=SearchResult,
-    )
-
-    if structured_result.parsed_output is not None:
-        print("Top HackerNews Posts:")
-        for post in structured_result.parsed_output.posts:
-            print(f" - {post.title} - {post.url}")
-
-asyncio.run(main())
-```
-
-## Streaming Updates with Async Iterators
-
-```py
-class HackerNewsPost(BaseModel):
-    title: str
-    url: str
-
-class SearchResult(BaseModel):
-    posts: List[HackerNewsPost]
-
-
-async def main() -> None:
-    task = await client.tasks.create(
-        task="""
-        Find top 10 Hacker News articles and return the title and url.
-        """,
-        structured_output_json=SearchResult,
-    )
-
-    async for update in client.tasks.stream(structured_task.id, structured_output_json=SearchResult):
-        if len(update.steps) > 0:
-            last_step = update.steps[-1]
-            print(f"{update.status}: {last_step.url} ({last_step.next_goal})")
-        else:
-            print(f"{update.status}")
-
-        if update.status == "finished":
-            if update.parsed_output is None:
-                print("No output...")
-            else:
-                print("Top HackerNews Posts:")
-                for post in update.parsed_output.posts:
-                    print(f" - {post.title} - {post.url}")
-
-                break
-
-asyncio.run(main())
-```
+## Advanced
 
 ## Handling errors
 
@@ -247,8 +295,6 @@ On timeout, an `APITimeoutError` is thrown.
 
 Note that requests that time out are [retried twice by default](#retries).
 
-## Advanced
-
 ### Logging
 
 We use the standard library [`logging`](https://docs.python.org/3/library/logging.html) module.
@@ -294,58 +340,6 @@ These methods return an [`APIResponse`](https://github.com/browser-use/browser-u
 
 The async client returns an [`AsyncAPIResponse`](https://github.com/browser-use/browser-use-python/tree/main/src/browser_use_sdk/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
-#### `.with_streaming_response`
-
-The above interface eagerly reads the full response body when you make the request, which may not always be what you want.
-
-To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
-
-```python
-with client.tasks.with_streaming_response.create(
-    task="Search for the top 10 Hacker News posts and return the title and url.",
-) as response:
-    print(response.headers.get("X-My-Header"))
-
-    for line in response.iter_lines():
-        print(line)
-```
-
-The context manager is required so that the response will reliably be closed.
-
-### Making custom/undocumented requests
-
-This library is typed for convenient access to the documented API.
-
-If you need to access undocumented endpoints, params, or response properties, the library can still be used.
-
-#### Undocumented endpoints
-
-To make requests to undocumented endpoints, you can make requests using `client.get`, `client.post`, and other
-http verbs. Options on the client will be respected (such as retries) when making this request.
-
-```py
-import httpx
-
-response = client.post(
-    "/foo",
-    cast_to=httpx.Response,
-    body={"my_param": True},
-)
-
-print(response.headers.get("x-foo"))
-```
-
-#### Undocumented request params
-
-If you want to explicitly send an extra param, you can do so with the `extra_query`, `extra_body`, and `extra_headers` request
-options.
-
-#### Undocumented response properties
-
-To access undocumented response properties, you can access the extra fields like `response.unknown_prop`. You
-can also get all the extra fields on the Pydantic model as a dict with
-[`response.model_extra`](https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_extra).
-
 ### Configuring the HTTP client
 
 You can directly override the [httpx client](https://www.python-httpx.org/api/#client) to customize it for your use case, including:
@@ -386,29 +380,6 @@ with BrowserUse() as client:
   ...
 
 # HTTP client is now closed
-```
-
-## Versioning
-
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
-
-1. Changes that only affect static types, without breaking runtime behavior.
-2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
-3. Changes that we do not expect to impact the vast majority of users in practice.
-
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
-
-We are keen for your feedback; please open an [issue](https://www.github.com/browser-use/browser-use-python/issues) with questions, bugs, or suggestions.
-
-### Determining the installed version
-
-If you've upgraded to the latest version but aren't seeing any new features you were expecting then your python environment is likely still using an older version.
-
-You can determine the version that is being used at runtime with:
-
-```py
-import browser_use_sdk
-print(browser_use_sdk.__version__)
 ```
 
 ## Requirements
