@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any, Dict
 from datetime import datetime, timezone
 
@@ -118,7 +117,7 @@ def test_verify_webhook_event_signature_string_body() -> None:
     signature = create_webhook_signature(webhook.payload.model_dump(), timestamp, secret)
 
     verified_webhook = verify_webhook_event_signature(
-        body=json.dumps(webhook.model_dump()),
+        body=webhook.model_dump_json(),
         secret=secret,
         timestamp=timestamp,
         expected_signature=signature,
