@@ -123,9 +123,9 @@ async def webhook(request: Request):
 
     verified_webhook: Webhook = verify_webhook_event_signature(
         body=body,
-        signature=signature,
         timestamp=timestamp,
         secret=SECRET_KEY,
+        expected_signature=signature,
     )
 
     if verified_webhook is not None:

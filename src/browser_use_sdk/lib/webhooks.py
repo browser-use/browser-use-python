@@ -78,7 +78,7 @@ def create_webhook_signature(payload: Any, timestamp: str, secret: str) -> str:
 
 def verify_webhook_event_signature(
     body: Union[Dict[str, Any], str],
-    signature: str,
+    expected_signature: str,
     timestamp: str,
     #
     secret: str,
@@ -127,7 +127,7 @@ def verify_webhook_event_signature(
             payload=webhook_event.payload.model_dump(), timestamp=timestamp, secret=secret
         )
 
-        if not hmac.compare_digest(signature, expected_signature):
+        if not hmac.compare_digest(expected_signature, expected_signature):
             return None
 
         return webhook_event

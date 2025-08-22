@@ -49,7 +49,7 @@ def main() -> None:
 
     verified_webhook = verify_webhook_event_signature(
         body=evt,
-        signature=signature,
+        expected_signature=signature,
         timestamp=timestamp,
         secret=SECRET,
     )
