@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any, Dict
 from datetime import datetime, timezone
 
@@ -11,6 +12,8 @@ from browser_use_sdk.lib.webhooks import (
     create_webhook_signature,
     verify_webhook_event_signature,
 )
+
+# Signature Creation ---------------------------------------------------------
 
 
 def test_create_webhook_signature() -> None:
@@ -33,16 +36,16 @@ def test_create_webhook_signature() -> None:
     assert signature != different_signature
 
 
+# Webhook Verification --------------------------------------------------------
+
+
 def test_verify_webhook_event_signature_valid() -> None:
     """Test webhook signature verification with valid signature."""
     secret = "test-secret-key"
     timestamp = "2023-01-01T00:00:00Z"
 
-    # Create test webhook
     payload = WebhookTestPayload(test="ok")
     webhook = WebhookTest(type="test", timestamp=datetime.now(timezone.utc), payload=payload)
-
-    # Create signature
     signature = create_webhook_signature(webhook.payload.model_dump(), timestamp, secret)
 
     # Verify signature
@@ -88,7 +91,7 @@ def test_verify_webhook_event_signature_wrong_secret() -> None:
 
     # Create signature with correct secret
     signature = create_webhook_signature(
-        payload=webhook.payload.model_dump(),
+        payload=payload.model_dump(),
         timestamp=timestamp,
         secret="test-secret-key",
     )
@@ -112,13 +115,13 @@ def test_verify_webhook_event_signature_string_body() -> None:
     # Create test webhook
     payload = WebhookTestPayload(test="ok")
     webhook = WebhookTest(type="test", timestamp=datetime.now(timezone.utc), payload=payload)
-
-    # Create signature
     signature = create_webhook_signature(webhook.payload.model_dump(), timestamp, secret)
 
-    # Verify with string body
     verified_webhook = verify_webhook_event_signature(
-        body=webhook.model_dump(), secret=secret, expected_signature=signature, timestamp=timestamp
+        body=json.dumps(webhook.model_dump()),
+        secret=secret,
+        timestamp=timestamp,
+        expected_signature=signature,
     )
 
     assert verified_webhook is not None
