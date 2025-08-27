@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.3 (2025-08-27)
+
+Full Changelog: [v1.0.2...v1.0.3](https://github.com/browser-use/browser-use-python/compare/v1.0.2...v1.0.3)
+
+### Bug Fixes
+
+* avoid newer type syntax ([f2414e8](https://github.com/browser-use/browser-use-python/commit/f2414e876f730a0246a05fb4b4b69a7bf679f9e0))
+
+
+### Chores
+
+* **internal:** change ci workflow machines ([70809e8](https://github.com/browser-use/browser-use-python/commit/70809e88085baa9d34a1a3d4c55ef82f6670f444))
+* **internal:** update pyright exclude list ([7764e77](https://github.com/browser-use/browser-use-python/commit/7764e77d21b6b03696b83434390c114bc18dfa3e))
+
 ## 1.0.2 (2025-08-22)
 
 Full Changelog: [v1.0.1...v1.0.2](https://github.com/browser-use/browser-use-python/compare/v1.0.1...v1.0.2)
