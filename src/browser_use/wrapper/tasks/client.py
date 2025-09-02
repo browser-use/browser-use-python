@@ -84,7 +84,7 @@ class BrowserUseTasksClient(TasksClient):
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[WrappedStructuredTaskCreatedResponse[T], WrappedTaskCreatedResponse]:
-        if schema is not None:
+        if schema is not None and schema is not OMIT:
             structured_output = json.dumps(schema.model_json_schema())
 
             res = super().create_task(
@@ -145,7 +145,7 @@ class BrowserUseTasksClient(TasksClient):
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
         res = super().get_task(task_id, request_options=request_options)
 
-        if schema is not None:
+        if schema is not None and schema is not OMIT:
             return _parse_task_view_with_output(res, schema)
         else:
             return res
@@ -219,7 +219,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[AsyncWrappedStructuredTaskCreatedResponse[T], AsyncWrappedTaskCreatedResponse]:
-        if schema is not None:
+        if schema is not None and schema is not OMIT:
             structured_output = json.dumps(schema.model_json_schema())
 
             res = await super().create_task(
@@ -278,7 +278,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
         res = await super().get_task(task_id, request_options=request_options)
 
-        if schema is not None:
+        if schema is not None and schema is not OMIT:
             return _parse_task_view_with_output(res, schema)
         else:
             return res

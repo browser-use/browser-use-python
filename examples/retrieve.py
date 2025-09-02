@@ -3,8 +3,8 @@
 import time
 from typing import List
 
+from api import API_KEY
 from pydantic import BaseModel
-from utils import API_KEY
 
 from browser_use import BrowserUse
 
