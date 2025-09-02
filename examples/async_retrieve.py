@@ -1,14 +1,14 @@
 #!/usr/bin/env -S rye run python
 
 import asyncio
+import os
 from typing import List
 
 from pydantic import BaseModel
 
 from browser_use import AsyncBrowserUse
 
-# gets API Key from environment variable BROWSER_USE_API_KEY
-client = AsyncBrowserUse()
+client = AsyncBrowserUse(api_key=os.getenv("BROWSER_USE_API_KEY"))
 
 
 # Regular Task

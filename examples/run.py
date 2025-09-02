@@ -1,13 +1,13 @@
 #!/usr/bin/env -S rye run python
 
+import os
 from typing import List
 
 from pydantic import BaseModel
 
 from browser_use import BrowserUse
 
-# gets API Key from environment variable BROWSER_USE_API_KEY
-client = BrowserUse()
+client = BrowserUse(api_key=os.getenv("BROWSER_USE_API_KEY"))
 
 
 # Regular Task

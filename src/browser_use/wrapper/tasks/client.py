@@ -105,6 +105,7 @@ class BrowserUseTasksClient(TasksClient):
                 system_prompt_extension=system_prompt_extension,
                 request_options=request_options,
             )
+
             return WrappedStructuredTaskCreatedResponse[T](id=res.id, schema=schema, client=self)
 
         else:
@@ -125,6 +126,7 @@ class BrowserUseTasksClient(TasksClient):
                 system_prompt_extension=system_prompt_extension,
                 request_options=request_options,
             )
+
             return WrappedTaskCreatedResponse(id=res.id, client=self)
 
     @typing.overload
@@ -222,7 +224,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         if schema is not None:
             structured_output = json.dumps(schema.model_json_schema())
 
-            res = super().create_task(
+            res = await super().create_task(
                 task=task,
                 llm=llm,
                 start_url=start_url,
@@ -242,7 +244,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
             return AsyncWrappedStructuredTaskCreatedResponse[T](id=res.id, schema=schema, client=self)
 
         else:
-            res = super().create_task(
+            res = await super().create_task(
                 task=task,
                 llm=llm,
                 start_url=start_url,
