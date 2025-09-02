@@ -1,0 +1,7 @@
+{
+  "python.analysis.importFormat": "relative",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always",
+    "source.fixAll.ruff": "always"
+  }
+}

@@ -1,1 +1,6 @@
 # Specify files that shouldn't be modified by Fern
+.gitignore
+.vscode/
+
+src/browser_use/client.py
+src/browser_use/wrapper/
