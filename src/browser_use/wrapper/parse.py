@@ -1,5 +1,7 @@
+import asyncio
 import hashlib
 import json
+import time
 import typing
 from datetime import datetime
 from typing import Any, AsyncIterator, Generic, Iterator, Type, TypeVar, Union
@@ -33,47 +35,52 @@ class CustomJSONEncoder(json.JSONEncoder):
         return super().default(o)
 
 
-def hash_task_view(task_view: TaskView) -> str:
+def _hash_task_view(task_view: TaskView) -> str:
     """Hashes the task view to detect changes."""
     return hashlib.sha256(
         json.dumps(task_view.model_dump(), sort_keys=True, cls=CustomJSONEncoder).encode()
     ).hexdigest()
 
 
-# def _watch(
-#     self,
-#     task_id: str,
-#     interval: float = 1, request_options:typing.Optional[RequestOptions] = None,
-#     *,
-#     # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-#     # The extra values given here take precedence over values defined on the client or passed to this method.
-#     request_options: typing.Optional[RequestOptions] = None,
-# ) -> Iterator[TaskView]:
-#     """Converts a polling loop into a generator loop."""
-#     hash: str | None = None
+def _parse_task_view_with_output(task_view: TaskView, schema: Type[T]) -> TaskViewWithOutput[T]:
+    """Parses the task view with output."""
+    if task_view.output is None:
+        return TaskViewWithOutput[T](**task_view.model_dump(), parsed_output=None)
 
-#     while True:
-#         res = self.retrieve(
-#             task_id=task_id,
-#             extra_headers=extra_headers,
-#             extra_query=extra_query,
-#             extra_body=extra_body,
-#             timeout=timeout,
-#         )
-
-#         res_hash = hash_task_view(res)
-
-#         if hash is None or res_hash != hash:
-#             hash = res_hash
-#             yield res
-
-#         if res.status == "finished":
-#             break
-
-#         time.sleep(interval)
+    return TaskViewWithOutput[T](**task_view.model_dump(), parsed_output=schema.model_validate_json(task_view.output))
 
 
 # Sync -----------------------------------------------------------------------
+
+
+def _watch(
+    client: TasksClient, task_id: str, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
+) -> Iterator[TaskViewWithOutput[T]]:
+    """Yields the latest task state on every change."""
+    hash: str | None = None
+    while True:
+        res = client.get_task(task_id, request_options=request_options)
+        res_hash = _hash_task_view(res)
+
+        if hash is None or res_hash != hash:
+            hash = res_hash
+            yield res
+
+        if res.status == "finished" or res.status == "stopped" or res.status == "paused":
+            break
+
+        time.sleep(interval)
+
+
+def _stream(
+    client: TasksClient, task_id: str, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
+) -> Iterator[TaskStepView]:
+    """Streams the steps of the task and closes when the task is finished."""
+    total_steps = 0
+    for state in _watch(client, task_id, interval, request_options):
+        for i in range(total_steps, len(state.steps)):
+            total_steps = i + 1
+            yield state.steps[i]
 
 
 class WrappedTaskCreatedResponse(TaskCreatedResponse):
@@ -87,21 +94,23 @@ class WrappedTaskCreatedResponse(TaskCreatedResponse):
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> TaskViewWithOutput[T]:
         """Waits for the task to finish and return the result."""
-        pass
+        for state in _watch(self._client, self.id, interval, request_options):
+            if state.status == "finished" or state.status == "stopped" or state.status == "paused":
+                return state
+
+        raise Exception("Iterator ended without finding a finished state!")
 
     def stream(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> Iterator[TaskStepView]:
         """Streams the steps of the task and closes when the task is finished."""
-        for i in range(10):
-            yield TaskStepView(number=i, status="finished")
+        return _stream(self._client, self.id, interval, request_options)
 
     def watch(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> Iterator[TaskViewWithOutput[T]]:
         """Yields the latest task state on every change."""
-        for i in range(10):
-            yield TaskViewWithOutput[T](status="finished")
+        return _watch(self._client, self.id, interval, request_options)
 
 
 # Structured
@@ -120,24 +129,56 @@ class WrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T]):
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> TaskViewWithOutput[T]:
         """Waits for the task to finish and return the result."""
-        pass
+        for state in _watch(self._client, self.id, interval, request_options):
+            if state.status == "finished" or state.status == "stopped" or state.status == "paused":
+                return _parse_task_view_with_output(state, self._schema)
+
+        raise Exception("Iterator ended without finding a finished state!")
 
     def stream(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> Iterator[TaskStepView]:
         """Streams the steps of the task and closes when the task is finished."""
-        for i in range(10):
-            yield TaskStepView(number=i, status="finished")
+        return _stream(self._client, self.id, interval, request_options)
 
     def watch(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> Iterator[TaskViewWithOutput[T]]:
         """Yields the latest task state on every change."""
-        for i in range(10):
-            yield TaskViewWithOutput[T](status="finished")
+        for state in _watch(self._client, self.id, interval, request_options):
+            yield _parse_task_view_with_output(state, self._schema)
 
 
 # Async ----------------------------------------------------------------------
+
+
+async def _async_watch(
+    client: AsyncTasksClient, task_id: str, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
+) -> AsyncIterator[TaskViewWithOutput[T]]:
+    """Yields the latest task state on every change."""
+    hash: str | None = None
+    while True:
+        res = await client.get_task(task_id, request_options=request_options)
+        res_hash = _hash_task_view(res)
+        if hash is None or res_hash != hash:
+            hash = res_hash
+            yield res
+
+        if res.status == "finished" or res.status == "stopped" or res.status == "paused":
+            break
+
+        await asyncio.sleep(interval)
+
+
+async def _async_stream(
+    client: AsyncTasksClient, task_id: str, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
+) -> AsyncIterator[TaskStepView]:
+    """Streams the steps of the task and closes when the task is finished."""
+    total_steps = 0
+    for state in _async_watch(client, task_id, interval, request_options):
+        for i in range(total_steps, len(state.steps)):
+            total_steps = i + 1
+            yield state.steps[i]
 
 
 class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
@@ -149,21 +190,23 @@ class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
 
     async def complete(self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None) -> TaskView:
         """Waits for the task to finish and return the result."""
-        pass
+        for state in _async_watch(self._client, self.id, interval, request_options):
+            if state.status == "finished" or state.status == "stopped" or state.status == "paused":
+                return state
+
+        raise Exception("Iterator ended without finding a finished state!")
 
     async def stream(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncIterator[TaskStepView]:
         """Streams the steps of the task and closes when the task is finished."""
-        for i in range(10):
-            yield TaskStepView(number=i, status="finished")
+        return _async_stream(self._client, self.id, interval, request_options)
 
     async def watch(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncIterator[TaskView]:
         """Yields the latest task state on every change."""
-        for i in range(10):
-            yield TaskView(status="finished")
+        return _async_watch(self._client, self.id, interval, request_options)
 
 
 # Structured
@@ -182,18 +225,21 @@ class AsyncWrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T])
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> TaskViewWithOutput[T]:
         """Waits for the task to finish and return the result."""
-        pass
+        for state in _async_watch(self._client, self.id, interval, request_options):
+            if state.status == "finished" or state.status == "stopped" or state.status == "paused":
+                return _parse_task_view_with_output(state, self._schema)
+
+        raise Exception("Iterator ended without finding a finished state!")
 
     async def stream(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncIterator[TaskStepView]:
         """Streams the steps of the task and closes when the task is finished."""
-        for i in range(10):
-            yield TaskStepView(number=i, status="finished")
+        return _async_stream(self._client, self.id, interval, request_options)
 
     async def watch(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncIterator[TaskViewWithOutput[T]]:
         """Yields the latest task state on every change."""
-        for i in range(10):
-            yield TaskViewWithOutput[T](status="finished")
+        for state in _async_watch(self._client, self.id, interval, request_options):
+            yield _parse_task_view_with_output(state, self._schema)

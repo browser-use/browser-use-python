@@ -12,6 +12,7 @@ from browser_use.wrapper.parse import (
     TaskViewWithOutput,
     WrappedStructuredTaskCreatedResponse,
     WrappedTaskCreatedResponse,
+    _parse_task_view_with_output,
 )
 
 
@@ -145,10 +146,7 @@ class BrowserUseTasksClient(TasksClient):
         res = super().get_task(task_id, request_options=request_options)
 
         if schema is not None:
-            if res.output is None:
-                return TaskViewWithOutput[T](**res.model_dump(), parsed_output=None)
-
-            return TaskViewWithOutput[T](**res.model_dump(), parsed_output=schema.model_validate_json(res.output))
+            return _parse_task_view_with_output(res, schema)
         else:
             return res
 
@@ -281,9 +279,6 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         res = await super().get_task(task_id, request_options=request_options)
 
         if schema is not None:
-            if res.output is None:
-                return TaskViewWithOutput[T](**res.model_dump(), parsed_output=None)
-
-            return TaskViewWithOutput[T](**res.model_dump(), parsed_output=schema.model_validate_json(res.output))
+            return _parse_task_view_with_output(res, schema)
         else:
             return res
