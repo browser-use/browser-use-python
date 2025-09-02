@@ -1,9 +1,9 @@
 [project]
-name = "browser-use"
+name = "browser-use-sdk"
 
 [tool.poetry]
-name = "browser-use"
-version = "0.0.0"
+name = "browser-use-sdk"
+version = "2.0.0"
 description = ""
 readme = "README.md"
 authors = []
