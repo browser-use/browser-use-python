@@ -1,9 +1,9 @@
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S poetry run python
 
-from typing import Any, Dict, Tuple
 from datetime import datetime
+from typing import Any, Dict, Tuple
 
-from browser_use_sdk.lib.webhooks import (
+from browser_use.lib.webhooks import (
     Webhook,
     WebhookAgentTaskStatusUpdate,
     WebhookAgentTaskStatusUpdatePayload,

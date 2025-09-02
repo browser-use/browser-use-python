@@ -1,10 +1,9 @@
-<img src="https://raw.githubusercontent.com/browser-use/browser-use-python/refs/heads/main/assets/cloud-banner-python.png" alt="Browser Use Python" width="full"/>
+# BrowserUse Python Library
 
-[![PyPI version](<https://img.shields.io/pypi/v/browser-use-sdk.svg?label=pypi%20(stable)>)](https://pypi.org/project/browser-use-sdk/)
+[![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fbrowser-use%2Fbrowser-use-python)
+[![pypi](https://img.shields.io/pypi/v/browser-use)](https://pypi.python.org/pypi/browser-use)
 
-```sh
-pip install browser-use-sdk
-```
+The BrowserUse Python library provides convenient access to the BrowserUse APIs from Python.
 
 ## Two-Step QuickStart
 
@@ -17,11 +16,14 @@ from browser_use_sdk import BrowserUse
 
 client = BrowserUse(api_key="bu_...")
 
-result = client.tasks.run(
+task = client.tasks.create_task(
     task="Search for the top 10 Hacker News posts and return the title and url."
+    llm="gpt-4.1",
 )
 
-result.done_output
+result = task.complete()
+
+result.output
 ```
 
 > The full API of this library can be found in [api.md](api.md).
@@ -39,16 +41,18 @@ class SearchResult(BaseModel):
     posts: List[HackerNewsPost]
 
 async def main() -> None:
-    result = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    if structured_result.parsed_output is not None:
+    result = await task.complete()
+
+    if result.parsed_output is not None:
         print("Top HackerNews Posts:")
-        for post in structured_result.parsed_output.posts:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
 asyncio.run(main())
@@ -74,25 +78,18 @@ async def main() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    async for update in client.tasks.stream(task.id, structured_output_json=SearchResult):
-        if len(update.steps) > 0:
-            last_step = update.steps[-1]
-            print(f"{update.status}: {last_step.url} ({last_step.next_goal})")
-        else:
-            print(f"{update.status}")
+    async for step in task.stream():
+        print(f"Step {step.number}: {step.url} ({step.next_goal})")
 
-        if update.status == "finished":
-            if update.parsed_output is None:
-                print("No output...")
-            else:
-                print("Top HackerNews Posts:")
-                for post in update.parsed_output.posts:
-                    print(f" - {post.title} - {post.url}")
+    result = await task.complete()
 
-                break
+    if result.parsed_output is not None:
+        print("Top HackerNews Posts:")
+        for post in result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
 
 asyncio.run(main())
 ```
@@ -106,7 +103,7 @@ Browser Use SDK lets you easily verify the signature and structure of the payloa
 ```py
 import uvicorn
 import os
-from browser_use_sdk.lib.webhooks import Webhook, verify_webhook_event_signature
+from browser_use_sdk import Webhook, verify_webhook_event_signature
 
 from fastapi import FastAPI, Request, HTTPException
 
@@ -154,10 +151,11 @@ client = AsyncBrowserUse(
 
 
 async def main() -> None:
-    task = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="Search for the top 10 Hacker News posts and return the title and url.",
     )
-    print(task.done_output)
+
+    print(task.id)
 
 
 asyncio.run(main())
@@ -199,6 +197,80 @@ asyncio.run(main())
 ```
 
 ## Advanced
+
+### Access Raw Response Data
+
+The SDK provides access to raw response data, including headers, through the `.with_raw_response` property.
+The `.with_raw_response` property returns a "raw" client that can be used to access the `.headers` and `.data` attributes.
+
+```python
+from browser_use import BrowserUse
+
+client = BrowserUse(
+    ...,
+)
+response = client.tasks.with_raw_response.create_task(...)
+print(response.headers)  # access the response headers
+print(response.data)  # access the underlying object
+```
+
+### Retries
+
+The SDK is instrumented with automatic retries with exponential backoff. A request will be retried as long
+as the request is deemed retryable and the number of retry attempts has not grown larger than the configured
+retry limit (default: 2).
+
+A request is deemed retryable when any of the following HTTP status codes is returned:
+
+- [408](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/408) (Timeout)
+- [429](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) (Too Many Requests)
+- [5XX](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500) (Internal Server Errors)
+
+Use the `max_retries` request option to configure this behavior.
+
+```python
+client.tasks.create_task(..., request_options={
+    "max_retries": 1
+})
+```
+
+### Timeouts
+
+The SDK defaults to a 60 second timeout. You can configure this with a timeout option at the client or request level.
+
+```python
+
+from browser_use import BrowserUse
+
+client = BrowserUse(
+    ...,
+    timeout=20.0,
+)
+
+
+# Override timeout for a specific method
+client.tasks.create_task(..., request_options={
+    "timeout_in_seconds": 1
+})
+```
+
+### Custom Client
+
+You can override the `httpx` client to customize it for your use-case. Some common use-cases include support for proxies
+and transports.
+
+```python
+import httpx
+from browser_use import BrowserUse
+
+client = BrowserUse(
+    ...,
+    httpx_client=httpx.Client(
+        proxies="http://my.test.proxy.example.com",
+        transport=httpx.HTTPTransport(local_address="0.0.0.0"),
+    ),
+)
+```
 
 ## Handling errors
 
@@ -388,4 +460,73 @@ Python 3.8 or higher.
 
 ## Contributing
 
-See [the contributing documentation](./CONTRIBUTING.md).
+While we value open-source contributions to this SDK, this library is generated programmatically.
+Additions made directly to this library would have to be moved over to our generation code,
+otherwise they would be overwritten upon the next generated release. Feel free to open a PR as
+a proof of concept, but know that we will not be able to merge it as-is. We suggest opening
+an issue first to discuss with us!
+
+On the other hand, contributions to the README are always very welcome!
+
+## Installation
+
+```sh
+pip install browser-use
+```
+
+## Reference
+
+A full reference for this library is available [here](https://github.com/browser-use/browser-use-python/blob/HEAD/./reference.md).
+
+## Usage
+
+Instantiate and use the client with the following:
+
+```python
+from browser_use import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.tasks.create_task(
+    task="task",
+)
+```
+
+## Async Client
+
+The SDK also exports an `async` client so that you can make non-blocking calls to our API.
+
+```python
+import asyncio
+
+from browser_use import AsyncBrowserUse
+
+client = AsyncBrowserUse(
+    api_key="YOUR_API_KEY",
+)
+
+
+async def main() -> None:
+    await client.tasks.create_task(
+        task="task",
+    )
+
+
+asyncio.run(main())
+```
+
+## Exception Handling
+
+When the API returns a non-success status code (4xx or 5xx response), a subclass of the following error
+will be thrown.
+
+```python
+from browser_use.core.api_error import ApiError
+
+try:
+    client.tasks.create_task(...)
+except ApiError as e:
+    print(e.status_code)
+    print(e.body)
+```

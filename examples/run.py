@@ -1,27 +1,29 @@
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S poetry run python
 
 from typing import List
 
+from api import API_KEY
 from pydantic import BaseModel
 
-from browser_use_sdk import BrowserUse
+from browser_use import BrowserUse
 
-# gets API Key from environment variable BROWSER_USE_API_KEY
-client = BrowserUse()
+client = BrowserUse(api_key=API_KEY)
 
 
 # Regular Task
 def run_regular_task() -> None:
-    regular_result = client.tasks.run(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gemini-2.5-flash"},
+        llm="gemini-2.5-flash",
     )
 
-    print(f"Task ID: {regular_result.id}")
+    print(f"Task ID: {task.id}")
 
-    print(regular_result.done_output)
+    result = task.complete()
+
+    print(result.output)
 
     print("Done")
 
@@ -38,18 +40,20 @@ def run_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_result = client.tasks.run(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gpt-4.1"},
-        structured_output_json=SearchResult,
+        llm="gpt-4.1",
+        schema=SearchResult,
     )
 
-    print(f"Task ID: {structured_result.id}")
+    print(f"Task ID: {task.id}")
 
-    if structured_result.parsed_output is not None:
-        for post in structured_result.parsed_output.posts:
+    result = task.complete()
+
+    if result.parsed_output is not None:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
     print("Done")

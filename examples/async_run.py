@@ -1,28 +1,30 @@
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S poetry run python
 
 import asyncio
 from typing import List
 
+from api import API_KEY
 from pydantic import BaseModel
 
-from browser_use_sdk import AsyncBrowserUse
+from browser_use import AsyncBrowserUse
 
-# gets API Key from environment variable BROWSER_USE_API_KEY
-client = AsyncBrowserUse()
+client = AsyncBrowserUse(api_key=API_KEY)
 
 
 # Regular Task
 async def run_regular_task() -> None:
-    regular_result = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gemini-2.5-flash"},
+        llm="gemini-2.5-flash",
     )
 
-    print(f"Regular Task ID: {regular_result.id}")
+    print(f"Regular Task ID: {task.id}")
 
-    print(f"Regular Task Output: {regular_result.done_output}")
+    result = await task.complete()
+
+    print(f"Regular Task Output: {result.output}")
 
     print("Done")
 
@@ -36,19 +38,21 @@ async def run_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_result = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gpt-4.1"},
-        structured_output_json=SearchResult,
+        llm="gpt-4.1",
+        schema=SearchResult,
     )
 
-    print(f"Structured Task ID: {structured_result.id}")
+    print(f"Structured Task ID: {task.id}")
 
-    if structured_result.parsed_output is not None:
+    result = await task.complete()
+
+    if result.parsed_output is not None:
         print("Structured Task Output:")
-        for post in structured_result.parsed_output.posts:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
     print("Structured Task Done")

@@ -1,38 +1,28 @@
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S poetry run python
 
 from typing import List
 
+from api import API_KEY
 from pydantic import BaseModel
 
-from browser_use_sdk import BrowserUse
-from browser_use_sdk.types.task_create_params import AgentSettings
+from browser_use import BrowserUse
 
-# gets API Key from environment variable BROWSER_USE_API_KEY
-client = BrowserUse()
+client = BrowserUse(api_key=API_KEY)
 
 
 # Regular Task
 def stream_regular_task() -> None:
-    regular_task = client.tasks.create(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings=AgentSettings(llm="gemini-2.5-flash"),
+        llm="gemini-2.5-flash",
     )
 
-    print(f"Task ID: {regular_task.id}")
+    print(f"Task ID: {task.id}")
 
-    for res in client.tasks.stream(regular_task.id):
-        print(res.status)
-
-        if len(res.steps) > 0:
-            last_step = res.steps[-1]
-            print(f"{last_step.url} ({last_step.next_goal})")
-            for action in last_step.actions:
-                print(f" - {action}")
-
-        if res.status == "finished":
-            print(res.done_output)
+    for step in task.stream():
+        print(f"Step {step.number}: {step.url} ({step.next_goal})")
 
     print("Regular: DONE")
 
@@ -49,26 +39,24 @@ def stream_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_task = client.tasks.create(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        agent_settings={"llm": "gpt-4.1"},
-        structured_output_json=SearchResult,
+        llm="gpt-4.1",
+        schema=SearchResult,
     )
 
-    print(f"Task ID: {structured_task.id}")
+    print(f"Task ID: {task.id}")
 
-    for res in client.tasks.stream(structured_task.id, structured_output_json=SearchResult):
-        print(res.status)
+    for step in task.stream():
+        print(f"Step {step.number}: {step.url} ({step.next_goal})")
 
-        if res.status == "finished":
-            if res.parsed_output is None:
-                print("No output")
-            else:
-                for post in res.parsed_output.posts:
-                    print(f" - {post.title} - {post.url}")
-            break
+    result = task.complete()
+
+    if result.parsed_output is not None:
+        for post in result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
 
     print("Done")
 

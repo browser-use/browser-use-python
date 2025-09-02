@@ -1,15 +1,8 @@
-.prism.log
-_dev
+.mypy_cache/
+.ruff_cache/
+__pycache__/
+dist/
+poetry.toml
 
-__pycache__
-.mypy_cache
-
-dist
-
-.venv
-.idea
-
-.env
-.envrc
-codegen.log
-Brewfile.lock.json
+.env*
+!.env.example
