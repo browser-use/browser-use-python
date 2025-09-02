@@ -16,11 +16,14 @@ from browser_use_sdk import BrowserUse
 
 client = BrowserUse(api_key="bu_...")
 
-result = client.tasks.run(
+task = client.tasks.create_task(
     task="Search for the top 10 Hacker News posts and return the title and url."
+    llm="gpt-4.1",
 )
 
-result.done_output
+result = task.complete()
+
+result.output
 ```
 
 > The full API of this library can be found in [api.md](api.md).
@@ -38,16 +41,18 @@ class SearchResult(BaseModel):
     posts: List[HackerNewsPost]
 
 async def main() -> None:
-    result = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    if structured_result.parsed_output is not None:
+    result = await task.complete()
+
+    if result.parsed_output is not None:
         print("Top HackerNews Posts:")
-        for post in structured_result.parsed_output.posts:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
 asyncio.run(main())
@@ -73,25 +78,18 @@ async def main() -> None:
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    async for update in client.tasks.stream(task.id, structured_output_json=SearchResult):
-        if len(update.steps) > 0:
-            last_step = update.steps[-1]
-            print(f"{update.status}: {last_step.url} ({last_step.next_goal})")
-        else:
-            print(f"{update.status}")
+    async for step in task.stream():
+        print(f"Step {step.number}: {step.url} ({step.next_goal})")
 
-        if update.status == "finished":
-            if update.parsed_output is None:
-                print("No output...")
-            else:
-                print("Top HackerNews Posts:")
-                for post in update.parsed_output.posts:
-                    print(f" - {post.title} - {post.url}")
+    result = await task.complete()
 
-                break
+    if result.parsed_output is not None:
+        print("Top HackerNews Posts:")
+        for post in result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
 
 asyncio.run(main())
 ```
@@ -105,7 +103,7 @@ Browser Use SDK lets you easily verify the signature and structure of the payloa
 ```py
 import uvicorn
 import os
-from browser_use_sdk.lib.webhooks import Webhook, verify_webhook_event_signature
+from browser_use_sdk import Webhook, verify_webhook_event_signature
 
 from fastapi import FastAPI, Request, HTTPException
 
@@ -153,10 +151,11 @@ client = AsyncBrowserUse(
 
 
 async def main() -> None:
-    task = await client.tasks.run(
+    task = await client.tasks.create_task(
         task="Search for the top 10 Hacker News posts and return the title and url.",
     )
-    print(task.done_output)
+
+    print(task.id)
 
 
 asyncio.run(main())
@@ -468,6 +467,7 @@ a proof of concept, but know that we will not be able to merge it as-is. We sugg
 an issue first to discuss with us!
 
 On the other hand, contributions to the README are always very welcome!
+
 ## Installation
 
 ```sh
@@ -530,4 +530,3 @@ except ApiError as e:
     print(e.status_code)
     print(e.body)
 ```
-

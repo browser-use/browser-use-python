@@ -25,6 +25,11 @@ async def stream_regular_task() -> None:
     async for step in task.stream():
         print(f"Regular Task Status: {step.number}")
 
+    result = await task.complete()
+
+    if result.output is not None:
+        print(f"Regular Task Output: {result.output}")
+
     print("Regular Task Done")
 
 
@@ -53,6 +58,8 @@ async def stream_structured_task() -> None:
     result = await task.complete()
 
     if result.parsed_output is not None:
+        print("Structured Task Output:")
+
         for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
