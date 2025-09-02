@@ -60,7 +60,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -100,7 +100,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -130,7 +130,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -159,7 +159,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -191,7 +191,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -223,7 +223,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -255,7 +255,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -286,7 +286,7 @@ class SessionsClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use_sdk import BrowserUse
 
         client = BrowserUse(
             api_key="YOUR_API_KEY",
@@ -345,7 +345,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -393,7 +393,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -433,7 +433,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -470,7 +470,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -510,7 +510,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -550,7 +550,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -590,7 +590,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
@@ -629,7 +629,7 @@ class AsyncSessionsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use_sdk import AsyncBrowserUse
 
         client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",

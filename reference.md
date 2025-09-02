@@ -1,6 +1,6 @@
 # Reference
 ## Accounts
-<details><summary><code>client.accounts.<a href="src/browser_use/accounts/client.py">get_account_me</a>()</code></summary>
+<details><summary><code>client.accounts.<a href="src/browser_use_sdk/accounts/client.py">get_account_me</a>()</code></summary>
 <dl>
 <dd>
 
@@ -27,7 +27,7 @@ Get authenticated account information including credit balances and account deta
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -61,7 +61,7 @@ client.accounts.get_account_me()
 </details>
 
 ## Tasks
-<details><summary><code>client.tasks.<a href="src/browser_use/tasks/client.py">list_tasks</a>(...)</code></summary>
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">list_tasks</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -88,7 +88,7 @@ Get paginated list of AI agent tasks with optional filtering by session and stat
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -169,7 +169,7 @@ client.tasks.list_tasks()
 </dl>
 </details>
 
-<details><summary><code>client.tasks.<a href="src/browser_use/tasks/client.py">create_task</a>(...)</code></summary>
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">create_task</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -198,7 +198,7 @@ You can either:
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -345,7 +345,7 @@ client.tasks.create_task(
 </dl>
 </details>
 
-<details><summary><code>client.tasks.<a href="src/browser_use/tasks/client.py">get_task</a>(...)</code></summary>
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">get_task</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -372,7 +372,7 @@ Get detailed task information including status, progress, steps, and file output
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -415,7 +415,7 @@ client.tasks.get_task(
 </dl>
 </details>
 
-<details><summary><code>client.tasks.<a href="src/browser_use/tasks/client.py">update_task</a>(...)</code></summary>
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">update_task</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -442,7 +442,7 @@ Control task execution with stop, pause, resume, or stop task and session action
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -494,7 +494,7 @@ client.tasks.update_task(
 </dl>
 </details>
 
-<details><summary><code>client.tasks.<a href="src/browser_use/tasks/client.py">get_task_logs</a>(...)</code></summary>
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">get_task_logs</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -521,7 +521,7 @@ Get secure download URL for task execution logs with step-by-step details.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -565,7 +565,7 @@ client.tasks.get_task_logs(
 </details>
 
 ## Sessions
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">list_sessions</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">list_sessions</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -592,7 +592,7 @@ Get paginated list of AI agent sessions with optional status filtering.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -649,7 +649,7 @@ client.sessions.list_sessions()
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">create_session</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">create_session</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -676,7 +676,7 @@ Create a new session with a new task.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -725,7 +725,7 @@ client.sessions.create_session()
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">get_session</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">get_session</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -752,7 +752,7 @@ Get detailed session information including status, URLs, and task details.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -795,7 +795,7 @@ client.sessions.get_session(
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">delete_session</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">delete_session</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -822,7 +822,7 @@ Permanently delete a session and all associated data.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -865,7 +865,7 @@ client.sessions.delete_session(
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">update_session</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">update_session</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -892,7 +892,7 @@ Stop a session and all its running tasks.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -935,7 +935,7 @@ client.sessions.update_session(
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">get_session_public_share</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">get_session_public_share</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -962,7 +962,7 @@ Get public share information including URL and usage statistics.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1005,7 +1005,7 @@ client.sessions.get_session_public_share(
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">create_session_public_share</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">create_session_public_share</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1032,7 +1032,7 @@ Create or return existing public share for a session.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1075,7 +1075,7 @@ client.sessions.create_session_public_share(
 </dl>
 </details>
 
-<details><summary><code>client.sessions.<a href="src/browser_use/sessions/client.py">delete_session_public_share</a>(...)</code></summary>
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">delete_session_public_share</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1102,7 +1102,7 @@ Remove public share for a session.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1146,7 +1146,7 @@ client.sessions.delete_session_public_share(
 </details>
 
 ## Files
-<details><summary><code>client.files.<a href="src/browser_use/files/client.py">user_upload_file_presigned_url</a>(...)</code></summary>
+<details><summary><code>client.files.<a href="src/browser_use_sdk/files/client.py">user_upload_file_presigned_url</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1173,7 +1173,7 @@ Generate a secure presigned URL for uploading files that AI agents can use durin
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1243,7 +1243,7 @@ client.files.user_upload_file_presigned_url(
 </dl>
 </details>
 
-<details><summary><code>client.files.<a href="src/browser_use/files/client.py">get_task_output_file_presigned_url</a>(...)</code></summary>
+<details><summary><code>client.files.<a href="src/browser_use_sdk/files/client.py">get_task_output_file_presigned_url</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1270,7 +1270,7 @@ Get secure download URL for an output file generated by the AI agent.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1323,7 +1323,7 @@ client.files.get_task_output_file_presigned_url(
 </details>
 
 ## Profiles
-<details><summary><code>client.profiles.<a href="src/browser_use/profiles/client.py">list_profiles</a>(...)</code></summary>
+<details><summary><code>client.profiles.<a href="src/browser_use_sdk/profiles/client.py">list_profiles</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1350,7 +1350,7 @@ Get paginated list of profiles.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1399,7 +1399,7 @@ client.profiles.list_profiles()
 </dl>
 </details>
 
-<details><summary><code>client.profiles.<a href="src/browser_use/profiles/client.py">create_profile</a>()</code></summary>
+<details><summary><code>client.profiles.<a href="src/browser_use_sdk/profiles/client.py">create_profile</a>()</code></summary>
 <dl>
 <dd>
 
@@ -1431,7 +1431,7 @@ You can create a new profile by calling this endpoint.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1464,7 +1464,7 @@ client.profiles.create_profile()
 </dl>
 </details>
 
-<details><summary><code>client.profiles.<a href="src/browser_use/profiles/client.py">get_profile</a>(...)</code></summary>
+<details><summary><code>client.profiles.<a href="src/browser_use_sdk/profiles/client.py">get_profile</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1491,7 +1491,7 @@ Get profile details.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",
@@ -1534,7 +1534,7 @@ client.profiles.get_profile(
 </dl>
 </details>
 
-<details><summary><code>client.profiles.<a href="src/browser_use/profiles/client.py">delete_browser_profile</a>(...)</code></summary>
+<details><summary><code>client.profiles.<a href="src/browser_use_sdk/profiles/client.py">delete_browser_profile</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -1561,7 +1561,7 @@ Permanently delete a browser profile and its configuration.
 <dd>
 
 ```python
-from browser_use import BrowserUse
+from browser_use_sdk import BrowserUse
 
 client = BrowserUse(
     api_key="YOUR_API_KEY",

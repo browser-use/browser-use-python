@@ -8,7 +8,7 @@ import typing
 
 import typing_extensions
 
-from browser_use.core.serialization import FieldMetadata
+from browser_use_sdk.core.serialization import FieldMetadata
 
 
 class Base(typing_extensions.TypedDict):
