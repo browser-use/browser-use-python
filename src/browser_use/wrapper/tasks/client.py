@@ -1,8 +1,6 @@
 import json
 import typing
 
-from pydantic import BaseModel
-
 from browser_use.core.request_options import RequestOptions
 from browser_use.tasks.client import OMIT, AsyncClientWrapper, AsyncTasksClient, SyncClientWrapper, TasksClient
 from browser_use.types.supported_ll_ms import SupportedLlMs
@@ -140,7 +138,7 @@ class BrowserUseTasksClient(TasksClient):
     def get_task(
         self,
         task_id: str,
-        schema: typing.Optional[typing.Union[typing.Type[T], str]] = OMIT,
+        schema: typing.Optional[typing.Type[T]] = OMIT,
         *,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
@@ -211,7 +209,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
         structured_output: typing.Optional[str] = OMIT,
-        schema: typing.Optional[typing.Type[BaseModel]] = OMIT,
+        schema: typing.Optional[typing.Type[T]] = OMIT,
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -276,7 +274,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
     async def get_task(
         self,
         task_id: str,
-        schema: typing.Optional[typing.Union[typing.Type[BaseModel], str]] = OMIT,
+        schema: typing.Optional[typing.Type[T]] = OMIT,
         *,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
