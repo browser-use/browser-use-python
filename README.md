@@ -9,26 +9,37 @@ The BrowserUse Python library provides convenient access to the BrowserUse APIs 
 
 ## Three-Step QuickStart
 
-1. 📦 Install the library with `pip install browser-use-sdk`
+1. 📦 Install Browser Use SDK
 
-1. ☝️ Get your API Key at [Browser Use Cloud](https://cloud.browser-use.com)...
+   ```sh
+   # PIP
+   pip install browser-use-sdk
 
-1. ✌️ Automate the web!
+   # Poetry
+   poetry add browser-use-sdk
 
-```python
-from browser_use_sdk import BrowserUseClient
+   # UV
+   uv add browser-use-sdk
+   ```
 
-client = BrowserUseClient(api_key="bu_...")
+1. 🔑 Get your API Key at [Browser Use Cloud](https://cloud.browser-use.com)!
 
-task = client.tasks.create_task(
-    task="Search for the top 10 Hacker News posts and return the title and url."
-    llm="gpt-4.1",
-)
+1. 🦄 Automate the Internet!
 
-result = task.complete()
+   ```python
+   from browser_use_sdk import BrowserUseClient
 
-result.output
-```
+   client = BrowserUseClient(api_key="bu_...")
+
+   task = client.tasks.create_task(
+       task="Search for the top 10 Hacker News posts and return the title and url."
+       llm="gpt-4.1",
+   )
+
+   result = task.complete()
+
+   result.output
+   ```
 
 > The full API of this library can be found in [api.md](api.md).
 
