@@ -31,7 +31,7 @@ class BrowserUseTasksClient(TasksClient):
         llm: typing.Optional[SupportedLlMs] = OMIT,
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
-        schema: type[T],
+        schema: typing.Type[T],
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -73,7 +73,7 @@ class BrowserUseTasksClient(TasksClient):
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
         structured_output: typing.Optional[str] = OMIT,
-        schema: typing.Optional[type[BaseModel]] = OMIT,
+        schema: typing.Optional[typing.Type[BaseModel]] = OMIT,
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -131,7 +131,7 @@ class BrowserUseTasksClient(TasksClient):
 
     @typing.overload
     def get_task(
-        self, task_id: str, schema: type[T], *, request_options: typing.Optional[RequestOptions] = None
+        self, task_id: str, schema: typing.Type[T], *, request_options: typing.Optional[RequestOptions] = None
     ) -> TaskViewWithOutput[T]: ...
 
     @typing.overload
@@ -140,7 +140,7 @@ class BrowserUseTasksClient(TasksClient):
     def get_task(
         self,
         task_id: str,
-        schema: typing.Optional[typing.Union[type[BaseModel], str]] = OMIT,
+        schema: typing.Optional[typing.Union[typing.Type[BaseModel], str]] = OMIT,
         *,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
@@ -167,7 +167,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         llm: typing.Optional[SupportedLlMs] = OMIT,
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
-        schema: type[T],
+        schema: typing.Type[T],
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -209,7 +209,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
         structured_output: typing.Optional[str] = OMIT,
-        schema: typing.Optional[type[BaseModel]] = OMIT,
+        schema: typing.Optional[typing.Type[BaseModel]] = OMIT,
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -265,7 +265,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
 
     @typing.overload
     async def get_task(
-        self, task_id: str, schema: type[T], *, request_options: typing.Optional[RequestOptions] = None
+        self, task_id: str, schema: typing.Type[T], *, request_options: typing.Optional[RequestOptions] = None
     ) -> TaskViewWithOutput[T]: ...
 
     @typing.overload
@@ -274,7 +274,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
     async def get_task(
         self,
         task_id: str,
-        schema: typing.Optional[typing.Union[type[BaseModel], str]] = OMIT,
+        schema: typing.Optional[typing.Union[typing.Type[BaseModel], str]] = OMIT,
         *,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:

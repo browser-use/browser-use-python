@@ -2,7 +2,7 @@ import hashlib
 import json
 import typing
 from datetime import datetime
-from typing import Any, AsyncIterator, Generic, Iterator, TypeVar, Union
+from typing import Any, AsyncIterator, Generic, Iterator, Type, TypeVar, Union
 
 from pydantic import BaseModel
 
@@ -110,7 +110,7 @@ class WrappedTaskCreatedResponse(TaskCreatedResponse):
 class WrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T]):
     """TaskCreatedResponse with structured output."""
 
-    def __init__(self, id: str, schema: type[T], client: TasksClient):
+    def __init__(self, id: str, schema: Type[T], client: TasksClient):
         super().__init__(id=id)
 
         self._client = client
@@ -172,7 +172,7 @@ class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
 class AsyncWrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T]):
     """TaskCreatedResponse with structured output."""
 
-    def __init__(self, id: str, schema: type[T], client: AsyncTasksClient):
+    def __init__(self, id: str, schema: Type[T], client: AsyncTasksClient):
         super().__init__(id=id)
 
         self._client = client
