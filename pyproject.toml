@@ -1,10 +1,10 @@
 [project]
-name = "browser-use"
+name = "browser-use-sdk"
 
 [tool.poetry]
-name = "browser-use"
-version = "0.0.0"
-description = ""
+name = "browser-use-sdk"
+version = "2.0.2"
+description = "The official Python library for the Browser Use API"
 readme = "README.md"
 authors = []
 keywords = []
