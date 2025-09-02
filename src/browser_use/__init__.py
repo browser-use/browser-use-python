@@ -3,7 +3,16 @@
 # isort: skip_file
 
 from . import accounts, files, profiles, sessions, tasks
-from .client import AsyncBrowserUse, BrowserUse
+from .client import AsyncBrowserUseClient, BrowserUseClient
 from .version import __version__
 
-__all__ = ["AsyncBrowserUse", "BrowserUse", "__version__", "accounts", "files", "profiles", "sessions", "tasks"]
+__all__ = [
+    "AsyncBrowserUseClient",
+    "BrowserUseClient",
+    "__version__",
+    "accounts",
+    "files",
+    "profiles",
+    "sessions",
+    "tasks",
+]

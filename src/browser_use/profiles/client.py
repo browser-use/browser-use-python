@@ -50,9 +50,9 @@ class ProfilesClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use import BrowserUseClient
 
-        client = BrowserUse(
+        client = BrowserUseClient(
             api_key="YOUR_API_KEY",
         )
         client.profiles.list_profiles()
@@ -83,9 +83,9 @@ class ProfilesClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use import BrowserUseClient
 
-        client = BrowserUse(
+        client = BrowserUseClient(
             api_key="YOUR_API_KEY",
         )
         client.profiles.create_profile()
@@ -111,9 +111,9 @@ class ProfilesClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use import BrowserUseClient
 
-        client = BrowserUse(
+        client = BrowserUseClient(
             api_key="YOUR_API_KEY",
         )
         client.profiles.get_profile(
@@ -142,9 +142,9 @@ class ProfilesClient:
 
         Examples
         --------
-        from browser_use import BrowserUse
+        from browser_use import BrowserUseClient
 
-        client = BrowserUse(
+        client = BrowserUseClient(
             api_key="YOUR_API_KEY",
         )
         client.profiles.delete_browser_profile(
@@ -198,9 +198,9 @@ class AsyncProfilesClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use import AsyncBrowserUseClient
 
-        client = AsyncBrowserUse(
+        client = AsyncBrowserUseClient(
             api_key="YOUR_API_KEY",
         )
 
@@ -239,9 +239,9 @@ class AsyncProfilesClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use import AsyncBrowserUseClient
 
-        client = AsyncBrowserUse(
+        client = AsyncBrowserUseClient(
             api_key="YOUR_API_KEY",
         )
 
@@ -277,9 +277,9 @@ class AsyncProfilesClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use import AsyncBrowserUseClient
 
-        client = AsyncBrowserUse(
+        client = AsyncBrowserUseClient(
             api_key="YOUR_API_KEY",
         )
 
@@ -316,9 +316,9 @@ class AsyncProfilesClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUse
+        from browser_use import AsyncBrowserUseClient
 
-        client = AsyncBrowserUse(
+        client = AsyncBrowserUseClient(
             api_key="YOUR_API_KEY",
         )
 
