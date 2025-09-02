@@ -6,7 +6,7 @@ from typing import List
 from api import API_KEY
 from pydantic import BaseModel
 
-from browser_use import AsyncBrowserUse
+from browser_use_sdk import AsyncBrowserUse
 
 client = AsyncBrowserUse(api_key=API_KEY)
 

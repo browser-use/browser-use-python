@@ -8,11 +8,11 @@ from typing import Any, AsyncIterator, Generic, Iterator, Type, TypeVar, Union
 
 from pydantic import BaseModel
 
-from browser_use.core.request_options import RequestOptions
-from browser_use.tasks.client import AsyncTasksClient, TasksClient
-from browser_use.types.task_created_response import TaskCreatedResponse
-from browser_use.types.task_step_view import TaskStepView
-from browser_use.types.task_view import TaskView
+from browser_use_sdk.core.request_options import RequestOptions
+from browser_use_sdk.tasks.client import AsyncTasksClient, TasksClient
+from browser_use_sdk.types.task_created_response import TaskCreatedResponse
+from browser_use_sdk.types.task_step_view import TaskStepView
+from browser_use_sdk.types.task_view import TaskView
 
 T = TypeVar("T", bound=BaseModel)
 

@@ -11,7 +11,7 @@ from .color import Color
 from .shape import ShapeParams
 from .undiscriminated_shape import UndiscriminatedShapeParams
 
-from browser_use.core.serialization import FieldMetadata
+from browser_use_sdk.core.serialization import FieldMetadata
 
 
 class ObjectWithOptionalFieldParams(typing_extensions.TypedDict):

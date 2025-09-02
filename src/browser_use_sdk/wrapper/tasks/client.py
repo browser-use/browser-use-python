@@ -1,11 +1,11 @@
 import json
 import typing
 
-from browser_use.core.request_options import RequestOptions
-from browser_use.tasks.client import OMIT, AsyncClientWrapper, AsyncTasksClient, SyncClientWrapper, TasksClient
-from browser_use.types.supported_ll_ms import SupportedLlMs
-from browser_use.types.task_view import TaskView
-from browser_use.wrapper.parse import (
+from browser_use_sdk.core.request_options import RequestOptions
+from browser_use_sdk.tasks.client import OMIT, AsyncClientWrapper, AsyncTasksClient, SyncClientWrapper, TasksClient
+from browser_use_sdk.types.supported_ll_ms import SupportedLlMs
+from browser_use_sdk.types.task_view import TaskView
+from browser_use_sdk.wrapper.parse import (
     AsyncWrappedStructuredTaskCreatedResponse,
     AsyncWrappedTaskCreatedResponse,
     T,

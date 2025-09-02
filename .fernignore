@@ -2,9 +2,9 @@
 .gitignore
 .vscode/
 
-src/browser_use/client.py
-src/browser_use/lib/
-src/browser_use/wrapper/
+src/browser_use_sdk/client.py
+src/browser_use_sdk/lib/
+src/browser_use_sdk/wrapper/
 examples/
 assets/
 

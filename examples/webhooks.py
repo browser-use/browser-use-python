@@ -3,7 +3,7 @@
 from datetime import datetime
 from typing import Any, Dict, Tuple
 
-from browser_use.lib.webhooks import (
+from browser_use_sdk.lib.webhooks import (
     Webhook,
     WebhookAgentTaskStatusUpdate,
     WebhookAgentTaskStatusUpdatePayload,
