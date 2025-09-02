@@ -57,8 +57,11 @@ async def watch_structured_task() -> None:
         if state.status == "finished":
             print(f"Structured Task Output: {state.output}")
 
-            for post in state.parsed_output.posts:
-                print(f" - {post.title} - {post.url}")
+            if state.parsed_output is not None:
+                for post in state.parsed_output.posts:
+                    print(f" - {post.title} - {post.url}")
+            else:
+                print("No output...")
 
             break
 
