@@ -1,13 +1,13 @@
-#!/usr/bin/env -S rye run python
+#!/usr/bin/env -S poetry run python
 
-import os
 from typing import List
 
 from pydantic import BaseModel
+from utils import API_KEY
 
 from browser_use import BrowserUse
 
-client = BrowserUse(api_key=os.getenv("BROWSER_USE_API_KEY"))
+client = BrowserUse(api_key=API_KEY)
 
 
 # Regular Task
