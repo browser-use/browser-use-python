@@ -205,9 +205,9 @@ The SDK provides access to raw response data, including headers, through the `.w
 The `.with_raw_response` property returns a "raw" client that can be used to access the `.headers` and `.data` attributes.
 
 ```python
-from browser_use import BrowserUseClient
+from browser_use import BrowserUse
 
-client = BrowserUseClient(
+client = BrowserUse(
     ...,
 )
 response = client.tasks.with_raw_response.create_task(...)
@@ -241,9 +241,9 @@ The SDK defaults to a 60 second timeout. You can configure this with a timeout o
 
 ```python
 
-from browser_use import BrowserUseClient
+from browser_use import BrowserUse
 
-client = BrowserUseClient(
+client = BrowserUse(
     ...,
     timeout=20.0,
 )
@@ -262,9 +262,9 @@ and transports.
 
 ```python
 import httpx
-from browser_use import BrowserUseClient
+from browser_use import BrowserUse
 
-client = BrowserUseClient(
+client = BrowserUse(
     ...,
     httpx_client=httpx.Client(
         proxies="http://my.test.proxy.example.com",
@@ -483,9 +483,9 @@ A full reference for this library is available [here](https://github.com/browser
 Instantiate and use the client with the following:
 
 ```python
-from browser_use import BrowserUseClient
+from browser_use import BrowserUse
 
-client = BrowserUseClient(
+client = BrowserUse(
     api_key="YOUR_API_KEY",
 )
 client.tasks.create_task(
@@ -500,9 +500,9 @@ The SDK also exports an `async` client so that you can make non-blocking calls t
 ```python
 import asyncio
 
-from browser_use import AsyncBrowserUseClient
+from browser_use import AsyncBrowserUse
 
-client = AsyncBrowserUseClient(
+client = AsyncBrowserUse(
     api_key="YOUR_API_KEY",
 )
 

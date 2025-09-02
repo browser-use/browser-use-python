@@ -39,9 +39,9 @@ class AccountsClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.accounts.get_account_me()
@@ -83,9 +83,9 @@ class AsyncAccountsClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 

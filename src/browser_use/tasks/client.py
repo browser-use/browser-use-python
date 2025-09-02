@@ -71,9 +71,9 @@ class TasksClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.tasks.list_tasks()
@@ -167,9 +167,9 @@ class TasksClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.tasks.create_task(
@@ -213,9 +213,9 @@ class TasksClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.tasks.get_task(
@@ -248,9 +248,9 @@ class TasksClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.tasks.update_task(
@@ -281,9 +281,9 @@ class TasksClient:
 
         Examples
         --------
-        from browser_use import BrowserUseClient
+        from browser_use import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.tasks.get_task_logs(
@@ -349,9 +349,9 @@ class AsyncTasksClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 
@@ -453,9 +453,9 @@ class AsyncTasksClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 
@@ -507,9 +507,9 @@ class AsyncTasksClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 
@@ -550,9 +550,9 @@ class AsyncTasksClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 
@@ -591,9 +591,9 @@ class AsyncTasksClient:
         --------
         import asyncio
 
-        from browser_use import AsyncBrowserUseClient
+        from browser_use import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 

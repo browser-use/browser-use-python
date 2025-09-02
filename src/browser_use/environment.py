@@ -3,5 +3,5 @@
 import enum
 
 
-class BrowserUseClientEnvironment(enum.Enum):
+class BrowserUseEnvironment(enum.Enum):
     PRODUCTION = "https://api.browser-use.com/api/v2"
