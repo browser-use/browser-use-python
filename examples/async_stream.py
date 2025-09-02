@@ -13,23 +13,17 @@ client = AsyncBrowserUse()
 
 # Regular Task
 async def stream_regular_task() -> None:
-    regular_task = await client.tasks.create(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         llm="gemini-2.5-flash",
     )
 
-    print(f"Regular Task ID: {regular_task.id}")
+    print(f"Regular Task ID: {task.id}")
 
-    async for res in client.tasks.stream(regular_task.id):
-        print(f"Regular Task Status: {res.status}")
-
-        if len(res.steps) > 0:
-            last_step = res.steps[-1]
-            print(f"Regular Task Step: {last_step.url} ({last_step.next_goal})")
-            for action in last_step.actions:
-                print(f" - Regular Task Action: {action}")
+    async for step in task.stream():
+        print(f"Regular Task Status: {step.number}")
 
     print("Regular Task Done")
 
@@ -43,26 +37,24 @@ async def stream_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_task = await client.tasks.create(
+    task = await client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         llm="gpt-4.1",
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    print(f"Structured Task ID: {structured_task.id}")
+    print(f"Structured Task ID: {task.id}")
 
-    async for res in client.tasks.stream(structured_task.id, structured_output_json=SearchResult):
-        print(f"Structured Task Status: {res.status}")
+    async for step in task.stream():
+        print(f"Structured Task Step {step.number}: {step.url} ({step.next_goal})")
 
-        if res.status == "finished":
-            if res.parsed_output is None:
-                print("Structured Task No output")
-            else:
-                for post in res.parsed_output.posts:
-                    print(f" - Structured Task Post: {post.title} - {post.url}")
-            break
+    result = await task.complete()
+
+    if result.parsed_output is not None:
+        for post in result.parsed_output.posts:
+            print(f" - {post.title} - {post.url}")
 
     print("Structured Task Done")
 

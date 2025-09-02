@@ -43,16 +43,16 @@ async def run_structured_task() -> None:
         Find top 10 Hacker News articles and return the title and url.
         """,
         llm="gpt-4.1",
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
     print(f"Structured Task ID: {task.id}")
 
     result = await task.complete()
 
-    if result.parsed is not None:
+    if result.parsed_output is not None:
         print("Structured Task Output:")
-        for post in result.parsed.posts:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
     print("Structured Task Done")

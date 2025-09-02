@@ -63,7 +63,7 @@ class BrowserUseTasksClient(TasksClient):
         vision: typing.Optional[bool] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> WrappedStructuredTaskCreatedResponse[T]: ...
+    ) -> WrappedTaskCreatedResponse: ...
 
     def create_task(
         self,

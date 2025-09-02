@@ -19,17 +19,17 @@ def retrieve_regular_task() -> None:
 
     print("Retrieving regular task...")
 
-    regular_task = client.tasks.create_task(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         llm="gemini-2.5-flash",
     )
 
-    print(f"Task ID: {regular_task.id}")
+    print(f"Task ID: {task.id}")
 
     while True:
-        regular_status = client.tasks.get_task(regular_task.id)
+        regular_status = client.tasks.get_task(task.id)
         print(regular_status.status)
         if regular_status.status == "finished":
             print(regular_status.output)
@@ -58,7 +58,7 @@ def retrieve_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_task = client.tasks.create_task(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
@@ -66,17 +66,17 @@ def retrieve_structured_task() -> None:
         schema=SearchResult,
     )
 
-    print(f"Task ID: {structured_task.id}")
+    print(f"Task ID: {task.id}")
 
     while True:
-        structured_status = client.tasks.get_task(task_id=structured_task.id, schema=SearchResult)
+        structured_status = client.tasks.get_task(task_id=task.id, schema=SearchResult)
         print(structured_status.status)
 
         if structured_status.status == "finished":
-            if structured_status.parsed is None:
+            if structured_status.parsed_output is None:
                 print("No output")
             else:
-                for post in structured_status.parsed.posts:
+                for post in structured_status.parsed_output.posts:
                     print(f" - {post.title} - {post.url}")
 
             break

@@ -40,18 +40,20 @@ def run_structured_task() -> None:
     class SearchResult(BaseModel):
         posts: List[HackerNewsPost]
 
-    structured_result = client.tasks.create_task(
+    task = client.tasks.create_task(
         task="""
         Find top 10 Hacker News articles and return the title and url.
         """,
         llm="gpt-4.1",
-        structured_output_json=SearchResult,
+        schema=SearchResult,
     )
 
-    print(f"Task ID: {structured_result.id}")
+    print(f"Task ID: {task.id}")
 
-    if structured_result.parsed_output is not None:
-        for post in structured_result.parsed_output.posts:
+    result = task.complete()
+
+    if result.parsed_output is not None:
+        for post in result.parsed_output.posts:
             print(f" - {post.title} - {post.url}")
 
     print("Done")
