@@ -62,9 +62,9 @@ class FilesClient:
 
         Examples
         --------
-        from browser_use_sdk import BrowserUseClient
+        from browser_use_sdk import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.files.user_upload_file_presigned_url(
@@ -105,9 +105,9 @@ class FilesClient:
 
         Examples
         --------
-        from browser_use_sdk import BrowserUseClient
+        from browser_use_sdk import BrowserUse
 
-        client = BrowserUseClient(
+        client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
         client.files.get_task_output_file_presigned_url(
@@ -172,9 +172,9 @@ class AsyncFilesClient:
         --------
         import asyncio
 
-        from browser_use_sdk import AsyncBrowserUseClient
+        from browser_use_sdk import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 
@@ -223,9 +223,9 @@ class AsyncFilesClient:
         --------
         import asyncio
 
-        from browser_use_sdk import AsyncBrowserUseClient
+        from browser_use_sdk import AsyncBrowserUse
 
-        client = AsyncBrowserUseClient(
+        client = AsyncBrowserUse(
             api_key="YOUR_API_KEY",
         )
 

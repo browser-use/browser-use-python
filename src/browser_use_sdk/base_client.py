@@ -6,7 +6,7 @@ import typing
 
 import httpx
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
-from .environment import BrowserUseClientEnvironment
+from .environment import BrowserUseEnvironment
 
 if typing.TYPE_CHECKING:
     from .accounts.client import AccountsClient, AsyncAccountsClient
@@ -25,12 +25,12 @@ class BaseClient:
     base_url : typing.Optional[str]
         The base url to use for requests from the client.
 
-    environment : BrowserUseClientEnvironment
-        The environment to use for requests from the client. from .environment import BrowserUseClientEnvironment
+    environment : BrowserUseEnvironment
+        The environment to use for requests from the client. from .environment import BrowserUseEnvironment
 
 
 
-        Defaults to BrowserUseClientEnvironment.PRODUCTION
+        Defaults to BrowserUseEnvironment.PRODUCTION
 
 
 
@@ -49,9 +49,9 @@ class BaseClient:
 
     Examples
     --------
-    from browser_use_sdk import BrowserUseClient
+    from browser_use_sdk import BrowserUse
 
-    client = BrowserUseClient(
+    client = BrowserUse(
         api_key="YOUR_API_KEY",
     )
     """
@@ -60,7 +60,7 @@ class BaseClient:
         self,
         *,
         base_url: typing.Optional[str] = None,
-        environment: BrowserUseClientEnvironment = BrowserUseClientEnvironment.PRODUCTION,
+        environment: BrowserUseEnvironment = BrowserUseEnvironment.PRODUCTION,
         api_key: str,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
@@ -137,12 +137,12 @@ class AsyncBaseClient:
     base_url : typing.Optional[str]
         The base url to use for requests from the client.
 
-    environment : BrowserUseClientEnvironment
-        The environment to use for requests from the client. from .environment import BrowserUseClientEnvironment
+    environment : BrowserUseEnvironment
+        The environment to use for requests from the client. from .environment import BrowserUseEnvironment
 
 
 
-        Defaults to BrowserUseClientEnvironment.PRODUCTION
+        Defaults to BrowserUseEnvironment.PRODUCTION
 
 
 
@@ -161,9 +161,9 @@ class AsyncBaseClient:
 
     Examples
     --------
-    from browser_use_sdk import AsyncBrowserUseClient
+    from browser_use_sdk import AsyncBrowserUse
 
-    client = AsyncBrowserUseClient(
+    client = AsyncBrowserUse(
         api_key="YOUR_API_KEY",
     )
     """
@@ -172,7 +172,7 @@ class AsyncBaseClient:
         self,
         *,
         base_url: typing.Optional[str] = None,
-        environment: BrowserUseClientEnvironment = BrowserUseClientEnvironment.PRODUCTION,
+        environment: BrowserUseEnvironment = BrowserUseEnvironment.PRODUCTION,
         api_key: str,
         headers: typing.Optional[typing.Dict[str, str]] = None,
         timeout: typing.Optional[float] = None,
@@ -240,7 +240,7 @@ class AsyncBaseClient:
         return self._profiles
 
 
-def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseClientEnvironment) -> str:
+def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseEnvironment) -> str:
     if base_url is not None:
         return base_url
     elif environment is not None:
