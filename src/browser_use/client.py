@@ -9,7 +9,7 @@ from .environment import BrowserUseEnvironment
 from .files.client import AsyncFilesClient, FilesClient
 from .profiles.client import AsyncProfilesClient, ProfilesClient
 from .sessions.client import AsyncSessionsClient, SessionsClient
-from .tasks.client import AsyncTasksClient, TasksClient
+from .wrapper.tasks.client import AsyncBrowserUseTasksClient, BrowserUseTasksClient
 
 
 class BrowserUse:
@@ -78,7 +78,7 @@ class BrowserUse:
             timeout=_defaulted_timeout,
         )
         self.accounts = AccountsClient(client_wrapper=self._client_wrapper)
-        self.tasks = TasksClient(client_wrapper=self._client_wrapper)
+        self.tasks = BrowserUseTasksClient(client_wrapper=self._client_wrapper)
         self.sessions = SessionsClient(client_wrapper=self._client_wrapper)
         self.files = FilesClient(client_wrapper=self._client_wrapper)
         self.profiles = ProfilesClient(client_wrapper=self._client_wrapper)
@@ -150,7 +150,7 @@ class AsyncBrowserUse:
             timeout=_defaulted_timeout,
         )
         self.accounts = AsyncAccountsClient(client_wrapper=self._client_wrapper)
-        self.tasks = AsyncTasksClient(client_wrapper=self._client_wrapper)
+        self.tasks = AsyncBrowserUseTasksClient(client_wrapper=self._client_wrapper)
         self.sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
         self.files = AsyncFilesClient(client_wrapper=self._client_wrapper)
         self.profiles = AsyncProfilesClient(client_wrapper=self._client_wrapper)

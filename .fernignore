@@ -3,4 +3,6 @@
 .vscode/
 
 src/browser_use/client.py
+src/browser_use/lib/
 src/browser_use/wrapper/
+examples/

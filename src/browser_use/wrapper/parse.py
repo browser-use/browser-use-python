@@ -72,9 +72,43 @@ def _watch(
         time.sleep(interval)
 
 
-class WrapperTaskCreatedResponse(TaskCreatedResponse):
+# Sync -----------------------------------------------------------------------
+
+
+class WrappedTaskCreatedResponse(TaskCreatedResponse):
     """TaskCreatedResponse with utility methods for easier interfacing with Browser Use Cloud."""
 
     def __init__(self, id: str):
         super().__init__()
         self.id = id
+
+
+class WrappedStructuredTaskCreatedResponse(TaskCreatedResponse):
+    """TaskCreatedResponse with structured output."""
+
+    def __init__(self, id: str, schema: type[T], client: BrowserUse):
+        super().__init__()
+
+        self.id = id
+        self._schema = schema
+
+
+# Async ----------------------------------------------------------------------
+
+
+class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
+    """TaskCreatedResponse with utility methods for easier interfacing with Browser Use Cloud."""
+
+    def __init__(self, id: str):
+        super().__init__()
+        self.id = id
+
+
+class AsyncWrappedStructuredTaskCreatedResponse(TaskCreatedResponse):
+    """TaskCreatedResponse with structured output."""
+
+    def __init__(self, id: str, schema: type[T], client: BrowserUse):
+        super().__init__()
+
+        self.id = id
+        self._schema = schema
