@@ -1,0 +1,77 @@
+#!/usr/bin/env -S poetry run python
+
+import asyncio
+from typing import List
+
+from api import API_KEY
+from pydantic import BaseModel
+
+from browser_use import AsyncBrowserUse
+
+client = AsyncBrowserUse(api_key=API_KEY)
+
+
+# Regular Task
+async def watch_regular_task() -> None:
+    task = await client.tasks.create_task(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        llm="gemini-2.5-flash",
+    )
+
+    print(f"Regular Task ID: {task.id}")
+
+    async for state in task.watch():
+        print(f"Regular Task Status: {state.status}")
+
+        if state.status == "finished":
+            print(f"Regular Task Output: {state.output}")
+            break
+
+    print("Regular Task Done")
+
+
+# Structured Output
+async def watch_structured_task() -> None:
+    class HackerNewsPost(BaseModel):
+        title: str
+        url: str
+
+    class SearchResult(BaseModel):
+        posts: List[HackerNewsPost]
+
+    task = await client.tasks.create_task(
+        task="""
+        Find top 10 Hacker News articles and return the title and url.
+        """,
+        llm="gpt-4.1",
+        schema=SearchResult,
+    )
+
+    print(f"Structured Task ID: {task.id}")
+
+    async for state in task.watch():
+        print(f"Structured Task Status: {state.status}")
+
+        if state.status == "finished":
+            print(f"Structured Task Output: {state.output}")
+
+            for post in state.parsed_output.posts:
+                print(f" - {post.title} - {post.url}")
+
+            break
+
+
+# Main
+
+
+async def main() -> None:
+    await asyncio.gather(
+        #
+        watch_regular_task(),
+        watch_structured_task(),
+    )
+
+
+asyncio.run(main())

@@ -198,7 +198,7 @@ class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
         """Streams the steps of the task and closes when the task is finished."""
         return _async_stream(self._client, self.id, interval, request_options)
 
-    async def watch(
+    def watch(
         self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncIterator[TaskView]:
         """Yields the latest task state on every change."""
