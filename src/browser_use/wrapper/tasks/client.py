@@ -73,7 +73,7 @@ class BrowserUseTasksClient(TasksClient):
         start_url: typing.Optional[str] = OMIT,
         max_steps: typing.Optional[int] = OMIT,
         structured_output: typing.Optional[str] = OMIT,
-        schema: typing.Optional[typing.Type[BaseModel]] = OMIT,
+        schema: typing.Optional[typing.Type[T]] = OMIT,
         session_id: typing.Optional[str] = OMIT,
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
@@ -140,15 +140,17 @@ class BrowserUseTasksClient(TasksClient):
     def get_task(
         self,
         task_id: str,
-        schema: typing.Optional[typing.Union[typing.Type[BaseModel], str]] = OMIT,
+        schema: typing.Optional[typing.Union[typing.Type[T], str]] = OMIT,
         *,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[TaskViewWithOutput[T], TaskView]:
         res = super().get_task(task_id, request_options=request_options)
 
         if schema is not None:
-            parsed_output = schema.model_validate_json(res.output)
-            return TaskViewWithOutput(**res.model_dump(), parsed_output=parsed_output)
+            if res.output is None:
+                return TaskViewWithOutput[T](**res.model_dump(), parsed_output=None)
+
+            return TaskViewWithOutput[T](**res.model_dump(), parsed_output=schema.model_validate_json(res.output))
         else:
             return res
 
@@ -281,7 +283,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         res = await super().get_task(task_id, request_options=request_options)
 
         if schema is not None:
-            parsed_output = schema.model_validate_json(res.output)
-            return TaskViewWithOutput(**res.model_dump(), parsed_output=parsed_output)
+            if res.output is None:
+                return TaskViewWithOutput[T](**res.model_dump(), parsed_output=None)
+
+            return TaskViewWithOutput[T](**res.model_dump(), parsed_output=schema.model_validate_json(res.output))
         else:
             return res
