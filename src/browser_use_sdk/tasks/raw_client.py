@@ -14,6 +14,7 @@ from ..core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
 from ..errors.internal_server_error import InternalServerError
 from ..errors.not_found_error import NotFoundError
+from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.supported_ll_ms import SupportedLlMs
 from ..types.task_created_response import TaskCreatedResponse
@@ -22,6 +23,7 @@ from ..types.task_log_file_response import TaskLogFileResponse
 from ..types.task_status import TaskStatus
 from ..types.task_update_action import TaskUpdateAction
 from ..types.task_view import TaskView
+from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -246,6 +248,17 @@ class RawTasksClient:
                         typing.Optional[typing.Any],
                         construct_type(
                             type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -676,6 +689,17 @@ class AsyncRawTasksClient:
                         typing.Optional[typing.Any],
                         construct_type(
                             type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),

@@ -142,35 +142,6 @@ class SessionsClient:
         _response = self._raw_client.get_session(session_id, request_options=request_options)
         return _response.data
 
-    def delete_session(self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
-        """
-        Permanently delete a session and all associated data.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        from browser_use_sdk import BrowserUse
-
-        client = BrowserUse(
-            api_key="YOUR_API_KEY",
-        )
-        client.sessions.delete_session(
-            session_id="session_id",
-        )
-        """
-        _response = self._raw_client.delete_session(session_id, request_options=request_options)
-        return _response.data
-
     def update_session(
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> SessionView:
@@ -449,43 +420,6 @@ class AsyncSessionsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_session(session_id, request_options=request_options)
-        return _response.data
-
-    async def delete_session(self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> None:
-        """
-        Permanently delete a session and all associated data.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        import asyncio
-
-        from browser_use_sdk import AsyncBrowserUse
-
-        client = AsyncBrowserUse(
-            api_key="YOUR_API_KEY",
-        )
-
-
-        async def main() -> None:
-            await client.sessions.delete_session(
-                session_id="session_id",
-            )
-
-
-        asyncio.run(main())
-        """
-        _response = await self._raw_client.delete_session(session_id, request_options=request_options)
         return _response.data
 
     async def update_session(
