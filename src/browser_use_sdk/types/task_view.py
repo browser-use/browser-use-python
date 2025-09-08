@@ -56,11 +56,6 @@ class TaskView(UncheckedBaseModel):
     Optional additional metadata associated with the task set by the user
     """
 
-    is_scheduled: typing_extensions.Annotated[bool, FieldMetadata(alias="isScheduled")] = pydantic.Field()
-    """
-    Whether this task was created as a scheduled task
-    """
-
     steps: typing.List[TaskStepView]
     output: typing.Optional[str] = pydantic.Field(default=None)
     """
