@@ -5,25 +5,25 @@ import typing
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.account_view import AccountView
-from .raw_client import AsyncRawAccountsClient, RawAccountsClient
+from .raw_client import AsyncRawBillingClient, RawBillingClient
 
 
-class AccountsClient:
+class BillingClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
-        self._raw_client = RawAccountsClient(client_wrapper=client_wrapper)
+        self._raw_client = RawBillingClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> RawAccountsClient:
+    def with_raw_response(self) -> RawBillingClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        RawAccountsClient
+        RawBillingClient
         """
         return self._raw_client
 
-    def get_account_me(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
+    def get_account_billing(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
         """
         Get authenticated account information including credit balances and account details.
 
@@ -44,28 +44,28 @@ class AccountsClient:
         client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
-        client.accounts.get_account_me()
+        client.billing.get_account_billing()
         """
-        _response = self._raw_client.get_account_me(request_options=request_options)
+        _response = self._raw_client.get_account_billing(request_options=request_options)
         return _response.data
 
 
-class AsyncAccountsClient:
+class AsyncBillingClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
-        self._raw_client = AsyncRawAccountsClient(client_wrapper=client_wrapper)
+        self._raw_client = AsyncRawBillingClient(client_wrapper=client_wrapper)
 
     @property
-    def with_raw_response(self) -> AsyncRawAccountsClient:
+    def with_raw_response(self) -> AsyncRawBillingClient:
         """
         Retrieves a raw implementation of this client that returns raw responses.
 
         Returns
         -------
-        AsyncRawAccountsClient
+        AsyncRawBillingClient
         """
         return self._raw_client
 
-    async def get_account_me(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
+    async def get_account_billing(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
         """
         Get authenticated account information including credit balances and account details.
 
@@ -91,10 +91,10 @@ class AsyncAccountsClient:
 
 
         async def main() -> None:
-            await client.accounts.get_account_me()
+            await client.billing.get_account_billing()
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_account_me(request_options=request_options)
+        _response = await self._raw_client.get_account_billing(request_options=request_options)
         return _response.data

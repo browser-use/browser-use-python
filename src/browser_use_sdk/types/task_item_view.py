@@ -37,9 +37,16 @@ class TaskItemView(UncheckedBaseModel):
     """
 
     status: TaskStatus
-    started_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="startedAt")] = pydantic.Field()
+    created_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="createdAt")] = pydantic.Field()
     """
-    Naive UTC timestamp when the task was started
+    Naive UTC timestamp when the task was created
+    """
+
+    started_at: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="startedAt")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Naive UTC timestamp when the task was started (None if task has not started yet)
     """
 
     finished_at: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="finishedAt")] = (

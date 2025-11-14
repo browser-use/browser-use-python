@@ -10,6 +10,7 @@ from ..core.datetime_utils import serialize_datetime
 from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
 from ..errors.internal_server_error import InternalServerError
@@ -24,6 +25,7 @@ from ..types.task_status import TaskStatus
 from ..types.task_update_action import TaskUpdateAction
 from ..types.task_view import TaskView
 from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
+from .types.create_task_request_vision import CreateTaskRequestVision
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -120,10 +122,11 @@ class RawTasksClient:
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[TaskCreatedResponse]:
@@ -153,13 +156,16 @@ class RawTasksClient:
             The ID of the session where the task will run.
 
         metadata : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The metadata for the task.
+            The metadata for the task. Up to 10 key-value pairs.
 
         secrets : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The secrets for the task.
+            The secrets for the task. Allowed domains are not required for secrets to be injected, but are recommended.
 
         allowed_domains : typing.Optional[typing.Sequence[str]]
             The allowed domains for the task.
+
+        op_vault_id : typing.Optional[str]
+            The ID of the 1Password vault to use for the task. This is used to inject secrets into the task.
 
         highlight_elements : typing.Optional[bool]
             Tells the agent to highlight interactive elements on the page.
@@ -170,8 +176,8 @@ class RawTasksClient:
         thinking : typing.Optional[bool]
             Whether agent thinking mode is enabled.
 
-        vision : typing.Optional[bool]
-            Whether agent vision capabilities are enabled.
+        vision : typing.Optional[CreateTaskRequestVision]
+            Whether agent vision capabilities are enabled. Set to 'auto' to let the agent decide based on the model capabilities.
 
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
@@ -197,10 +203,13 @@ class RawTasksClient:
                 "metadata": metadata,
                 "secrets": secrets,
                 "allowedDomains": allowed_domains,
+                "opVaultId": op_vault_id,
                 "highlightElements": highlight_elements,
                 "flashMode": flash_mode,
                 "thinking": thinking,
-                "vision": vision,
+                "vision": convert_and_respect_annotation_metadata(
+                    object_=vision, annotation=CreateTaskRequestVision, direction="write"
+                ),
                 "systemPromptExtension": system_prompt_extension,
             },
             headers={
@@ -561,10 +570,11 @@ class AsyncRawTasksClient:
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[TaskCreatedResponse]:
@@ -594,13 +604,16 @@ class AsyncRawTasksClient:
             The ID of the session where the task will run.
 
         metadata : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The metadata for the task.
+            The metadata for the task. Up to 10 key-value pairs.
 
         secrets : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The secrets for the task.
+            The secrets for the task. Allowed domains are not required for secrets to be injected, but are recommended.
 
         allowed_domains : typing.Optional[typing.Sequence[str]]
             The allowed domains for the task.
+
+        op_vault_id : typing.Optional[str]
+            The ID of the 1Password vault to use for the task. This is used to inject secrets into the task.
 
         highlight_elements : typing.Optional[bool]
             Tells the agent to highlight interactive elements on the page.
@@ -611,8 +624,8 @@ class AsyncRawTasksClient:
         thinking : typing.Optional[bool]
             Whether agent thinking mode is enabled.
 
-        vision : typing.Optional[bool]
-            Whether agent vision capabilities are enabled.
+        vision : typing.Optional[CreateTaskRequestVision]
+            Whether agent vision capabilities are enabled. Set to 'auto' to let the agent decide based on the model capabilities.
 
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
@@ -638,10 +651,13 @@ class AsyncRawTasksClient:
                 "metadata": metadata,
                 "secrets": secrets,
                 "allowedDomains": allowed_domains,
+                "opVaultId": op_vault_id,
                 "highlightElements": highlight_elements,
                 "flashMode": flash_mode,
                 "thinking": thinking,
-                "vision": vision,
+                "vision": convert_and_respect_annotation_metadata(
+                    object_=vision, annotation=CreateTaskRequestVision, direction="write"
+                ),
                 "systemPromptExtension": system_prompt_extension,
             },
             headers={

@@ -9,11 +9,13 @@ from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .environment import BrowserUseEnvironment
 
 if typing.TYPE_CHECKING:
-    from .accounts.client import AccountsClient, AsyncAccountsClient
+    from .billing.client import AsyncBillingClient, BillingClient
+    from .browsers.client import AsyncBrowsersClient, BrowsersClient
     from .files.client import AsyncFilesClient, FilesClient
     from .profiles.client import AsyncProfilesClient, ProfilesClient
     from .sessions.client import AsyncSessionsClient, SessionsClient
     from .tasks.client import AsyncTasksClient, TasksClient
+    from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 
 
 class BaseClient:
@@ -81,19 +83,21 @@ class BaseClient:
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self._accounts: typing.Optional[AccountsClient] = None
+        self._billing: typing.Optional[BillingClient] = None
         self._tasks: typing.Optional[TasksClient] = None
         self._sessions: typing.Optional[SessionsClient] = None
         self._files: typing.Optional[FilesClient] = None
         self._profiles: typing.Optional[ProfilesClient] = None
+        self._browsers: typing.Optional[BrowsersClient] = None
+        self._workflows: typing.Optional[WorkflowsClient] = None
 
     @property
-    def accounts(self):
-        if self._accounts is None:
-            from .accounts.client import AccountsClient  # noqa: E402
+    def billing(self):
+        if self._billing is None:
+            from .billing.client import BillingClient  # noqa: E402
 
-            self._accounts = AccountsClient(client_wrapper=self._client_wrapper)
-        return self._accounts
+            self._billing = BillingClient(client_wrapper=self._client_wrapper)
+        return self._billing
 
     @property
     def tasks(self):
@@ -126,6 +130,22 @@ class BaseClient:
 
             self._profiles = ProfilesClient(client_wrapper=self._client_wrapper)
         return self._profiles
+
+    @property
+    def browsers(self):
+        if self._browsers is None:
+            from .browsers.client import BrowsersClient  # noqa: E402
+
+            self._browsers = BrowsersClient(client_wrapper=self._client_wrapper)
+        return self._browsers
+
+    @property
+    def workflows(self):
+        if self._workflows is None:
+            from .workflows.client import WorkflowsClient  # noqa: E402
+
+            self._workflows = WorkflowsClient(client_wrapper=self._client_wrapper)
+        return self._workflows
 
 
 class AsyncBaseClient:
@@ -193,19 +213,21 @@ class AsyncBaseClient:
             else httpx.AsyncClient(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self._accounts: typing.Optional[AsyncAccountsClient] = None
+        self._billing: typing.Optional[AsyncBillingClient] = None
         self._tasks: typing.Optional[AsyncTasksClient] = None
         self._sessions: typing.Optional[AsyncSessionsClient] = None
         self._files: typing.Optional[AsyncFilesClient] = None
         self._profiles: typing.Optional[AsyncProfilesClient] = None
+        self._browsers: typing.Optional[AsyncBrowsersClient] = None
+        self._workflows: typing.Optional[AsyncWorkflowsClient] = None
 
     @property
-    def accounts(self):
-        if self._accounts is None:
-            from .accounts.client import AsyncAccountsClient  # noqa: E402
+    def billing(self):
+        if self._billing is None:
+            from .billing.client import AsyncBillingClient  # noqa: E402
 
-            self._accounts = AsyncAccountsClient(client_wrapper=self._client_wrapper)
-        return self._accounts
+            self._billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
+        return self._billing
 
     @property
     def tasks(self):
@@ -238,6 +260,22 @@ class AsyncBaseClient:
 
             self._profiles = AsyncProfilesClient(client_wrapper=self._client_wrapper)
         return self._profiles
+
+    @property
+    def browsers(self):
+        if self._browsers is None:
+            from .browsers.client import AsyncBrowsersClient  # noqa: E402
+
+            self._browsers = AsyncBrowsersClient(client_wrapper=self._client_wrapper)
+        return self._browsers
+
+    @property
+    def workflows(self):
+        if self._workflows is None:
+            from .workflows.client import AsyncWorkflowsClient  # noqa: E402
+
+            self._workflows = AsyncWorkflowsClient(client_wrapper=self._client_wrapper)
+        return self._workflows
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseEnvironment) -> str:

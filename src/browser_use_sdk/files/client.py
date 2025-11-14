@@ -6,8 +6,8 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
 from ..types.task_output_file_response import TaskOutputFileResponse
 from ..types.upload_file_presigned_url_response import UploadFilePresignedUrlResponse
+from ..types.upload_file_request_content_type import UploadFileRequestContentType
 from .raw_client import AsyncRawFilesClient, RawFilesClient
-from .types.upload_file_request_content_type import UploadFileRequestContentType
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -28,7 +28,7 @@ class FilesClient:
         """
         return self._raw_client
 
-    def user_upload_file_presigned_url(
+    def agent_session_upload_file_presigned_url(
         self,
         session_id: str,
         *,
@@ -38,7 +38,7 @@ class FilesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UploadFilePresignedUrlResponse:
         """
-        Generate a secure presigned URL for uploading files that AI agents can use during tasks.
+        Generate a secure presigned URL for uploading files to an agent session.
 
         Parameters
         ----------
@@ -67,14 +67,69 @@ class FilesClient:
         client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
-        client.files.user_upload_file_presigned_url(
+        client.files.agent_session_upload_file_presigned_url(
             session_id="session_id",
             file_name="fileName",
             content_type="image/jpg",
             size_bytes=1,
         )
         """
-        _response = self._raw_client.user_upload_file_presigned_url(
+        _response = self._raw_client.agent_session_upload_file_presigned_url(
+            session_id,
+            file_name=file_name,
+            content_type=content_type,
+            size_bytes=size_bytes,
+            request_options=request_options,
+        )
+        return _response.data
+
+    def browser_session_upload_file_presigned_url(
+        self,
+        session_id: str,
+        *,
+        file_name: str,
+        content_type: UploadFileRequestContentType,
+        size_bytes: int,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UploadFilePresignedUrlResponse:
+        """
+        Generate a secure presigned URL for uploading files to a browser session.
+
+        Parameters
+        ----------
+        session_id : str
+
+        file_name : str
+            The name of the file to upload
+
+        content_type : UploadFileRequestContentType
+            The content type of the file to upload
+
+        size_bytes : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UploadFilePresignedUrlResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.files.browser_session_upload_file_presigned_url(
+            session_id="session_id",
+            file_name="fileName",
+            content_type="image/jpg",
+            size_bytes=1,
+        )
+        """
+        _response = self._raw_client.browser_session_upload_file_presigned_url(
             session_id,
             file_name=file_name,
             content_type=content_type,
@@ -136,7 +191,7 @@ class AsyncFilesClient:
         """
         return self._raw_client
 
-    async def user_upload_file_presigned_url(
+    async def agent_session_upload_file_presigned_url(
         self,
         session_id: str,
         *,
@@ -146,7 +201,7 @@ class AsyncFilesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> UploadFilePresignedUrlResponse:
         """
-        Generate a secure presigned URL for uploading files that AI agents can use during tasks.
+        Generate a secure presigned URL for uploading files to an agent session.
 
         Parameters
         ----------
@@ -180,7 +235,7 @@ class AsyncFilesClient:
 
 
         async def main() -> None:
-            await client.files.user_upload_file_presigned_url(
+            await client.files.agent_session_upload_file_presigned_url(
                 session_id="session_id",
                 file_name="fileName",
                 content_type="image/jpg",
@@ -190,7 +245,70 @@ class AsyncFilesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.user_upload_file_presigned_url(
+        _response = await self._raw_client.agent_session_upload_file_presigned_url(
+            session_id,
+            file_name=file_name,
+            content_type=content_type,
+            size_bytes=size_bytes,
+            request_options=request_options,
+        )
+        return _response.data
+
+    async def browser_session_upload_file_presigned_url(
+        self,
+        session_id: str,
+        *,
+        file_name: str,
+        content_type: UploadFileRequestContentType,
+        size_bytes: int,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> UploadFilePresignedUrlResponse:
+        """
+        Generate a secure presigned URL for uploading files to a browser session.
+
+        Parameters
+        ----------
+        session_id : str
+
+        file_name : str
+            The name of the file to upload
+
+        content_type : UploadFileRequestContentType
+            The content type of the file to upload
+
+        size_bytes : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        UploadFilePresignedUrlResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.files.browser_session_upload_file_presigned_url(
+                session_id="session_id",
+                file_name="fileName",
+                content_type="image/jpg",
+                size_bytes=1,
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.browser_session_upload_file_presigned_url(
             session_id,
             file_name=file_name,
             content_type=content_type,

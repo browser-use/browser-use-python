@@ -3,26 +3,16 @@
 import typing
 
 import pydantic
-import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class TaskCreatedResponse(UncheckedBaseModel):
+class SessionTimeoutLimitExceededError(UncheckedBaseModel):
     """
-    Response model for creating a task
-    """
-
-    id: str = pydantic.Field()
-    """
-    Unique identifier for the created task
+    Error response when free user tries to create session longer than allowed
     """
 
-    session_id: typing_extensions.Annotated[str, FieldMetadata(alias="sessionId")] = pydantic.Field()
-    """
-    Session ID where the task was created
-    """
+    detail: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

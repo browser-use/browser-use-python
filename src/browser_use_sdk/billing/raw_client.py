@@ -9,14 +9,17 @@ from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
 from ..errors.not_found_error import NotFoundError
+from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.account_view import AccountView
 
 
-class RawAccountsClient:
+class RawBillingClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def get_account_me(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[AccountView]:
+    def get_account_billing(
+        self, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[AccountView]:
         """
         Get authenticated account information including credit balances and account details.
 
@@ -31,7 +34,7 @@ class RawAccountsClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "accounts/me",
+            "billing/account",
             method="GET",
             request_options=request_options,
         )
@@ -56,17 +59,28 @@ class RawAccountsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
 
-class AsyncRawAccountsClient:
+class AsyncRawBillingClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def get_account_me(
+    async def get_account_billing(
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[AccountView]:
         """
@@ -83,7 +97,7 @@ class AsyncRawAccountsClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "accounts/me",
+            "billing/account",
             method="GET",
             request_options=request_options,
         )
@@ -99,6 +113,17 @@ class AsyncRawAccountsClient:
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 404:
                 raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Optional[typing.Any],

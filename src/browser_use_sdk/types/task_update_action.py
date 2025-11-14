@@ -2,4 +2,4 @@
 
 import typing
 
-TaskUpdateAction = typing.Union[typing.Literal["stop", "pause", "resume", "stop_task_and_session"], typing.Any]
+TaskUpdateAction = typing.Union[typing.Literal["stop", "stop_task_and_session"], typing.Any]

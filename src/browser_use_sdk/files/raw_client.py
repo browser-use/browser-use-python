@@ -15,7 +15,7 @@ from ..errors.not_found_error import NotFoundError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.task_output_file_response import TaskOutputFileResponse
 from ..types.upload_file_presigned_url_response import UploadFilePresignedUrlResponse
-from .types.upload_file_request_content_type import UploadFileRequestContentType
+from ..types.upload_file_request_content_type import UploadFileRequestContentType
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -25,7 +25,7 @@ class RawFilesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def user_upload_file_presigned_url(
+    def agent_session_upload_file_presigned_url(
         self,
         session_id: str,
         *,
@@ -35,7 +35,7 @@ class RawFilesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[UploadFilePresignedUrlResponse]:
         """
-        Generate a secure presigned URL for uploading files that AI agents can use during tasks.
+        Generate a secure presigned URL for uploading files to an agent session.
 
         Parameters
         ----------
@@ -59,6 +59,111 @@ class RawFilesClient:
         """
         _response = self._client_wrapper.httpx_client.request(
             f"files/sessions/{jsonable_encoder(session_id)}/presigned-url",
+            method="POST",
+            json={
+                "fileName": file_name,
+                "contentType": content_type,
+                "sizeBytes": size_bytes,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UploadFilePresignedUrlResponse,
+                    construct_type(
+                        type_=UploadFilePresignedUrlResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def browser_session_upload_file_presigned_url(
+        self,
+        session_id: str,
+        *,
+        file_name: str,
+        content_type: UploadFileRequestContentType,
+        size_bytes: int,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[UploadFilePresignedUrlResponse]:
+        """
+        Generate a secure presigned URL for uploading files to a browser session.
+
+        Parameters
+        ----------
+        session_id : str
+
+        file_name : str
+            The name of the file to upload
+
+        content_type : UploadFileRequestContentType
+            The content type of the file to upload
+
+        size_bytes : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[UploadFilePresignedUrlResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"files/browsers/{jsonable_encoder(session_id)}/presigned-url",
             method="POST",
             json={
                 "fileName": file_name,
@@ -208,7 +313,7 @@ class AsyncRawFilesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def user_upload_file_presigned_url(
+    async def agent_session_upload_file_presigned_url(
         self,
         session_id: str,
         *,
@@ -218,7 +323,7 @@ class AsyncRawFilesClient:
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[UploadFilePresignedUrlResponse]:
         """
-        Generate a secure presigned URL for uploading files that AI agents can use during tasks.
+        Generate a secure presigned URL for uploading files to an agent session.
 
         Parameters
         ----------
@@ -242,6 +347,111 @@ class AsyncRawFilesClient:
         """
         _response = await self._client_wrapper.httpx_client.request(
             f"files/sessions/{jsonable_encoder(session_id)}/presigned-url",
+            method="POST",
+            json={
+                "fileName": file_name,
+                "contentType": content_type,
+                "sizeBytes": size_bytes,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    UploadFilePresignedUrlResponse,
+                    construct_type(
+                        type_=UploadFilePresignedUrlResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 500:
+                raise InternalServerError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def browser_session_upload_file_presigned_url(
+        self,
+        session_id: str,
+        *,
+        file_name: str,
+        content_type: UploadFileRequestContentType,
+        size_bytes: int,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[UploadFilePresignedUrlResponse]:
+        """
+        Generate a secure presigned URL for uploading files to a browser session.
+
+        Parameters
+        ----------
+        session_id : str
+
+        file_name : str
+            The name of the file to upload
+
+        content_type : UploadFileRequestContentType
+            The content type of the file to upload
+
+        size_bytes : int
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[UploadFilePresignedUrlResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"files/browsers/{jsonable_encoder(session_id)}/presigned-url",
             method="POST",
             json={
                 "fileName": file_name,

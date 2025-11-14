@@ -77,6 +77,7 @@ class SessionsClient:
         *,
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
+        start_url: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -89,6 +90,9 @@ class SessionsClient:
 
         proxy_country_code : typing.Optional[ProxyCountryCode]
             Country code for proxy location.
+
+        start_url : typing.Optional[str]
+            URL to navigate to when the session starts.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -108,7 +112,10 @@ class SessionsClient:
         client.sessions.create_session()
         """
         _response = self._raw_client.create_session(
-            profile_id=profile_id, proxy_country_code=proxy_country_code, request_options=request_options
+            profile_id=profile_id,
+            proxy_country_code=proxy_country_code,
+            start_url=start_url,
+            request_options=request_options,
         )
         return _response.data
 
@@ -339,6 +346,7 @@ class AsyncSessionsClient:
         *,
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
+        start_url: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -351,6 +359,9 @@ class AsyncSessionsClient:
 
         proxy_country_code : typing.Optional[ProxyCountryCode]
             Country code for proxy location.
+
+        start_url : typing.Optional[str]
+            URL to navigate to when the session starts.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -378,7 +389,10 @@ class AsyncSessionsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.create_session(
-            profile_id=profile_id, proxy_country_code=proxy_country_code, request_options=request_options
+            profile_id=profile_id,
+            proxy_country_code=proxy_country_code,
+            start_url=start_url,
+            request_options=request_options,
         )
         return _response.data
 

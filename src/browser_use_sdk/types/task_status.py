@@ -2,4 +2,4 @@
 
 import typing
 
-TaskStatus = typing.Union[typing.Literal["started", "paused", "finished", "stopped"], typing.Any]
+TaskStatus = typing.Union[typing.Literal["created", "started", "finished", "stopped"], typing.Any]

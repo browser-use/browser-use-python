@@ -22,6 +22,11 @@ class ProfileView(UncheckedBaseModel):
     Unique identifier for the profile
     """
 
+    name: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Optional name for the profile
+    """
+
     last_used_at: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="lastUsedAt")] = (
         pydantic.Field(default=None)
     )
@@ -37,6 +42,13 @@ class ProfileView(UncheckedBaseModel):
     updated_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="updatedAt")] = pydantic.Field()
     """
     Timestamp when the profile was last updated
+    """
+
+    cookie_domains: typing_extensions.Annotated[
+        typing.Optional[typing.List[str]], FieldMetadata(alias="cookieDomains")
+    ] = pydantic.Field(default=None)
+    """
+    List of domain URLs that have cookies stored for this profile
     """
 
     if IS_PYDANTIC_V2:

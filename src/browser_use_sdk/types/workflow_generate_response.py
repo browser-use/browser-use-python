@@ -9,19 +9,24 @@ from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class TaskCreatedResponse(UncheckedBaseModel):
+class WorkflowGenerateResponse(UncheckedBaseModel):
     """
-    Response model for creating a task
-    """
-
-    id: str = pydantic.Field()
-    """
-    Unique identifier for the created task
+    Response model for workflow generation request.
     """
 
-    session_id: typing_extensions.Annotated[str, FieldMetadata(alias="sessionId")] = pydantic.Field()
+    workflow_id: typing_extensions.Annotated[str, FieldMetadata(alias="workflowId")] = pydantic.Field()
     """
-    Session ID where the task was created
+    ID of the workflow that was updated with generated YAML
+    """
+
+    status: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Status of the generation request (e.g., "pending", "processing")
+    """
+
+    message: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Human-readable message about the generation request
     """
 
     if IS_PYDANTIC_V2:

@@ -7,22 +7,27 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
+from .upload_file_request_content_type import UploadFileRequestContentType
 
 
-class TaskCreatedResponse(UncheckedBaseModel):
+class UploadFileRequest(UncheckedBaseModel):
     """
-    Response model for creating a task
-    """
-
-    id: str = pydantic.Field()
-    """
-    Unique identifier for the created task
+    Request model for uploading a file to the user's files bucket.
     """
 
-    session_id: typing_extensions.Annotated[str, FieldMetadata(alias="sessionId")] = pydantic.Field()
+    file_name: typing_extensions.Annotated[str, FieldMetadata(alias="fileName")] = pydantic.Field()
     """
-    Session ID where the task was created
+    The name of the file to upload
     """
+
+    content_type: typing_extensions.Annotated[UploadFileRequestContentType, FieldMetadata(alias="contentType")] = (
+        pydantic.Field()
+    )
+    """
+    The content type of the file to upload
+    """
+
+    size_bytes: typing_extensions.Annotated[int, FieldMetadata(alias="sizeBytes")]
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

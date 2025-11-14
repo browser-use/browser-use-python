@@ -4,13 +4,17 @@ import typing
 
 SupportedLlMs = typing.Union[
     typing.Literal[
+        "browser-use-llm",
         "gpt-4.1",
         "gpt-4.1-mini",
         "o4-mini",
         "o3",
         "gemini-2.5-flash",
         "gemini-2.5-pro",
+        "gemini-flash-latest",
+        "gemini-flash-lite-latest",
         "claude-sonnet-4-20250514",
+        "claude-sonnet-4-5-20250929",
         "gpt-4o",
         "gpt-4o-mini",
         "llama-4-maverick-17b-128e-instruct",

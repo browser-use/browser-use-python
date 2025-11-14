@@ -8,6 +8,9 @@ from ..types.profile_list_response import ProfileListResponse
 from ..types.profile_view import ProfileView
 from .raw_client import AsyncRawProfilesClient, RawProfilesClient
 
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
+
 
 class ProfilesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
@@ -62,7 +65,9 @@ class ProfilesClient:
         )
         return _response.data
 
-    def create_profile(self, *, request_options: typing.Optional[RequestOptions] = None) -> ProfileView:
+    def create_profile(
+        self, *, name: typing.Optional[str] = OMIT, request_options: typing.Optional[RequestOptions] = None
+    ) -> ProfileView:
         """
         Profiles allow you to preserve the state of the browser between tasks.
 
@@ -73,6 +78,9 @@ class ProfilesClient:
 
         Parameters
         ----------
+        name : typing.Optional[str]
+            Optional name for the profile
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -90,7 +98,7 @@ class ProfilesClient:
         )
         client.profiles.create_profile()
         """
-        _response = self._raw_client.create_profile(request_options=request_options)
+        _response = self._raw_client.create_profile(name=name, request_options=request_options)
         return _response.data
 
     def get_profile(self, profile_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> ProfileView:
@@ -152,6 +160,45 @@ class ProfilesClient:
         )
         """
         _response = self._raw_client.delete_browser_profile(profile_id, request_options=request_options)
+        return _response.data
+
+    def update_profile(
+        self,
+        profile_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ProfileView:
+        """
+        Update a browser profile's information.
+
+        Parameters
+        ----------
+        profile_id : str
+
+        name : typing.Optional[str]
+            Optional name for the profile
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ProfileView
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.profiles.update_profile(
+            profile_id="profile_id",
+        )
+        """
+        _response = self._raw_client.update_profile(profile_id, name=name, request_options=request_options)
         return _response.data
 
 
@@ -216,7 +263,9 @@ class AsyncProfilesClient:
         )
         return _response.data
 
-    async def create_profile(self, *, request_options: typing.Optional[RequestOptions] = None) -> ProfileView:
+    async def create_profile(
+        self, *, name: typing.Optional[str] = OMIT, request_options: typing.Optional[RequestOptions] = None
+    ) -> ProfileView:
         """
         Profiles allow you to preserve the state of the browser between tasks.
 
@@ -227,6 +276,9 @@ class AsyncProfilesClient:
 
         Parameters
         ----------
+        name : typing.Optional[str]
+            Optional name for the profile
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -252,7 +304,7 @@ class AsyncProfilesClient:
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.create_profile(request_options=request_options)
+        _response = await self._raw_client.create_profile(name=name, request_options=request_options)
         return _response.data
 
     async def get_profile(
@@ -332,4 +384,51 @@ class AsyncProfilesClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.delete_browser_profile(profile_id, request_options=request_options)
+        return _response.data
+
+    async def update_profile(
+        self,
+        profile_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ProfileView:
+        """
+        Update a browser profile's information.
+
+        Parameters
+        ----------
+        profile_id : str
+
+        name : typing.Optional[str]
+            Optional name for the profile
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ProfileView
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.profiles.update_profile(
+                profile_id="profile_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.update_profile(profile_id, name=name, request_options=request_options)
         return _response.data

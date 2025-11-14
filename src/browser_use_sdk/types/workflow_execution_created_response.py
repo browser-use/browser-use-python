@@ -7,21 +7,27 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
+from .workflow_execution_status import WorkflowExecutionStatus
 
 
-class TaskCreatedResponse(UncheckedBaseModel):
+class WorkflowExecutionCreatedResponse(UncheckedBaseModel):
     """
-    Response model for creating a task
+    Response model for creating a workflow execution (async mode).
     """
 
     id: str = pydantic.Field()
     """
-    Unique identifier for the created task
+    Unique identifier for the execution
     """
 
-    session_id: typing_extensions.Annotated[str, FieldMetadata(alias="sessionId")] = pydantic.Field()
+    workflow_id: typing_extensions.Annotated[str, FieldMetadata(alias="workflowId")] = pydantic.Field()
     """
-    Session ID where the task was created
+    ID of the workflow being executed
+    """
+
+    status: WorkflowExecutionStatus = pydantic.Field()
+    """
+    Current status of the execution
     """
 
     if IS_PYDANTIC_V2:

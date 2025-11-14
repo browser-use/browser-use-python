@@ -9,19 +9,14 @@ from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class TaskCreatedResponse(UncheckedBaseModel):
+class WorkflowExecutionLogResponse(UncheckedBaseModel):
     """
-    Response model for creating a task
-    """
-
-    id: str = pydantic.Field()
-    """
-    Unique identifier for the created task
+    Response model for execution log file requests.
     """
 
-    session_id: typing_extensions.Annotated[str, FieldMetadata(alias="sessionId")] = pydantic.Field()
+    download_url: typing_extensions.Annotated[str, FieldMetadata(alias="downloadUrl")] = pydantic.Field()
     """
-    Session ID where the task was created
+    Presigned URL to download the execution log file
     """
 
     if IS_PYDANTIC_V2:

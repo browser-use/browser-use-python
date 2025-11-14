@@ -13,6 +13,7 @@ from ..types.task_status import TaskStatus
 from ..types.task_update_action import TaskUpdateAction
 from ..types.task_view import TaskView
 from .raw_client import AsyncRawTasksClient, RawTasksClient
+from .types.create_task_request_vision import CreateTaskRequestVision
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -101,10 +102,11 @@ class TasksClient:
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TaskCreatedResponse:
@@ -134,13 +136,16 @@ class TasksClient:
             The ID of the session where the task will run.
 
         metadata : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The metadata for the task.
+            The metadata for the task. Up to 10 key-value pairs.
 
         secrets : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The secrets for the task.
+            The secrets for the task. Allowed domains are not required for secrets to be injected, but are recommended.
 
         allowed_domains : typing.Optional[typing.Sequence[str]]
             The allowed domains for the task.
+
+        op_vault_id : typing.Optional[str]
+            The ID of the 1Password vault to use for the task. This is used to inject secrets into the task.
 
         highlight_elements : typing.Optional[bool]
             Tells the agent to highlight interactive elements on the page.
@@ -151,8 +156,8 @@ class TasksClient:
         thinking : typing.Optional[bool]
             Whether agent thinking mode is enabled.
 
-        vision : typing.Optional[bool]
-            Whether agent vision capabilities are enabled.
+        vision : typing.Optional[CreateTaskRequestVision]
+            Whether agent vision capabilities are enabled. Set to 'auto' to let the agent decide based on the model capabilities.
 
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
@@ -186,6 +191,7 @@ class TasksClient:
             metadata=metadata,
             secrets=secrets,
             allowed_domains=allowed_domains,
+            op_vault_id=op_vault_id,
             highlight_elements=highlight_elements,
             flash_mode=flash_mode,
             thinking=thinking,
@@ -385,10 +391,11 @@ class AsyncTasksClient:
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TaskCreatedResponse:
@@ -418,13 +425,16 @@ class AsyncTasksClient:
             The ID of the session where the task will run.
 
         metadata : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The metadata for the task.
+            The metadata for the task. Up to 10 key-value pairs.
 
         secrets : typing.Optional[typing.Dict[str, typing.Optional[str]]]
-            The secrets for the task.
+            The secrets for the task. Allowed domains are not required for secrets to be injected, but are recommended.
 
         allowed_domains : typing.Optional[typing.Sequence[str]]
             The allowed domains for the task.
+
+        op_vault_id : typing.Optional[str]
+            The ID of the 1Password vault to use for the task. This is used to inject secrets into the task.
 
         highlight_elements : typing.Optional[bool]
             Tells the agent to highlight interactive elements on the page.
@@ -435,8 +445,8 @@ class AsyncTasksClient:
         thinking : typing.Optional[bool]
             Whether agent thinking mode is enabled.
 
-        vision : typing.Optional[bool]
-            Whether agent vision capabilities are enabled.
+        vision : typing.Optional[CreateTaskRequestVision]
+            Whether agent vision capabilities are enabled. Set to 'auto' to let the agent decide based on the model capabilities.
 
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
@@ -478,6 +488,7 @@ class AsyncTasksClient:
             metadata=metadata,
             secrets=secrets,
             allowed_domains=allowed_domains,
+            op_vault_id=op_vault_id,
             highlight_elements=highlight_elements,
             flash_mode=flash_mode,
             thinking=thinking,

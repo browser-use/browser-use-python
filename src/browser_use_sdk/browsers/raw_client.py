@@ -9,35 +9,36 @@ from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
+from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.browser_session_item_view import BrowserSessionItemView
+from ..types.browser_session_list_response import BrowserSessionListResponse
+from ..types.browser_session_status import BrowserSessionStatus
+from ..types.browser_session_view import BrowserSessionView
 from ..types.proxy_country_code import ProxyCountryCode
-from ..types.session_item_view import SessionItemView
-from ..types.session_list_response import SessionListResponse
-from ..types.session_status import SessionStatus
-from ..types.session_view import SessionView
-from ..types.share_view import ShareView
+from ..types.session_timeout_limit_exceeded_error import SessionTimeoutLimitExceededError
 from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
 
 
-class RawSessionsClient:
+class RawBrowsersClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    def list_sessions(
+    def list_browser_sessions(
         self,
         *,
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
-        filter_by: typing.Optional[SessionStatus] = None,
+        filter_by: typing.Optional[BrowserSessionStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SessionListResponse]:
+    ) -> HttpResponse[BrowserSessionListResponse]:
         """
-        Get paginated list of AI agent sessions with optional status filtering.
+        Get paginated list of browser sessions with optional status filtering.
 
         Parameters
         ----------
@@ -45,18 +46,18 @@ class RawSessionsClient:
 
         page_number : typing.Optional[int]
 
-        filter_by : typing.Optional[SessionStatus]
+        filter_by : typing.Optional[BrowserSessionStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[SessionListResponse]
+        HttpResponse[BrowserSessionListResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "sessions",
+            "browsers",
             method="GET",
             params={
                 "pageSize": page_size,
@@ -68,9 +69,9 @@ class RawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionListResponse,
+                    BrowserSessionListResponse,
                     construct_type(
-                        type_=SessionListResponse,  # type: ignore
+                        type_=BrowserSessionListResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -91,16 +92,27 @@ class RawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_session(
+    def create_browser_session(
         self,
         *,
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
-        start_url: typing.Optional[str] = OMIT,
+        timeout: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[SessionItemView]:
+    ) -> HttpResponse[BrowserSessionItemView]:
         """
-        Create a new session with a new task.
+        Create a new browser session.
+
+        **Pricing:** Browser sessions are charged at $0.05 per hour.
+        The full hourly rate is charged upfront when the session starts.
+        When you stop the session, any unused time is automatically refunded proportionally.
+
+        Billing is rounded to the nearest minute (minimum 1 minute).
+        For example, if you stop a session after 30 minutes, you'll be refunded $0.025.
+
+        **Session Limits:**
+        - Free users (without active subscription): Maximum 15 minutes per session
+        - Paid subscribers: Up to 4 hours per session
 
         Parameters
         ----------
@@ -110,24 +122,24 @@ class RawSessionsClient:
         proxy_country_code : typing.Optional[ProxyCountryCode]
             Country code for proxy location.
 
-        start_url : typing.Optional[str]
-            URL to navigate to when the session starts.
+        timeout : typing.Optional[int]
+            The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        HttpResponse[SessionItemView]
+        HttpResponse[BrowserSessionItemView]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            "sessions",
+            "browsers",
             method="POST",
             json={
                 "profileId": profile_id,
                 "proxyCountryCode": proxy_country_code,
-                "startUrl": start_url,
+                "timeout": timeout,
             },
             headers={
                 "content-type": "application/json",
@@ -138,13 +150,24 @@ class RawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionItemView,
+                    BrowserSessionItemView,
                     construct_type(
-                        type_=SessionItemView,  # type: ignore
+                        type_=BrowserSessionItemView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        SessionTimeoutLimitExceededError,
+                        construct_type(
+                            type_=SessionTimeoutLimitExceededError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -183,11 +206,11 @@ class RawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_session(
+    def get_browser_session(
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[SessionView]:
+    ) -> HttpResponse[BrowserSessionView]:
         """
-        Get detailed session information including status, URLs, and task details.
+        Get detailed browser session information including status and URLs.
 
         Parameters
         ----------
@@ -198,20 +221,20 @@ class RawSessionsClient:
 
         Returns
         -------
-        HttpResponse[SessionView]
+        HttpResponse[BrowserSessionView]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}",
+            f"browsers/{jsonable_encoder(session_id)}",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionView,
+                    BrowserSessionView,
                     construct_type(
-                        type_=SessionView,  # type: ignore
+                        type_=BrowserSessionView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -243,11 +266,15 @@ class RawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def update_session(
+    def update_browser_session(
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[SessionView]:
+    ) -> HttpResponse[BrowserSessionView]:
         """
-        Stop a session and all its running tasks.
+        Stop a browser session.
+
+        **Refund:** When you stop a session, unused time is automatically refunded.
+        If the session ran for less than 1 hour, you'll receive a proportional refund.
+        Billing is ceil to the nearest minute (minimum 1 minute).
 
         Parameters
         ----------
@@ -258,11 +285,11 @@ class RawSessionsClient:
 
         Returns
         -------
-        HttpResponse[SessionView]
+        HttpResponse[BrowserSessionView]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}",
+            f"browsers/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
                 "action": "stop",
@@ -276,9 +303,9 @@ class RawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionView,
+                    BrowserSessionView,
                     construct_type(
-                        type_=SessionView,  # type: ignore
+                        type_=BrowserSessionView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -310,193 +337,21 @@ class RawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def get_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[ShareView]:
-        """
-        Get public share information including URL and usage statistics.
 
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ShareView]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ShareView,
-                    construct_type(
-                        type_=ShareView,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def create_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[ShareView]:
-        """
-        Create or return existing public share for a session.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[ShareView]
-            Successful Response
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="POST",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ShareView,
-                    construct_type(
-                        type_=ShareView,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return HttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    def delete_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[None]:
-        """
-        Remove public share for a session.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        HttpResponse[None]
-        """
-        _response = self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return HttpResponse(response=_response, data=None)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-
-class AsyncRawSessionsClient:
+class AsyncRawBrowsersClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
         self._client_wrapper = client_wrapper
 
-    async def list_sessions(
+    async def list_browser_sessions(
         self,
         *,
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
-        filter_by: typing.Optional[SessionStatus] = None,
+        filter_by: typing.Optional[BrowserSessionStatus] = None,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SessionListResponse]:
+    ) -> AsyncHttpResponse[BrowserSessionListResponse]:
         """
-        Get paginated list of AI agent sessions with optional status filtering.
+        Get paginated list of browser sessions with optional status filtering.
 
         Parameters
         ----------
@@ -504,18 +359,18 @@ class AsyncRawSessionsClient:
 
         page_number : typing.Optional[int]
 
-        filter_by : typing.Optional[SessionStatus]
+        filter_by : typing.Optional[BrowserSessionStatus]
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[SessionListResponse]
+        AsyncHttpResponse[BrowserSessionListResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "sessions",
+            "browsers",
             method="GET",
             params={
                 "pageSize": page_size,
@@ -527,9 +382,9 @@ class AsyncRawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionListResponse,
+                    BrowserSessionListResponse,
                     construct_type(
-                        type_=SessionListResponse,  # type: ignore
+                        type_=BrowserSessionListResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -550,16 +405,27 @@ class AsyncRawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def create_session(
+    async def create_browser_session(
         self,
         *,
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
-        start_url: typing.Optional[str] = OMIT,
+        timeout: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[SessionItemView]:
+    ) -> AsyncHttpResponse[BrowserSessionItemView]:
         """
-        Create a new session with a new task.
+        Create a new browser session.
+
+        **Pricing:** Browser sessions are charged at $0.05 per hour.
+        The full hourly rate is charged upfront when the session starts.
+        When you stop the session, any unused time is automatically refunded proportionally.
+
+        Billing is rounded to the nearest minute (minimum 1 minute).
+        For example, if you stop a session after 30 minutes, you'll be refunded $0.025.
+
+        **Session Limits:**
+        - Free users (without active subscription): Maximum 15 minutes per session
+        - Paid subscribers: Up to 4 hours per session
 
         Parameters
         ----------
@@ -569,24 +435,24 @@ class AsyncRawSessionsClient:
         proxy_country_code : typing.Optional[ProxyCountryCode]
             Country code for proxy location.
 
-        start_url : typing.Optional[str]
-            URL to navigate to when the session starts.
+        timeout : typing.Optional[int]
+            The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
         Returns
         -------
-        AsyncHttpResponse[SessionItemView]
+        AsyncHttpResponse[BrowserSessionItemView]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            "sessions",
+            "browsers",
             method="POST",
             json={
                 "profileId": profile_id,
                 "proxyCountryCode": proxy_country_code,
-                "startUrl": start_url,
+                "timeout": timeout,
             },
             headers={
                 "content-type": "application/json",
@@ -597,13 +463,24 @@ class AsyncRawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionItemView,
+                    BrowserSessionItemView,
                     construct_type(
-                        type_=SessionItemView,  # type: ignore
+                        type_=BrowserSessionItemView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        SessionTimeoutLimitExceededError,
+                        construct_type(
+                            type_=SessionTimeoutLimitExceededError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -642,11 +519,11 @@ class AsyncRawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def get_session(
+    async def get_browser_session(
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[SessionView]:
+    ) -> AsyncHttpResponse[BrowserSessionView]:
         """
-        Get detailed session information including status, URLs, and task details.
+        Get detailed browser session information including status and URLs.
 
         Parameters
         ----------
@@ -657,20 +534,20 @@ class AsyncRawSessionsClient:
 
         Returns
         -------
-        AsyncHttpResponse[SessionView]
+        AsyncHttpResponse[BrowserSessionView]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}",
+            f"browsers/{jsonable_encoder(session_id)}",
             method="GET",
             request_options=request_options,
         )
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionView,
+                    BrowserSessionView,
                     construct_type(
-                        type_=SessionView,  # type: ignore
+                        type_=BrowserSessionView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -702,11 +579,15 @@ class AsyncRawSessionsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def update_session(
+    async def update_browser_session(
         self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[SessionView]:
+    ) -> AsyncHttpResponse[BrowserSessionView]:
         """
-        Stop a session and all its running tasks.
+        Stop a browser session.
+
+        **Refund:** When you stop a session, unused time is automatically refunded.
+        If the session ran for less than 1 hour, you'll receive a proportional refund.
+        Billing is ceil to the nearest minute (minimum 1 minute).
 
         Parameters
         ----------
@@ -717,11 +598,11 @@ class AsyncRawSessionsClient:
 
         Returns
         -------
-        AsyncHttpResponse[SessionView]
+        AsyncHttpResponse[BrowserSessionView]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}",
+            f"browsers/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
                 "action": "stop",
@@ -735,185 +616,13 @@ class AsyncRawSessionsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    SessionView,
+                    BrowserSessionView,
                     construct_type(
-                        type_=SessionView,  # type: ignore
+                        type_=BrowserSessionView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def get_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[ShareView]:
-        """
-        Get public share information including URL and usage statistics.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ShareView]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="GET",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ShareView,
-                    construct_type(
-                        type_=ShareView,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def create_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[ShareView]:
-        """
-        Create or return existing public share for a session.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[ShareView]
-            Successful Response
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="POST",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                _data = typing.cast(
-                    ShareView,
-                    construct_type(
-                        type_=ShareView,  # type: ignore
-                        object_=_response.json(),
-                    ),
-                )
-                return AsyncHttpResponse(response=_response, data=_data)
-            if _response.status_code == 404:
-                raise NotFoundError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            if _response.status_code == 422:
-                raise UnprocessableEntityError(
-                    headers=dict(_response.headers),
-                    body=typing.cast(
-                        typing.Optional[typing.Any],
-                        construct_type(
-                            type_=typing.Optional[typing.Any],  # type: ignore
-                            object_=_response.json(),
-                        ),
-                    ),
-                )
-            _response_json = _response.json()
-        except JSONDecodeError:
-            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
-        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
-
-    async def delete_session_public_share(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[None]:
-        """
-        Remove public share for a session.
-
-        Parameters
-        ----------
-        session_id : str
-
-        request_options : typing.Optional[RequestOptions]
-            Request-specific configuration.
-
-        Returns
-        -------
-        AsyncHttpResponse[None]
-        """
-        _response = await self._client_wrapper.httpx_client.request(
-            f"sessions/{jsonable_encoder(session_id)}/public-share",
-            method="DELETE",
-            request_options=request_options,
-        )
-        try:
-            if 200 <= _response.status_code < 300:
-                return AsyncHttpResponse(response=_response, data=None)
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),

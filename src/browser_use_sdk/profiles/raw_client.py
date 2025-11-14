@@ -16,6 +16,9 @@ from ..types.insufficient_credits_error import InsufficientCreditsError
 from ..types.profile_list_response import ProfileListResponse
 from ..types.profile_view import ProfileView
 
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
+
 
 class RawProfilesClient:
     def __init__(self, *, client_wrapper: SyncClientWrapper):
@@ -80,7 +83,9 @@ class RawProfilesClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def create_profile(self, *, request_options: typing.Optional[RequestOptions] = None) -> HttpResponse[ProfileView]:
+    def create_profile(
+        self, *, name: typing.Optional[str] = OMIT, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[ProfileView]:
         """
         Profiles allow you to preserve the state of the browser between tasks.
 
@@ -91,6 +96,9 @@ class RawProfilesClient:
 
         Parameters
         ----------
+        name : typing.Optional[str]
+            Optional name for the profile
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -102,7 +110,14 @@ class RawProfilesClient:
         _response = self._client_wrapper.httpx_client.request(
             "profiles",
             method="POST",
+            json={
+                "name": name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -242,6 +257,80 @@ class RawProfilesClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def update_profile(
+        self,
+        profile_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[ProfileView]:
+        """
+        Update a browser profile's information.
+
+        Parameters
+        ----------
+        profile_id : str
+
+        name : typing.Optional[str]
+            Optional name for the profile
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ProfileView]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"profiles/{jsonable_encoder(profile_id)}",
+            method="PATCH",
+            json={
+                "name": name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ProfileView,
+                    construct_type(
+                        type_=ProfileView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawProfilesClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -307,7 +396,7 @@ class AsyncRawProfilesClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def create_profile(
-        self, *, request_options: typing.Optional[RequestOptions] = None
+        self, *, name: typing.Optional[str] = OMIT, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[ProfileView]:
         """
         Profiles allow you to preserve the state of the browser between tasks.
@@ -319,6 +408,9 @@ class AsyncRawProfilesClient:
 
         Parameters
         ----------
+        name : typing.Optional[str]
+            Optional name for the profile
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -330,7 +422,14 @@ class AsyncRawProfilesClient:
         _response = await self._client_wrapper.httpx_client.request(
             "profiles",
             method="POST",
+            json={
+                "name": name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
             request_options=request_options,
+            omit=OMIT,
         )
         try:
             if 200 <= _response.status_code < 300:
@@ -454,6 +553,80 @@ class AsyncRawProfilesClient:
         try:
             if 200 <= _response.status_code < 300:
                 return AsyncHttpResponse(response=_response, data=None)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def update_profile(
+        self,
+        profile_id: str,
+        *,
+        name: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[ProfileView]:
+        """
+        Update a browser profile's information.
+
+        Parameters
+        ----------
+        profile_id : str
+
+        name : typing.Optional[str]
+            Optional name for the profile
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ProfileView]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"profiles/{jsonable_encoder(profile_id)}",
+            method="PATCH",
+            json={
+                "name": name,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ProfileView,
+                    construct_type(
+                        type_=ProfileView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

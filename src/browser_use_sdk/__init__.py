@@ -6,18 +6,20 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import accounts, files, profiles, sessions, tasks
+    from . import billing, browsers, files, profiles, sessions, tasks, workflows
     from .client import AsyncBrowserUse, BrowserUse
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
     "AsyncBrowserUse": ".client",
     "BrowserUse": ".client",
     "__version__": ".version",
-    "accounts": ".",
+    "billing": ".",
+    "browsers": ".",
     "files": ".",
     "profiles": ".",
     "sessions": ".",
     "tasks": ".",
+    "workflows": ".",
 }
 
 
@@ -40,4 +42,15 @@ def __dir__():
     return sorted(lazy_attrs)
 
 
-__all__ = ["AsyncBrowserUse", "BrowserUse", "__version__", "accounts", "files", "profiles", "sessions", "tasks"]
+__all__ = [
+    "AsyncBrowserUse",
+    "BrowserUse",
+    "__version__",
+    "billing",
+    "browsers",
+    "files",
+    "profiles",
+    "sessions",
+    "tasks",
+    "workflows",
+]
