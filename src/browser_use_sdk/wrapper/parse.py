@@ -86,8 +86,8 @@ def _stream(
 class WrappedTaskCreatedResponse(TaskCreatedResponse):
     """TaskCreatedResponse with utility methods for easier interfacing with Browser Use Cloud."""
 
-    def __init__(self, id: str, client: TasksClient):
-        super().__init__(id=id)
+    def __init__(self, id: str, session_id: str, client: TasksClient):
+        super().__init__(id=id, session_id=session_id)
         self._client = client
 
     def complete(self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None) -> TaskView:
@@ -115,8 +115,8 @@ class WrappedTaskCreatedResponse(TaskCreatedResponse):
 class WrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T]):
     """TaskCreatedResponse with structured output."""
 
-    def __init__(self, id: str, schema: Type[T], client: TasksClient):
-        super().__init__(id=id)
+    def __init__(self, id: str, session_id: str, schema: Type[T], client: TasksClient):
+        super().__init__(id=id, session_id=session_id)
 
         self._client = client
         self._schema = schema
@@ -180,8 +180,8 @@ async def _async_stream(
 class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
     """TaskCreatedResponse with utility methods for easier interfacing with Browser Use Cloud."""
 
-    def __init__(self, id: str, client: AsyncTasksClient):
-        super().__init__(id=id)
+    def __init__(self, id: str, session_id: str, client: AsyncTasksClient):
+        super().__init__(id=id, session_id=session_id)
         self._client = client
 
     async def complete(self, interval: float = 1, request_options: typing.Optional[RequestOptions] = None) -> TaskView:
@@ -211,8 +211,8 @@ class AsyncWrappedTaskCreatedResponse(TaskCreatedResponse):
 class AsyncWrappedStructuredTaskCreatedResponse(TaskCreatedResponse, Generic[T]):
     """TaskCreatedResponse with structured output."""
 
-    def __init__(self, id: str, schema: Type[T], client: AsyncTasksClient):
-        super().__init__(id=id)
+    def __init__(self, id: str, session_id: str, schema: Type[T], client: AsyncTasksClient):
+        super().__init__(id=id, session_id=session_id)
 
         self._client = client
         self._schema = schema

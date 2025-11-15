@@ -3,6 +3,7 @@ import typing
 
 from browser_use_sdk.core.request_options import RequestOptions
 from browser_use_sdk.tasks.client import OMIT, AsyncClientWrapper, AsyncTasksClient, SyncClientWrapper, TasksClient
+from browser_use_sdk.tasks.types.create_task_request_vision import CreateTaskRequestVision
 from browser_use_sdk.types.supported_ll_ms import SupportedLlMs
 from browser_use_sdk.types.task_view import TaskView
 from browser_use_sdk.wrapper.parse import (
@@ -35,10 +36,11 @@ class BrowserUseTasksClient(TasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedStructuredTaskCreatedResponse[T]: ...
@@ -56,10 +58,11 @@ class BrowserUseTasksClient(TasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedTaskCreatedResponse: ...
@@ -77,10 +80,11 @@ class BrowserUseTasksClient(TasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[WrappedStructuredTaskCreatedResponse[T], WrappedTaskCreatedResponse]:
@@ -97,6 +101,7 @@ class BrowserUseTasksClient(TasksClient):
                 metadata=metadata,
                 secrets=secrets,
                 allowed_domains=allowed_domains,
+                op_vault_id=op_vault_id,
                 highlight_elements=highlight_elements,
                 flash_mode=flash_mode,
                 thinking=thinking,
@@ -105,7 +110,7 @@ class BrowserUseTasksClient(TasksClient):
                 request_options=request_options,
             )
 
-            return WrappedStructuredTaskCreatedResponse[T](id=res.id, schema=schema, client=self)
+            return WrappedStructuredTaskCreatedResponse[T](id=res.id, session_id=res.session_id, schema=schema, client=self)
 
         else:
             res = super().create_task(
@@ -118,6 +123,7 @@ class BrowserUseTasksClient(TasksClient):
                 metadata=metadata,
                 secrets=secrets,
                 allowed_domains=allowed_domains,
+                op_vault_id=op_vault_id,
                 highlight_elements=highlight_elements,
                 flash_mode=flash_mode,
                 thinking=thinking,
@@ -126,7 +132,7 @@ class BrowserUseTasksClient(TasksClient):
                 request_options=request_options,
             )
 
-            return WrappedTaskCreatedResponse(id=res.id, client=self)
+            return WrappedTaskCreatedResponse(id=res.id, session_id=res.session_id, client=self)
 
     @typing.overload
     def get_task(
@@ -170,10 +176,11 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedStructuredTaskCreatedResponse[T]: ...
@@ -191,10 +198,11 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedTaskCreatedResponse: ...
@@ -212,10 +220,11 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         metadata: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         secrets: typing.Optional[typing.Dict[str, typing.Optional[str]]] = OMIT,
         allowed_domains: typing.Optional[typing.Sequence[str]] = OMIT,
+        op_vault_id: typing.Optional[str] = OMIT,
         highlight_elements: typing.Optional[bool] = OMIT,
         flash_mode: typing.Optional[bool] = OMIT,
         thinking: typing.Optional[bool] = OMIT,
-        vision: typing.Optional[bool] = OMIT,
+        vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[AsyncWrappedStructuredTaskCreatedResponse[T], AsyncWrappedTaskCreatedResponse]:
@@ -232,6 +241,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 metadata=metadata,
                 secrets=secrets,
                 allowed_domains=allowed_domains,
+                op_vault_id=op_vault_id,
                 highlight_elements=highlight_elements,
                 flash_mode=flash_mode,
                 thinking=thinking,
@@ -239,7 +249,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 system_prompt_extension=system_prompt_extension,
                 request_options=request_options,
             )
-            return AsyncWrappedStructuredTaskCreatedResponse[T](id=res.id, schema=schema, client=self)
+            return AsyncWrappedStructuredTaskCreatedResponse[T](id=res.id, session_id=res.session_id, schema=schema, client=self)
 
         else:
             res = await super().create_task(
@@ -252,6 +262,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 metadata=metadata,
                 secrets=secrets,
                 allowed_domains=allowed_domains,
+                op_vault_id=op_vault_id,
                 highlight_elements=highlight_elements,
                 flash_mode=flash_mode,
                 thinking=thinking,
@@ -259,7 +270,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 system_prompt_extension=system_prompt_extension,
                 request_options=request_options,
             )
-            return AsyncWrappedTaskCreatedResponse(id=res.id, client=self)
+            return AsyncWrappedTaskCreatedResponse(id=res.id, session_id=res.session_id, client=self)
 
     @typing.overload
     async def get_task(

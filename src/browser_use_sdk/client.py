@@ -3,12 +3,15 @@
 import typing
 
 import httpx
-from .accounts.client import AccountsClient, AsyncAccountsClient
+# from .accounts.client import AccountsClient, AsyncAccountsClient  # Module not yet available
+from .billing.client import AsyncBillingClient, BillingClient
+from .browsers.client import AsyncBrowsersClient, BrowsersClient
 from .core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from .environment import BrowserUseEnvironment
 from .files.client import AsyncFilesClient, FilesClient
 from .profiles.client import AsyncProfilesClient, ProfilesClient
 from .sessions.client import AsyncSessionsClient, SessionsClient
+from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 from .wrapper.tasks.client import AsyncBrowserUseTasksClient, BrowserUseTasksClient
 
 
@@ -77,11 +80,14 @@ class BrowserUse:
             else httpx.Client(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self.accounts = AccountsClient(client_wrapper=self._client_wrapper)
+        # self.accounts = AccountsClient(client_wrapper=self._client_wrapper)  # Module not yet available
+        self.billing = BillingClient(client_wrapper=self._client_wrapper)
+        self.browsers = BrowsersClient(client_wrapper=self._client_wrapper)
         self.tasks = BrowserUseTasksClient(client_wrapper=self._client_wrapper)
         self.sessions = SessionsClient(client_wrapper=self._client_wrapper)
         self.files = FilesClient(client_wrapper=self._client_wrapper)
         self.profiles = ProfilesClient(client_wrapper=self._client_wrapper)
+        self.workflows = WorkflowsClient(client_wrapper=self._client_wrapper)
 
 
 class AsyncBrowserUse:
@@ -149,11 +155,14 @@ class AsyncBrowserUse:
             else httpx.AsyncClient(timeout=_defaulted_timeout),
             timeout=_defaulted_timeout,
         )
-        self.accounts = AsyncAccountsClient(client_wrapper=self._client_wrapper)
+        # self.accounts = AsyncAccountsClient(client_wrapper=self._client_wrapper)  # Module not yet available
+        self.billing = AsyncBillingClient(client_wrapper=self._client_wrapper)
+        self.browsers = AsyncBrowsersClient(client_wrapper=self._client_wrapper)
         self.tasks = AsyncBrowserUseTasksClient(client_wrapper=self._client_wrapper)
         self.sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
         self.files = AsyncFilesClient(client_wrapper=self._client_wrapper)
         self.profiles = AsyncProfilesClient(client_wrapper=self._client_wrapper)
+        self.workflows = AsyncWorkflowsClient(client_wrapper=self._client_wrapper)
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseEnvironment) -> str:
