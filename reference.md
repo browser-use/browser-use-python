@@ -341,6 +341,30 @@ client.tasks.create_task(
 <dl>
 <dd>
 
+**judge:** `typing.Optional[bool]` — Enable judge mode to evaluate task completion against ground truth.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**judge_ground_truth:** `typing.Optional[str]` — Expected answer for judge evaluation.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**judge_llm:** `typing.Optional[SupportedLlMs]` — The LLM model to use for judging. If not provided, uses the default judge LLM.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -774,6 +798,76 @@ client = BrowserUse(
     api_key="YOUR_API_KEY",
 )
 client.sessions.get_session(
+    session_id="session_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**session_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.sessions.<a href="src/browser_use_sdk/sessions/client.py">delete_session</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a session with all its tasks.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.sessions.delete_session(
     session_id="session_id",
 )
 

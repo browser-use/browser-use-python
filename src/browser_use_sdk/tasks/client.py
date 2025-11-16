@@ -108,6 +108,9 @@ class TasksClient:
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TaskCreatedResponse:
         """
@@ -162,6 +165,15 @@ class TasksClient:
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
 
+        judge : typing.Optional[bool]
+            Enable judge mode to evaluate task completion against ground truth.
+
+        judge_ground_truth : typing.Optional[str]
+            Expected answer for judge evaluation.
+
+        judge_llm : typing.Optional[SupportedLlMs]
+            The LLM model to use for judging. If not provided, uses the default judge LLM.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -197,6 +209,9 @@ class TasksClient:
             thinking=thinking,
             vision=vision,
             system_prompt_extension=system_prompt_extension,
+            judge=judge,
+            judge_ground_truth=judge_ground_truth,
+            judge_llm=judge_llm,
             request_options=request_options,
         )
         return _response.data
@@ -397,6 +412,9 @@ class AsyncTasksClient:
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> TaskCreatedResponse:
         """
@@ -451,6 +469,15 @@ class AsyncTasksClient:
         system_prompt_extension : typing.Optional[str]
             Optional extension to the agent system prompt.
 
+        judge : typing.Optional[bool]
+            Enable judge mode to evaluate task completion against ground truth.
+
+        judge_ground_truth : typing.Optional[str]
+            Expected answer for judge evaluation.
+
+        judge_llm : typing.Optional[SupportedLlMs]
+            The LLM model to use for judging. If not provided, uses the default judge LLM.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -494,6 +521,9 @@ class AsyncTasksClient:
             thinking=thinking,
             vision=vision,
             system_prompt_extension=system_prompt_extension,
+            judge=judge,
+            judge_ground_truth=judge_ground_truth,
+            judge_llm=judge_llm,
             request_options=request_options,
         )
         return _response.data

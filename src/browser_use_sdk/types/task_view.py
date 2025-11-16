@@ -81,7 +81,19 @@ class TaskView(UncheckedBaseModel):
         default=None
     )
     """
-    Whether the task was successful (self-reported by the agent)
+    Whether the task was successful based on the agent's self-reported output (less reliable than the judge)
+    """
+
+    judgement: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Stringified JSON object containing the full report from the judge
+    """
+
+    judge_verdict: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="judgeVerdict")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Judge verdict - True if the judge found the task to be successful, False otherwise (None if judge is not enabled)
     """
 
     if IS_PYDANTIC_V2:
