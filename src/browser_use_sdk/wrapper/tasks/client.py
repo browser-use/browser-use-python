@@ -42,6 +42,9 @@ class BrowserUseTasksClient(TasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedStructuredTaskCreatedResponse[T]: ...
 
@@ -64,6 +67,9 @@ class BrowserUseTasksClient(TasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedTaskCreatedResponse: ...
 
@@ -86,6 +92,9 @@ class BrowserUseTasksClient(TasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[WrappedStructuredTaskCreatedResponse[T], WrappedTaskCreatedResponse]:
         if schema is not None and schema is not OMIT:
@@ -107,6 +116,9 @@ class BrowserUseTasksClient(TasksClient):
                 thinking=thinking,
                 vision=vision,
                 system_prompt_extension=system_prompt_extension,
+                judge=judge,
+                judge_ground_truth=judge_ground_truth,
+                judge_llm=judge_llm,
                 request_options=request_options,
             )
 
@@ -129,6 +141,9 @@ class BrowserUseTasksClient(TasksClient):
                 thinking=thinking,
                 vision=vision,
                 system_prompt_extension=system_prompt_extension,
+                judge=judge,
+                judge_ground_truth=judge_ground_truth,
+                judge_llm=judge_llm,
                 request_options=request_options,
             )
 
@@ -182,6 +197,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedStructuredTaskCreatedResponse[T]: ...
 
@@ -204,6 +222,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedTaskCreatedResponse: ...
 
@@ -226,6 +247,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         thinking: typing.Optional[bool] = OMIT,
         vision: typing.Optional[CreateTaskRequestVision] = OMIT,
         system_prompt_extension: typing.Optional[str] = OMIT,
+        judge: typing.Optional[bool] = OMIT,
+        judge_ground_truth: typing.Optional[str] = OMIT,
+        judge_llm: typing.Optional[SupportedLlMs] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[AsyncWrappedStructuredTaskCreatedResponse[T], AsyncWrappedTaskCreatedResponse]:
         if schema is not None and schema is not OMIT:
@@ -247,6 +271,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 thinking=thinking,
                 vision=vision,
                 system_prompt_extension=system_prompt_extension,
+                judge=judge,
+                judge_ground_truth=judge_ground_truth,
+                judge_llm=judge_llm,
                 request_options=request_options,
             )
             return AsyncWrappedStructuredTaskCreatedResponse[T](id=res.id, session_id=res.session_id, schema=schema, client=self)
@@ -268,6 +295,9 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 thinking=thinking,
                 vision=vision,
                 system_prompt_extension=system_prompt_extension,
+                judge=judge,
+                judge_ground_truth=judge_ground_truth,
+                judge_llm=judge_llm,
                 request_options=request_options,
             )
             return AsyncWrappedTaskCreatedResponse(id=res.id, session_id=res.session_id, client=self)
