@@ -97,6 +97,8 @@ class RawSessionsClient:
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
         start_url: typing.Optional[str] = OMIT,
+        browser_screen_width: typing.Optional[int] = OMIT,
+        browser_screen_height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SessionItemView]:
         """
@@ -113,6 +115,12 @@ class RawSessionsClient:
         start_url : typing.Optional[str]
             URL to navigate to when the session starts.
 
+        browser_screen_width : typing.Optional[int]
+            Custom screen width in pixels for the browser.
+
+        browser_screen_height : typing.Optional[int]
+            Custom screen height in pixels for the browser.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -128,6 +136,8 @@ class RawSessionsClient:
                 "profileId": profile_id,
                 "proxyCountryCode": proxy_country_code,
                 "startUrl": start_url,
+                "browserScreenWidth": browser_screen_width,
+                "browserScreenHeight": browser_screen_height,
             },
             headers={
                 "content-type": "application/json",
@@ -608,6 +618,8 @@ class AsyncRawSessionsClient:
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
         start_url: typing.Optional[str] = OMIT,
+        browser_screen_width: typing.Optional[int] = OMIT,
+        browser_screen_height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SessionItemView]:
         """
@@ -624,6 +636,12 @@ class AsyncRawSessionsClient:
         start_url : typing.Optional[str]
             URL to navigate to when the session starts.
 
+        browser_screen_width : typing.Optional[int]
+            Custom screen width in pixels for the browser.
+
+        browser_screen_height : typing.Optional[int]
+            Custom screen height in pixels for the browser.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -639,6 +657,8 @@ class AsyncRawSessionsClient:
                 "profileId": profile_id,
                 "proxyCountryCode": proxy_country_code,
                 "startUrl": start_url,
+                "browserScreenWidth": browser_screen_width,
+                "browserScreenHeight": browser_screen_height,
             },
             headers={
                 "content-type": "application/json",

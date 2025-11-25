@@ -4,19 +4,19 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
-from ..types.execution_mode import ExecutionMode
+from ..types.workflow_execution_created_response import WorkflowExecutionCreatedResponse
 from ..types.workflow_execution_list_response import WorkflowExecutionListResponse
 from ..types.workflow_execution_log_response import WorkflowExecutionLogResponse
+from ..types.workflow_execution_media_view import WorkflowExecutionMediaView
 from ..types.workflow_execution_response import WorkflowExecutionResponse
+from ..types.workflow_execution_state_view import WorkflowExecutionStateView
 from ..types.workflow_execution_status import WorkflowExecutionStatus
 from ..types.workflow_generate_response import WorkflowGenerateResponse
+from ..types.workflow_generation_state_view import WorkflowGenerationStateView
 from ..types.workflow_list_response import WorkflowListResponse
 from ..types.workflow_response import WorkflowResponse
 from ..types.workflow_yaml_presigned_upload_response import WorkflowYamlPresignedUploadResponse
 from .raw_client import AsyncRawWorkflowsClient, RawWorkflowsClient
-from .types.execute_workflow_workflows_workflow_id_execute_post_response import (
-    ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,
-)
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -244,6 +244,42 @@ class WorkflowsClient:
         )
         return _response.data
 
+    def get_workflow_generation_state(
+        self, workflow_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowGenerationStateView:
+        """
+        Get workflow generation state with live browser URL for polling.
+
+        This endpoint returns the current state of workflow generation including
+        the live browser URL (if available). It's designed to be polled every 2 seconds
+        during generation to show real-time browser activity in the frontend.
+
+        Parameters
+        ----------
+        workflow_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowGenerationStateView
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.workflows.get_workflow_generation_state(
+            workflow_id="workflow_id",
+        )
+        """
+        _response = self._raw_client.get_workflow_generation_state(workflow_id, request_options=request_options)
+        return _response.data
+
     def get_workflow_yaml_presigned_url(
         self,
         workflow_id: str,
@@ -293,20 +329,19 @@ class WorkflowsClient:
         )
         return _response.data
 
-    def execute_workflow(
+    def run_workflow(
         self,
         workflow_id: str,
         *,
         input: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
-        mode: typing.Optional[ExecutionMode] = OMIT,
         execution_metadata: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse:
+    ) -> WorkflowExecutionCreatedResponse:
         """
-        Execute a workflow either synchronously or asynchronously.
+        Execute a workflow asynchronously.
 
-        - ASYNC mode: Returns execution ID immediately and processes in background via Lambda
-        - SYNC mode: Waits for execution to complete and returns results inline (max 5 min timeout)
+        Returns execution ID immediately and processes in background via Inngest.
+        Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
 
         Parameters
         ----------
@@ -314,9 +349,6 @@ class WorkflowsClient:
 
         input : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Input parameters for the workflow execution
-
-        mode : typing.Optional[ExecutionMode]
-            Execution mode (sync or async)
 
         execution_metadata : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Optional metadata for this execution
@@ -326,7 +358,7 @@ class WorkflowsClient:
 
         Returns
         -------
-        ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse
+        WorkflowExecutionCreatedResponse
             Successful Response
 
         Examples
@@ -336,12 +368,12 @@ class WorkflowsClient:
         client = BrowserUse(
             api_key="YOUR_API_KEY",
         )
-        client.workflows.execute_workflow(
+        client.workflows.run_workflow(
             workflow_id="workflow_id",
         )
         """
-        _response = self._raw_client.execute_workflow(
-            workflow_id, input=input, mode=mode, execution_metadata=execution_metadata, request_options=request_options
+        _response = self._raw_client.run_workflow(
+            workflow_id, input=input, execution_metadata=execution_metadata, request_options=request_options
         )
         return _response.data
 
@@ -655,6 +687,78 @@ class WorkflowsClient:
         _response = self._raw_client.get_execution_logs(execution_id, request_options=request_options)
         return _response.data
 
+    def get_execution_state(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowExecutionStateView:
+        """
+        Get workflow execution state with steps for live UI polling.
+
+        This endpoint returns the current state of a workflow execution including all steps
+        with their details. It's designed to be polled every 2 seconds during execution
+        to show real-time progress in the frontend.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowExecutionStateView
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.workflows.get_execution_state(
+            execution_id="execution_id",
+        )
+        """
+        _response = self._raw_client.get_execution_state(execution_id, request_options=request_options)
+        return _response.data
+
+    def get_execution_media(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowExecutionMediaView:
+        """
+        Get workflow execution media (screenshots) with presigned URLs.
+
+        This endpoint returns media URLs for completed executions. Screenshots
+        are returned with presigned S3 URLs for direct access from the frontend.
+        Should be called when execution status is 'completed', 'failed', or 'cancelled'.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowExecutionMediaView
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.workflows.get_execution_media(
+            execution_id="execution_id",
+        )
+        """
+        _response = self._raw_client.get_execution_media(execution_id, request_options=request_options)
+        return _response.data
+
 
 class AsyncWorkflowsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -918,6 +1022,50 @@ class AsyncWorkflowsClient:
         )
         return _response.data
 
+    async def get_workflow_generation_state(
+        self, workflow_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowGenerationStateView:
+        """
+        Get workflow generation state with live browser URL for polling.
+
+        This endpoint returns the current state of workflow generation including
+        the live browser URL (if available). It's designed to be polled every 2 seconds
+        during generation to show real-time browser activity in the frontend.
+
+        Parameters
+        ----------
+        workflow_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowGenerationStateView
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.workflows.get_workflow_generation_state(
+                workflow_id="workflow_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_workflow_generation_state(workflow_id, request_options=request_options)
+        return _response.data
+
     async def get_workflow_yaml_presigned_url(
         self,
         workflow_id: str,
@@ -975,20 +1123,19 @@ class AsyncWorkflowsClient:
         )
         return _response.data
 
-    async def execute_workflow(
+    async def run_workflow(
         self,
         workflow_id: str,
         *,
         input: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
-        mode: typing.Optional[ExecutionMode] = OMIT,
         execution_metadata: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse:
+    ) -> WorkflowExecutionCreatedResponse:
         """
-        Execute a workflow either synchronously or asynchronously.
+        Execute a workflow asynchronously.
 
-        - ASYNC mode: Returns execution ID immediately and processes in background via Lambda
-        - SYNC mode: Waits for execution to complete and returns results inline (max 5 min timeout)
+        Returns execution ID immediately and processes in background via Inngest.
+        Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
 
         Parameters
         ----------
@@ -996,9 +1143,6 @@ class AsyncWorkflowsClient:
 
         input : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Input parameters for the workflow execution
-
-        mode : typing.Optional[ExecutionMode]
-            Execution mode (sync or async)
 
         execution_metadata : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Optional metadata for this execution
@@ -1008,7 +1152,7 @@ class AsyncWorkflowsClient:
 
         Returns
         -------
-        ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse
+        WorkflowExecutionCreatedResponse
             Successful Response
 
         Examples
@@ -1023,15 +1167,15 @@ class AsyncWorkflowsClient:
 
 
         async def main() -> None:
-            await client.workflows.execute_workflow(
+            await client.workflows.run_workflow(
                 workflow_id="workflow_id",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.execute_workflow(
-            workflow_id, input=input, mode=mode, execution_metadata=execution_metadata, request_options=request_options
+        _response = await self._raw_client.run_workflow(
+            workflow_id, input=input, execution_metadata=execution_metadata, request_options=request_options
         )
         return _response.data
 
@@ -1391,4 +1535,92 @@ class AsyncWorkflowsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_execution_logs(execution_id, request_options=request_options)
+        return _response.data
+
+    async def get_execution_state(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowExecutionStateView:
+        """
+        Get workflow execution state with steps for live UI polling.
+
+        This endpoint returns the current state of a workflow execution including all steps
+        with their details. It's designed to be polled every 2 seconds during execution
+        to show real-time progress in the frontend.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowExecutionStateView
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.workflows.get_execution_state(
+                execution_id="execution_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_execution_state(execution_id, request_options=request_options)
+        return _response.data
+
+    async def get_execution_media(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> WorkflowExecutionMediaView:
+        """
+        Get workflow execution media (screenshots) with presigned URLs.
+
+        This endpoint returns media URLs for completed executions. Screenshots
+        are returned with presigned S3 URLs for direct access from the frontend.
+        Should be called when execution status is 'completed', 'failed', or 'cancelled'.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowExecutionMediaView
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.workflows.get_execution_media(
+                execution_id="execution_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_execution_media(execution_id, request_options=request_options)
         return _response.data

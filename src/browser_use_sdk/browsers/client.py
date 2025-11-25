@@ -77,6 +77,8 @@ class BrowsersClient:
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
         timeout: typing.Optional[int] = OMIT,
+        browser_screen_width: typing.Optional[int] = OMIT,
+        browser_screen_height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -104,6 +106,12 @@ class BrowsersClient:
         timeout : typing.Optional[int]
             The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
 
+        browser_screen_width : typing.Optional[int]
+            Custom screen width in pixels for the browser.
+
+        browser_screen_height : typing.Optional[int]
+            Custom screen height in pixels for the browser.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -125,6 +133,8 @@ class BrowsersClient:
             profile_id=profile_id,
             proxy_country_code=proxy_country_code,
             timeout=timeout,
+            browser_screen_width=browser_screen_width,
+            browser_screen_height=browser_screen_height,
             request_options=request_options,
         )
         return _response.data
@@ -268,6 +278,8 @@ class AsyncBrowsersClient:
         profile_id: typing.Optional[str] = OMIT,
         proxy_country_code: typing.Optional[ProxyCountryCode] = OMIT,
         timeout: typing.Optional[int] = OMIT,
+        browser_screen_width: typing.Optional[int] = OMIT,
+        browser_screen_height: typing.Optional[int] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -294,6 +306,12 @@ class AsyncBrowsersClient:
 
         timeout : typing.Optional[int]
             The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
+
+        browser_screen_width : typing.Optional[int]
+            Custom screen width in pixels for the browser.
+
+        browser_screen_height : typing.Optional[int]
+            Custom screen height in pixels for the browser.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -324,6 +342,8 @@ class AsyncBrowsersClient:
             profile_id=profile_id,
             proxy_country_code=proxy_country_code,
             timeout=timeout,
+            browser_screen_width=browser_screen_width,
+            browser_screen_height=browser_screen_height,
             request_options=request_options,
         )
         return _response.data

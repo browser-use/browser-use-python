@@ -753,6 +753,22 @@ client.sessions.create_session()
 <dl>
 <dd>
 
+**browser_screen_width:** `typing.Optional[int]` — Custom screen width in pixels for the browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser_screen_height:** `typing.Optional[int]` — Custom screen height in pixels for the browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -1995,6 +2011,22 @@ client.browsers.create_browser_session()
 <dl>
 <dd>
 
+**browser_screen_width:** `typing.Optional[int]` — Custom screen width in pixels for the browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**browser_screen_height:** `typing.Optional[int]` — Custom screen height in pixels for the browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2564,6 +2596,80 @@ client.workflows.update_workflow(
 </dl>
 </details>
 
+<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_workflow_generation_state</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get workflow generation state with live browser URL for polling.
+
+This endpoint returns the current state of workflow generation including
+the live browser URL (if available). It's designed to be polled every 2 seconds
+during generation to show real-time browser activity in the frontend.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.workflows.get_workflow_generation_state(
+    workflow_id="workflow_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**workflow_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_workflow_yaml_presigned_url</a>(...)</code></summary>
 <dl>
 <dd>
@@ -2654,7 +2760,7 @@ client.workflows.get_workflow_yaml_presigned_url(
 </dl>
 </details>
 
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">execute_workflow</a>(...)</code></summary>
+<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">run_workflow</a>(...)</code></summary>
 <dl>
 <dd>
 
@@ -2666,10 +2772,10 @@ client.workflows.get_workflow_yaml_presigned_url(
 <dl>
 <dd>
 
-Execute a workflow either synchronously or asynchronously.
+Execute a workflow asynchronously.
 
-- ASYNC mode: Returns execution ID immediately and processes in background via Lambda
-- SYNC mode: Waits for execution to complete and returns results inline (max 5 min timeout)
+Returns execution ID immediately and processes in background via Inngest.
+Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
 </dd>
 </dl>
 </dd>
@@ -2689,7 +2795,7 @@ from browser_use_sdk import BrowserUse
 client = BrowserUse(
     api_key="YOUR_API_KEY",
 )
-client.workflows.execute_workflow(
+client.workflows.run_workflow(
     workflow_id="workflow_id",
 )
 
@@ -2716,14 +2822,6 @@ client.workflows.execute_workflow(
 <dd>
 
 **input:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Input parameters for the workflow execution
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**mode:** `typing.Optional[ExecutionMode]` — Execution mode (sync or async)
     
 </dd>
 </dl>
@@ -3301,6 +3399,154 @@ client = BrowserUse(
     api_key="YOUR_API_KEY",
 )
 client.workflows.get_execution_logs(
+    execution_id="execution_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution_state</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get workflow execution state with steps for live UI polling.
+
+This endpoint returns the current state of a workflow execution including all steps
+with their details. It's designed to be polled every 2 seconds during execution
+to show real-time progress in the frontend.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.workflows.get_execution_state(
+    execution_id="execution_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution_media</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get workflow execution media (screenshots) with presigned URLs.
+
+This endpoint returns media URLs for completed executions. Screenshots
+are returned with presigned S3 URLs for direct access from the frontend.
+Should be called when execution status is 'completed', 'failed', or 'cancelled'.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.workflows.get_execution_media(
     execution_id="execution_id",
 )
 

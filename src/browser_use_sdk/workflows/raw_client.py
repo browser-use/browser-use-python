@@ -10,18 +10,18 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.execution_mode import ExecutionMode
+from ..types.workflow_execution_created_response import WorkflowExecutionCreatedResponse
 from ..types.workflow_execution_list_response import WorkflowExecutionListResponse
 from ..types.workflow_execution_log_response import WorkflowExecutionLogResponse
+from ..types.workflow_execution_media_view import WorkflowExecutionMediaView
 from ..types.workflow_execution_response import WorkflowExecutionResponse
+from ..types.workflow_execution_state_view import WorkflowExecutionStateView
 from ..types.workflow_execution_status import WorkflowExecutionStatus
 from ..types.workflow_generate_response import WorkflowGenerateResponse
+from ..types.workflow_generation_state_view import WorkflowGenerationStateView
 from ..types.workflow_list_response import WorkflowListResponse
 from ..types.workflow_response import WorkflowResponse
 from ..types.workflow_yaml_presigned_upload_response import WorkflowYamlPresignedUploadResponse
-from .types.execute_workflow_workflows_workflow_id_execute_post_response import (
-    ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,
-)
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -339,6 +339,59 @@ class RawWorkflowsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def get_workflow_generation_state(
+        self, workflow_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[WorkflowGenerationStateView]:
+        """
+        Get workflow generation state with live browser URL for polling.
+
+        This endpoint returns the current state of workflow generation including
+        the live browser URL (if available). It's designed to be polled every 2 seconds
+        during generation to show real-time browser activity in the frontend.
+
+        Parameters
+        ----------
+        workflow_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[WorkflowGenerationStateView]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"workflows/{jsonable_encoder(workflow_id)}/generation-state",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowGenerationStateView,
+                    construct_type(
+                        type_=WorkflowGenerationStateView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     def get_workflow_yaml_presigned_url(
         self,
         workflow_id: str,
@@ -410,20 +463,19 @@ class RawWorkflowsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    def execute_workflow(
+    def run_workflow(
         self,
         workflow_id: str,
         *,
         input: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
-        mode: typing.Optional[ExecutionMode] = OMIT,
         execution_metadata: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> HttpResponse[ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse]:
+    ) -> HttpResponse[WorkflowExecutionCreatedResponse]:
         """
-        Execute a workflow either synchronously or asynchronously.
+        Execute a workflow asynchronously.
 
-        - ASYNC mode: Returns execution ID immediately and processes in background via Lambda
-        - SYNC mode: Waits for execution to complete and returns results inline (max 5 min timeout)
+        Returns execution ID immediately and processes in background via Inngest.
+        Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
 
         Parameters
         ----------
@@ -431,9 +483,6 @@ class RawWorkflowsClient:
 
         input : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Input parameters for the workflow execution
-
-        mode : typing.Optional[ExecutionMode]
-            Execution mode (sync or async)
 
         execution_metadata : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Optional metadata for this execution
@@ -443,15 +492,14 @@ class RawWorkflowsClient:
 
         Returns
         -------
-        HttpResponse[ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse]
+        HttpResponse[WorkflowExecutionCreatedResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"workflows/{jsonable_encoder(workflow_id)}/execute",
+            f"workflows/{jsonable_encoder(workflow_id)}/run",
             method="POST",
             json={
                 "input": input,
-                "mode": mode,
                 "executionMetadata": execution_metadata,
             },
             headers={
@@ -463,9 +511,9 @@ class RawWorkflowsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,
+                    WorkflowExecutionCreatedResponse,
                     construct_type(
-                        type_=ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,  # type: ignore
+                        type_=WorkflowExecutionCreatedResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -901,6 +949,112 @@ class RawWorkflowsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    def get_execution_state(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[WorkflowExecutionStateView]:
+        """
+        Get workflow execution state with steps for live UI polling.
+
+        This endpoint returns the current state of a workflow execution including all steps
+        with their details. It's designed to be polled every 2 seconds during execution
+        to show real-time progress in the frontend.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[WorkflowExecutionStateView]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"workflows/executions/{jsonable_encoder(execution_id)}/state",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowExecutionStateView,
+                    construct_type(
+                        type_=WorkflowExecutionStateView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_execution_media(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[WorkflowExecutionMediaView]:
+        """
+        Get workflow execution media (screenshots) with presigned URLs.
+
+        This endpoint returns media URLs for completed executions. Screenshots
+        are returned with presigned S3 URLs for direct access from the frontend.
+        Should be called when execution status is 'completed', 'failed', or 'cancelled'.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[WorkflowExecutionMediaView]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"workflows/executions/{jsonable_encoder(execution_id)}/media",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowExecutionMediaView,
+                    construct_type(
+                        type_=WorkflowExecutionMediaView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
 
 class AsyncRawWorkflowsClient:
     def __init__(self, *, client_wrapper: AsyncClientWrapper):
@@ -1214,6 +1368,59 @@ class AsyncRawWorkflowsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
+    async def get_workflow_generation_state(
+        self, workflow_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[WorkflowGenerationStateView]:
+        """
+        Get workflow generation state with live browser URL for polling.
+
+        This endpoint returns the current state of workflow generation including
+        the live browser URL (if available). It's designed to be polled every 2 seconds
+        during generation to show real-time browser activity in the frontend.
+
+        Parameters
+        ----------
+        workflow_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[WorkflowGenerationStateView]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"workflows/{jsonable_encoder(workflow_id)}/generation-state",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowGenerationStateView,
+                    construct_type(
+                        type_=WorkflowGenerationStateView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
     async def get_workflow_yaml_presigned_url(
         self,
         workflow_id: str,
@@ -1285,20 +1492,19 @@ class AsyncRawWorkflowsClient:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
-    async def execute_workflow(
+    async def run_workflow(
         self,
         workflow_id: str,
         *,
         input: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
-        mode: typing.Optional[ExecutionMode] = OMIT,
         execution_metadata: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
-    ) -> AsyncHttpResponse[ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse]:
+    ) -> AsyncHttpResponse[WorkflowExecutionCreatedResponse]:
         """
-        Execute a workflow either synchronously or asynchronously.
+        Execute a workflow asynchronously.
 
-        - ASYNC mode: Returns execution ID immediately and processes in background via Lambda
-        - SYNC mode: Waits for execution to complete and returns results inline (max 5 min timeout)
+        Returns execution ID immediately and processes in background via Inngest.
+        Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
 
         Parameters
         ----------
@@ -1306,9 +1512,6 @@ class AsyncRawWorkflowsClient:
 
         input : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Input parameters for the workflow execution
-
-        mode : typing.Optional[ExecutionMode]
-            Execution mode (sync or async)
 
         execution_metadata : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Optional metadata for this execution
@@ -1318,15 +1521,14 @@ class AsyncRawWorkflowsClient:
 
         Returns
         -------
-        AsyncHttpResponse[ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse]
+        AsyncHttpResponse[WorkflowExecutionCreatedResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"workflows/{jsonable_encoder(workflow_id)}/execute",
+            f"workflows/{jsonable_encoder(workflow_id)}/run",
             method="POST",
             json={
                 "input": input,
-                "mode": mode,
                 "executionMetadata": execution_metadata,
             },
             headers={
@@ -1338,9 +1540,9 @@ class AsyncRawWorkflowsClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,
+                    WorkflowExecutionCreatedResponse,
                     construct_type(
-                        type_=ExecuteWorkflowWorkflowsWorkflowIdExecutePostResponse,  # type: ignore
+                        type_=WorkflowExecutionCreatedResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -1756,6 +1958,112 @@ class AsyncRawWorkflowsClient:
                     WorkflowExecutionLogResponse,
                     construct_type(
                         type_=WorkflowExecutionLogResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_execution_state(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[WorkflowExecutionStateView]:
+        """
+        Get workflow execution state with steps for live UI polling.
+
+        This endpoint returns the current state of a workflow execution including all steps
+        with their details. It's designed to be polled every 2 seconds during execution
+        to show real-time progress in the frontend.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[WorkflowExecutionStateView]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"workflows/executions/{jsonable_encoder(execution_id)}/state",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowExecutionStateView,
+                    construct_type(
+                        type_=WorkflowExecutionStateView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_execution_media(
+        self, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[WorkflowExecutionMediaView]:
+        """
+        Get workflow execution media (screenshots) with presigned URLs.
+
+        This endpoint returns media URLs for completed executions. Screenshots
+        are returned with presigned S3 URLs for direct access from the frontend.
+        Should be called when execution status is 'completed', 'failed', or 'cancelled'.
+
+        Parameters
+        ----------
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[WorkflowExecutionMediaView]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"workflows/executions/{jsonable_encoder(execution_id)}/media",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowExecutionMediaView,
+                    construct_type(
+                        type_=WorkflowExecutionMediaView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
