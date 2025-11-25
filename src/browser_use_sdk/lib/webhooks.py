@@ -10,8 +10,6 @@ from pydantic import BaseModel
 
 # Models ---------------------------------------------------------------------
 
-# test
-
 
 class WebhookTestPayload(BaseModel):
     """Test webhook payload."""
@@ -53,12 +51,12 @@ Webhook = Union[WebhookTest, WebhookAgentTaskStatusUpdate]
 # Methods --------------------------------------------------------------------
 
 
-def create_webhook_signature(payload: Any, timestamp: str, secret: str) -> str:
+def create_webhook_signature(body: Any, timestamp: str, secret: str) -> str:
     """
-    Creates a webhook signature for the given payload, timestamp, and secret.
+    Creates a webhook signature for the given body, timestamp, and secret.
 
     Args:
-        payload: The webhook payload to sign
+        body: The webhook body to sign
         timestamp: The timestamp string
         secret: The secret key for signing
 
@@ -66,7 +64,7 @@ def create_webhook_signature(payload: Any, timestamp: str, secret: str) -> str:
         The HMAC-SHA256 signature as a hex string
     """
 
-    dump = json.dumps(payload, separators=(",", ":"), sort_keys=True)
+    dump = json.dumps(body, separators=(",", ":"), sort_keys=True)
     message = f"{timestamp}.{dump}"
 
     # Create HMAC-SHA256 signature
@@ -101,8 +99,16 @@ def verify_webhook_event_signature(
         else:
             json_data = body
 
-        # PARSE
+        # NOTE: Do not use the parsed json_data (model_dump()) for signature verification, use the original json_data (raw body) instead.
+        # The signature is created from the original body, not the parsed model
+        calculated_signature = create_webhook_signature(
+            body=json_data, timestamp=timestamp, secret=secret
+        )
 
+        if not hmac.compare_digest(expected_signature, calculated_signature):
+            return None
+
+        # PARSE
         webhook_event: Optional[Webhook] = None
 
         if webhook_event is None:
@@ -119,15 +125,6 @@ def verify_webhook_event_signature(
                 pass
 
         if webhook_event is None:
-            return None
-
-        # Verify
-
-        calculated_signature = create_webhook_signature(
-            payload=webhook_event.payload.model_dump(), timestamp=timestamp, secret=secret
-        )
-
-        if not hmac.compare_digest(expected_signature, calculated_signature):
             return None
 
         return webhook_event

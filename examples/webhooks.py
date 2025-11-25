@@ -26,19 +26,21 @@ def mock_webhook_event() -> Tuple[Dict[str, Any], str, str]:
         metadata={"progress": 25},
     )
 
-    signature = create_webhook_signature(
-        payload=payload.model_dump(),
-        timestamp=timestamp,
-        secret=SECRET,
-    )
-
     evt: Webhook = WebhookAgentTaskStatusUpdate(
         type="agent.task.status_update",
         timestamp=datetime.fromisoformat("2023-01-01T00:00:00"),
         payload=payload,
     )
 
-    return evt.model_dump(), signature, timestamp
+    # Create signature from the full event body
+    evt_dict = evt.model_dump()
+    signature = create_webhook_signature(
+        body=evt_dict,
+        timestamp=timestamp,
+        secret=SECRET,
+    )
+
+    return evt_dict, signature, timestamp
 
 
 def main() -> None:
