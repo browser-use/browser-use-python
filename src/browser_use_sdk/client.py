@@ -3,6 +3,7 @@
 import typing
 
 import httpx
+
 # from .accounts.client import AccountsClient, AsyncAccountsClient  # Module not yet available
 from .billing.client import AsyncBillingClient, BillingClient
 from .browsers.client import AsyncBrowsersClient, BrowsersClient
@@ -11,6 +12,7 @@ from .environment import BrowserUseEnvironment
 from .files.client import AsyncFilesClient, FilesClient
 from .profiles.client import AsyncProfilesClient, ProfilesClient
 from .sessions.client import AsyncSessionsClient, SessionsClient
+from .skills.client import AsyncSkillsClient, SkillsClient
 from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 from .wrapper.tasks.client import AsyncBrowserUseTasksClient, BrowserUseTasksClient
 
@@ -88,6 +90,7 @@ class BrowserUse:
         self.files = FilesClient(client_wrapper=self._client_wrapper)
         self.profiles = ProfilesClient(client_wrapper=self._client_wrapper)
         self.workflows = WorkflowsClient(client_wrapper=self._client_wrapper)
+        self.skills = SkillsClient(client_wrapper=self._client_wrapper)
 
 
 class AsyncBrowserUse:
@@ -163,6 +166,7 @@ class AsyncBrowserUse:
         self.files = AsyncFilesClient(client_wrapper=self._client_wrapper)
         self.profiles = AsyncProfilesClient(client_wrapper=self._client_wrapper)
         self.workflows = AsyncWorkflowsClient(client_wrapper=self._client_wrapper)
+        self.skills = AsyncSkillsClient(client_wrapper=self._client_wrapper)
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseEnvironment) -> str:
