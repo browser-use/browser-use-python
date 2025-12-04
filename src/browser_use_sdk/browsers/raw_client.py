@@ -100,6 +100,7 @@ class RawBrowsersClient:
         timeout: typing.Optional[int] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        allow_resizing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[BrowserSessionItemView]:
         """
@@ -133,6 +134,9 @@ class RawBrowsersClient:
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
 
+        allow_resizing : typing.Optional[bool]
+            Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -150,6 +154,7 @@ class RawBrowsersClient:
                 "timeout": timeout,
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
+                "allowResizing": allow_resizing,
             },
             headers={
                 "content-type": "application/json",
@@ -423,6 +428,7 @@ class AsyncRawBrowsersClient:
         timeout: typing.Optional[int] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        allow_resizing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[BrowserSessionItemView]:
         """
@@ -456,6 +462,9 @@ class AsyncRawBrowsersClient:
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
 
+        allow_resizing : typing.Optional[bool]
+            Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -473,6 +482,7 @@ class AsyncRawBrowsersClient:
                 "timeout": timeout,
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
+                "allowResizing": allow_resizing,
             },
             headers={
                 "content-type": "application/json",

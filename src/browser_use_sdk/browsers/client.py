@@ -79,6 +79,7 @@ class BrowsersClient:
         timeout: typing.Optional[int] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        allow_resizing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -112,6 +113,9 @@ class BrowsersClient:
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
 
+        allow_resizing : typing.Optional[bool]
+            Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -135,6 +139,7 @@ class BrowsersClient:
             timeout=timeout,
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
+            allow_resizing=allow_resizing,
             request_options=request_options,
         )
         return _response.data
@@ -280,6 +285,7 @@ class AsyncBrowsersClient:
         timeout: typing.Optional[int] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        allow_resizing: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -313,6 +319,9 @@ class AsyncBrowsersClient:
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
 
+        allow_resizing : typing.Optional[bool]
+            Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -344,6 +353,7 @@ class AsyncBrowsersClient:
             timeout=timeout,
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
+            allow_resizing=allow_resizing,
             request_options=request_options,
         )
         return _response.data

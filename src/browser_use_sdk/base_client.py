@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
     from .files.client import AsyncFilesClient, FilesClient
     from .profiles.client import AsyncProfilesClient, ProfilesClient
     from .sessions.client import AsyncSessionsClient, SessionsClient
+    from .skills.client import AsyncSkillsClient, SkillsClient
     from .tasks.client import AsyncTasksClient, TasksClient
     from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 
@@ -89,6 +90,7 @@ class BaseClient:
         self._files: typing.Optional[FilesClient] = None
         self._profiles: typing.Optional[ProfilesClient] = None
         self._browsers: typing.Optional[BrowsersClient] = None
+        self._skills: typing.Optional[SkillsClient] = None
         self._workflows: typing.Optional[WorkflowsClient] = None
 
     @property
@@ -138,6 +140,14 @@ class BaseClient:
 
             self._browsers = BrowsersClient(client_wrapper=self._client_wrapper)
         return self._browsers
+
+    @property
+    def skills(self):
+        if self._skills is None:
+            from .skills.client import SkillsClient  # noqa: E402
+
+            self._skills = SkillsClient(client_wrapper=self._client_wrapper)
+        return self._skills
 
     @property
     def workflows(self):
@@ -219,6 +229,7 @@ class AsyncBaseClient:
         self._files: typing.Optional[AsyncFilesClient] = None
         self._profiles: typing.Optional[AsyncProfilesClient] = None
         self._browsers: typing.Optional[AsyncBrowsersClient] = None
+        self._skills: typing.Optional[AsyncSkillsClient] = None
         self._workflows: typing.Optional[AsyncWorkflowsClient] = None
 
     @property
@@ -268,6 +279,14 @@ class AsyncBaseClient:
 
             self._browsers = AsyncBrowsersClient(client_wrapper=self._client_wrapper)
         return self._browsers
+
+    @property
+    def skills(self):
+        if self._skills is None:
+            from .skills.client import AsyncSkillsClient  # noqa: E402
+
+            self._skills = AsyncSkillsClient(client_wrapper=self._client_wrapper)
+        return self._skills
 
     @property
     def workflows(self):

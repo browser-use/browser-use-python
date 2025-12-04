@@ -2027,6 +2027,14 @@ client.browsers.create_browser_session()
 <dl>
 <dd>
 
+**allow_resizing:** `typing.Optional[bool]` — Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -2164,6 +2172,663 @@ client.browsers.update_browser_session(
 <dd>
 
 **session_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Skills
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">list_skills</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all skills owned by the authenticated project with optional filtering by public status.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.list_skills()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_number:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_public:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">create_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a new skill via automated generation.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.create_skill(
+    goal="goal",
+    agent_prompt="agentPrompt",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**goal:** `str` — Goal of the skill (description of what the skill does and what the user should expect from it)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**agent_prompt:** `str` — Prompt for the agent to use when generating the skill automatically
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**title:** `typing.Optional[str]` — Optional title for the skill (will be generated if not provided)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">get_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a specific skill owned by the project.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.get_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">delete_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a skill owned by the project.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.delete_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">update_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Update skill metadata (name, description, enabled, etc.).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.update_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**title:** `typing.Optional[str]` — Display name for the skill (shows up in the public view)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — Description of what the skill does (shows up in the public view)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` — Whether the skill is enabled for execution
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_public:** `typing.Optional[bool]` — Whether the skill is publicly available
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">cancel_generation</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Cancel the current in-progress generation for a skill.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.cancel_generation(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">execute_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Execute a skill with the provided parameters.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.execute_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Parameters to pass to the skill handler
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">refine_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Refine a skill based on feedback.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.refine_skill(
+    skill_id="skill_id",
+    feedback="feedback",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**feedback:** `str` — Feedback describing what to improve
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**test_output:** `typing.Optional[str]` — Last skill test output to include in refinement context
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**test_logs:** `typing.Optional[str]` — Last skill test logs to include in refinement context
     
 </dd>
 </dl>

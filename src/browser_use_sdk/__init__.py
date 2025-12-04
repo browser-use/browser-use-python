@@ -6,7 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import billing, browsers, files, profiles, sessions, tasks, workflows
+    from . import billing, browsers, files, profiles, sessions, skills, tasks, workflows
     from .client import AsyncBrowserUse, BrowserUse
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
@@ -18,6 +18,7 @@ _dynamic_imports: typing.Dict[str, str] = {
     "files": ".",
     "profiles": ".",
     "sessions": ".",
+    "skills": ".",
     "tasks": ".",
     "workflows": ".",
 }
@@ -51,6 +52,7 @@ __all__ = [
     "files",
     "profiles",
     "sessions",
+    "skills",
     "tasks",
     "workflows",
 ]

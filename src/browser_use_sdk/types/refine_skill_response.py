@@ -7,12 +7,15 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class InsufficientCreditsError(UncheckedBaseModel):
+class RefineSkillResponse(UncheckedBaseModel):
     """
-    Error response when user has insufficient credits
+    Response after requesting skill refinement.
     """
 
-    detail: typing.Optional[str] = None
+    id: str = pydantic.Field()
+    """
+    Unique identifier for the skill
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

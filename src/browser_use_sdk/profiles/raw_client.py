@@ -12,7 +12,6 @@ from ..core.unchecked_base_model import construct_type
 from ..errors.not_found_error import NotFoundError
 from ..errors.payment_required_error import PaymentRequiredError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
-from ..types.insufficient_credits_error import InsufficientCreditsError
 from ..types.profile_list_response import ProfileListResponse
 from ..types.profile_view import ProfileView
 
@@ -133,9 +132,9 @@ class RawProfilesClient:
                 raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        InsufficientCreditsError,
+                        typing.Optional[typing.Any],
                         construct_type(
-                            type_=InsufficientCreditsError,  # type: ignore
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -445,9 +444,9 @@ class AsyncRawProfilesClient:
                 raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
-                        InsufficientCreditsError,
+                        typing.Optional[typing.Any],
                         construct_type(
-                            type_=InsufficientCreditsError,  # type: ignore
+                            type_=typing.Optional[typing.Any],  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
