@@ -955,6 +955,7 @@ client = BrowserUse(
 )
 client.sessions.update_session(
     session_id="session_id",
+    action="stop",
 )
 
 ```
@@ -972,6 +973,14 @@ client.sessions.update_session(
 <dd>
 
 **session_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**action:** `SessionUpdateAction` — The action to perform on the session
     
 </dd>
 </dl>
@@ -2155,6 +2164,7 @@ client = BrowserUse(
 )
 client.browsers.update_browser_session(
     session_id="session_id",
+    action="stop",
 )
 
 ```
@@ -2172,6 +2182,14 @@ client.browsers.update_browser_session(
 <dd>
 
 **session_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**action:** `BrowserSessionUpdateAction` — The action to perform on the session
     
 </dd>
 </dl>

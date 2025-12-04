@@ -2,4 +2,4 @@
 
 import typing
 
-SessionUpdateAction = typing.Literal["stop"]
+SessionUpdateAction = typing.Union[typing.Literal["stop"], typing.Any]

@@ -3,7 +3,7 @@ name = "browser-use-sdk"
 
 [tool.poetry]
 name = "browser-use-sdk"
-version = "2.0.9"
+version = "2.0.10"
 description = "The official Python library for the Browser Use API"
 readme = "README.md"
 authors = []

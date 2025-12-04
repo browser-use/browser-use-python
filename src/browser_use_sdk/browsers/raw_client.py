@@ -16,6 +16,7 @@ from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.browser_session_item_view import BrowserSessionItemView
 from ..types.browser_session_list_response import BrowserSessionListResponse
 from ..types.browser_session_status import BrowserSessionStatus
+from ..types.browser_session_update_action import BrowserSessionUpdateAction
 from ..types.browser_session_view import BrowserSessionView
 from ..types.proxy_country_code import ProxyCountryCode
 from ..types.session_timeout_limit_exceeded_error import SessionTimeoutLimitExceededError
@@ -282,7 +283,11 @@ class RawBrowsersClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def update_browser_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        session_id: str,
+        *,
+        action: BrowserSessionUpdateAction,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[BrowserSessionView]:
         """
         Stop a browser session.
@@ -294,6 +299,9 @@ class RawBrowsersClient:
         Parameters
         ----------
         session_id : str
+
+        action : BrowserSessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -307,7 +315,7 @@ class RawBrowsersClient:
             f"browsers/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
-                "action": "stop",
+                "action": action,
             },
             headers={
                 "content-type": "application/json",
@@ -610,7 +618,11 @@ class AsyncRawBrowsersClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def update_browser_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        session_id: str,
+        *,
+        action: BrowserSessionUpdateAction,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[BrowserSessionView]:
         """
         Stop a browser session.
@@ -622,6 +634,9 @@ class AsyncRawBrowsersClient:
         Parameters
         ----------
         session_id : str
+
+        action : BrowserSessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -635,7 +650,7 @@ class AsyncRawBrowsersClient:
             f"browsers/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
-                "action": "stop",
+                "action": action,
             },
             headers={
                 "content-type": "application/json",

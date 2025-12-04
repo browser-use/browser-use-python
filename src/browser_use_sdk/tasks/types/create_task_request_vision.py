@@ -2,4 +2,6 @@
 
 import typing
 
-CreateTaskRequestVision = typing.Union[bool, typing.Literal["auto"]]
+from .create_task_request_vision_one import CreateTaskRequestVisionOne
+
+CreateTaskRequestVision = typing.Union[bool, CreateTaskRequestVisionOne]

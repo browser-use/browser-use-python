@@ -16,6 +16,7 @@ from ..types.proxy_country_code import ProxyCountryCode
 from ..types.session_item_view import SessionItemView
 from ..types.session_list_response import SessionListResponse
 from ..types.session_status import SessionStatus
+from ..types.session_update_action import SessionUpdateAction
 from ..types.session_view import SessionView
 from ..types.share_view import ShareView
 from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
@@ -306,7 +307,7 @@ class RawSessionsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def update_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, session_id: str, *, action: SessionUpdateAction, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[SessionView]:
         """
         Stop a session and all its running tasks.
@@ -314,6 +315,9 @@ class RawSessionsClient:
         Parameters
         ----------
         session_id : str
+
+        action : SessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -327,7 +331,7 @@ class RawSessionsClient:
             f"sessions/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
-                "action": "stop",
+                "action": action,
             },
             headers={
                 "content-type": "application/json",
@@ -827,7 +831,7 @@ class AsyncRawSessionsClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def update_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, session_id: str, *, action: SessionUpdateAction, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[SessionView]:
         """
         Stop a session and all its running tasks.
@@ -835,6 +839,9 @@ class AsyncRawSessionsClient:
         Parameters
         ----------
         session_id : str
+
+        action : SessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -848,7 +855,7 @@ class AsyncRawSessionsClient:
             f"sessions/{jsonable_encoder(session_id)}",
             method="PATCH",
             json={
-                "action": "stop",
+                "action": action,
             },
             headers={
                 "content-type": "application/json",

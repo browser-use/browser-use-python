@@ -8,6 +8,7 @@ from ..types.proxy_country_code import ProxyCountryCode
 from ..types.session_item_view import SessionItemView
 from ..types.session_list_response import SessionListResponse
 from ..types.session_status import SessionStatus
+from ..types.session_update_action import SessionUpdateAction
 from ..types.session_view import SessionView
 from ..types.share_view import ShareView
 from .raw_client import AsyncRawSessionsClient, RawSessionsClient
@@ -189,7 +190,7 @@ class SessionsClient:
         return _response.data
 
     def update_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, session_id: str, *, action: SessionUpdateAction, request_options: typing.Optional[RequestOptions] = None
     ) -> SessionView:
         """
         Stop a session and all its running tasks.
@@ -197,6 +198,9 @@ class SessionsClient:
         Parameters
         ----------
         session_id : str
+
+        action : SessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -215,9 +219,10 @@ class SessionsClient:
         )
         client.sessions.update_session(
             session_id="session_id",
+            action="stop",
         )
         """
-        _response = self._raw_client.update_session(session_id, request_options=request_options)
+        _response = self._raw_client.update_session(session_id, action=action, request_options=request_options)
         return _response.data
 
     def get_session_public_share(
@@ -523,7 +528,7 @@ class AsyncSessionsClient:
         return _response.data
 
     async def update_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, session_id: str, *, action: SessionUpdateAction, request_options: typing.Optional[RequestOptions] = None
     ) -> SessionView:
         """
         Stop a session and all its running tasks.
@@ -531,6 +536,9 @@ class AsyncSessionsClient:
         Parameters
         ----------
         session_id : str
+
+        action : SessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -554,12 +562,13 @@ class AsyncSessionsClient:
         async def main() -> None:
             await client.sessions.update_session(
                 session_id="session_id",
+                action="stop",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_session(session_id, request_options=request_options)
+        _response = await self._raw_client.update_session(session_id, action=action, request_options=request_options)
         return _response.data
 
     async def get_session_public_share(

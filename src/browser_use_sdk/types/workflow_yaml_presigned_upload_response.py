@@ -7,6 +7,7 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
+from .workflow_yaml_presigned_upload_response_method import WorkflowYamlPresignedUploadResponseMethod
 
 
 class WorkflowYamlPresignedUploadResponse(UncheckedBaseModel):
@@ -19,7 +20,7 @@ class WorkflowYamlPresignedUploadResponse(UncheckedBaseModel):
     The URL to upload the YAML file to
     """
 
-    method: typing.Literal["POST"] = pydantic.Field(default="POST")
+    method: WorkflowYamlPresignedUploadResponseMethod = pydantic.Field()
     """
     The HTTP method to use for the upload
     """
@@ -29,7 +30,7 @@ class WorkflowYamlPresignedUploadResponse(UncheckedBaseModel):
     The form fields to include in the upload request
     """
 
-    s_3_key: typing_extensions.Annotated[str, FieldMetadata(alias="s3Key")] = pydantic.Field()
+    s3key: typing_extensions.Annotated[str, FieldMetadata(alias="s3Key")] = pydantic.Field()
     """
     The S3 key where the file will be stored
     """

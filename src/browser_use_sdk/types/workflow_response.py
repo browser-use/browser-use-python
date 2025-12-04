@@ -43,7 +43,7 @@ class WorkflowResponse(UncheckedBaseModel):
     Description of the workflow
     """
 
-    s_3_key: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="s3Key")] = pydantic.Field(
+    s3key: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="s3Key")] = pydantic.Field(
         default=None
     )
     """

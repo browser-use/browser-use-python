@@ -2,4 +2,4 @@
 
 import typing
 
-BrowserSessionUpdateAction = typing.Union[typing.Literal["stop"], typing.Any]
+CreateTaskRequestVisionOne = typing.Union[typing.Literal["auto"], typing.Any]

@@ -7,6 +7,7 @@ from ..core.request_options import RequestOptions
 from ..types.browser_session_item_view import BrowserSessionItemView
 from ..types.browser_session_list_response import BrowserSessionListResponse
 from ..types.browser_session_status import BrowserSessionStatus
+from ..types.browser_session_update_action import BrowserSessionUpdateAction
 from ..types.browser_session_view import BrowserSessionView
 from ..types.proxy_country_code import ProxyCountryCode
 from .raw_client import AsyncRawBrowsersClient, RawBrowsersClient
@@ -177,7 +178,11 @@ class BrowsersClient:
         return _response.data
 
     def update_browser_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        session_id: str,
+        *,
+        action: BrowserSessionUpdateAction,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionView:
         """
         Stop a browser session.
@@ -189,6 +194,9 @@ class BrowsersClient:
         Parameters
         ----------
         session_id : str
+
+        action : BrowserSessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -207,9 +215,10 @@ class BrowsersClient:
         )
         client.browsers.update_browser_session(
             session_id="session_id",
+            action="stop",
         )
         """
-        _response = self._raw_client.update_browser_session(session_id, request_options=request_options)
+        _response = self._raw_client.update_browser_session(session_id, action=action, request_options=request_options)
         return _response.data
 
 
@@ -399,7 +408,11 @@ class AsyncBrowsersClient:
         return _response.data
 
     async def update_browser_session(
-        self, session_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self,
+        session_id: str,
+        *,
+        action: BrowserSessionUpdateAction,
+        request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionView:
         """
         Stop a browser session.
@@ -411,6 +424,9 @@ class AsyncBrowsersClient:
         Parameters
         ----------
         session_id : str
+
+        action : BrowserSessionUpdateAction
+            The action to perform on the session
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -434,10 +450,13 @@ class AsyncBrowsersClient:
         async def main() -> None:
             await client.browsers.update_browser_session(
                 session_id="session_id",
+                action="stop",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.update_browser_session(session_id, request_options=request_options)
+        _response = await self._raw_client.update_browser_session(
+            session_id, action=action, request_options=request_options
+        )
         return _response.data

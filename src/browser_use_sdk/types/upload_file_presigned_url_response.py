@@ -7,6 +7,7 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
+from .upload_file_presigned_url_response_method import UploadFilePresignedUrlResponseMethod
 
 
 class UploadFilePresignedUrlResponse(UncheckedBaseModel):
@@ -19,7 +20,7 @@ class UploadFilePresignedUrlResponse(UncheckedBaseModel):
     The URL to upload the file to.
     """
 
-    method: typing.Literal["POST"] = pydantic.Field(default="POST")
+    method: UploadFilePresignedUrlResponseMethod = pydantic.Field()
     """
     The HTTP method to use for the upload.
     """
