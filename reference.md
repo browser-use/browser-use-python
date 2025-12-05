@@ -2222,7 +2222,7 @@ client.browsers.update_browser_session(
 <dl>
 <dd>
 
-List all skills owned by the authenticated project with optional filtering by public status.
+List all skills owned by the authenticated project with optional filtering.
 </dd>
 </dl>
 </dd>
@@ -2275,6 +2275,38 @@ client.skills.list_skills()
 <dd>
 
 **is_public:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from_date:** `typing.Optional[dt.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to_date:** `typing.Optional[dt.datetime]` 
     
 </dd>
 </dl>
@@ -2362,6 +2394,14 @@ client.skills.create_skill(
 <dd>
 
 **title:** `typing.Optional[str]` — Optional title for the skill (will be generated if not provided)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — Optional description for the skill (will be generated if not provided)
     
 </dd>
 </dl>
@@ -2847,6 +2887,247 @@ client.skills.refine_skill(
 <dd>
 
 **test_logs:** `typing.Optional[str]` — Last skill test logs to include in refinement context
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## SkillsMarketplace
+<details><summary><code>client.skills_marketplace.<a href="src/browser_use_sdk/skills_marketplace/client.py">list_skills</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List all public skills available in the marketplace with optional filtering.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills_marketplace.list_skills()
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_number:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**query:** `typing.Optional[str]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from_date:** `typing.Optional[dt.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**to_date:** `typing.Optional[dt.datetime]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills_marketplace.<a href="src/browser_use_sdk/skills_marketplace/client.py">get_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get details of a specific public skill from the marketplace.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills_marketplace.get_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills_marketplace.<a href="src/browser_use_sdk/skills_marketplace/client.py">clone_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Clone a public marketplace skill to the user's project.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills_marketplace.clone_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
     
 </dd>
 </dl>

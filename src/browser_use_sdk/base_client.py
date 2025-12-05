@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from .profiles.client import AsyncProfilesClient, ProfilesClient
     from .sessions.client import AsyncSessionsClient, SessionsClient
     from .skills.client import AsyncSkillsClient, SkillsClient
+    from .skills_marketplace.client import AsyncSkillsMarketplaceClient, SkillsMarketplaceClient
     from .tasks.client import AsyncTasksClient, TasksClient
     from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 
@@ -91,6 +92,7 @@ class BaseClient:
         self._profiles: typing.Optional[ProfilesClient] = None
         self._browsers: typing.Optional[BrowsersClient] = None
         self._skills: typing.Optional[SkillsClient] = None
+        self._skills_marketplace: typing.Optional[SkillsMarketplaceClient] = None
         self._workflows: typing.Optional[WorkflowsClient] = None
 
     @property
@@ -148,6 +150,14 @@ class BaseClient:
 
             self._skills = SkillsClient(client_wrapper=self._client_wrapper)
         return self._skills
+
+    @property
+    def skills_marketplace(self):
+        if self._skills_marketplace is None:
+            from .skills_marketplace.client import SkillsMarketplaceClient  # noqa: E402
+
+            self._skills_marketplace = SkillsMarketplaceClient(client_wrapper=self._client_wrapper)
+        return self._skills_marketplace
 
     @property
     def workflows(self):
@@ -230,6 +240,7 @@ class AsyncBaseClient:
         self._profiles: typing.Optional[AsyncProfilesClient] = None
         self._browsers: typing.Optional[AsyncBrowsersClient] = None
         self._skills: typing.Optional[AsyncSkillsClient] = None
+        self._skills_marketplace: typing.Optional[AsyncSkillsMarketplaceClient] = None
         self._workflows: typing.Optional[AsyncWorkflowsClient] = None
 
     @property
@@ -287,6 +298,14 @@ class AsyncBaseClient:
 
             self._skills = AsyncSkillsClient(client_wrapper=self._client_wrapper)
         return self._skills
+
+    @property
+    def skills_marketplace(self):
+        if self._skills_marketplace is None:
+            from .skills_marketplace.client import AsyncSkillsMarketplaceClient  # noqa: E402
+
+            self._skills_marketplace = AsyncSkillsMarketplaceClient(client_wrapper=self._client_wrapper)
+        return self._skills_marketplace
 
     @property
     def workflows(self):

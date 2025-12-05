@@ -7,11 +7,10 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .app_api_v2skills_views_parameter_schema import AppApiV2SkillsViewsParameterSchema
-from .skills_generation_status import SkillsGenerationStatus
+from .app_api_v2marketplace_skills_views_parameter_schema import AppApiV2MarketplaceSkillsViewsParameterSchema
 
 
-class SkillResponse(UncheckedBaseModel):
+class MarketplaceSkillResponse(UncheckedBaseModel):
     """
     Skill information returned by the API.
     """
@@ -31,24 +30,7 @@ class SkillResponse(UncheckedBaseModel):
     Description of the skill (shows up in the public view)
     """
 
-    goal: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Goal of the skill (not shown in the public view)
-    """
-
-    agent_prompt: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="agentPrompt")] = (
-        pydantic.Field(default=None)
-    )
-    """
-    Prompt for the agent to use when generating the skill automatically (not shown in the public view)
-    """
-
-    status: SkillsGenerationStatus = pydantic.Field()
-    """
-    Status of the skill
-    """
-
-    parameters: typing.List[AppApiV2SkillsViewsParameterSchema] = pydantic.Field()
+    parameters: typing.List[AppApiV2MarketplaceSkillsViewsParameterSchema] = pydantic.Field()
     """
     Input parameters of the skill
     """
@@ -60,21 +42,6 @@ class SkillResponse(UncheckedBaseModel):
     Output schema of the skill
     """
 
-    is_enabled: typing_extensions.Annotated[bool, FieldMetadata(alias="isEnabled")] = pydantic.Field()
-    """
-    Whether the skill is enabled
-    """
-
-    is_public: typing_extensions.Annotated[bool, FieldMetadata(alias="isPublic")] = pydantic.Field()
-    """
-    Whether the skill is publicly available
-    """
-
-    is_owner: typing_extensions.Annotated[bool, FieldMetadata(alias="isOwner")] = pydantic.Field()
-    """
-    Whether the user is the owner of the skill
-    """
-
     current_version: typing_extensions.Annotated[typing.Optional[int], FieldMetadata(alias="currentVersion")] = (
         pydantic.Field(default=None)
     )
@@ -82,9 +49,9 @@ class SkillResponse(UncheckedBaseModel):
     Current version of the skill
     """
 
-    code: typing.Optional[str] = pydantic.Field(default=None)
+    is_official: typing_extensions.Annotated[bool, FieldMetadata(alias="isOfficial")] = pydantic.Field()
     """
-    Base64 encoded generated code (contact support@browser-use.com to get access) - ENTERPRISE ONLY
+    Whether the skill is official (verified by Browser Use)
     """
 
     created_at: typing_extensions.Annotated[str, FieldMetadata(alias="createdAt")] = pydantic.Field()

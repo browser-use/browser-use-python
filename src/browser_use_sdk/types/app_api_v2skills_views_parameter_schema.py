@@ -5,16 +5,16 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .parameter_type import ParameterType
+from .app_api_v2skills_views_parameter_type import AppApiV2SkillsViewsParameterType
 
 
-class ParameterSchema(UncheckedBaseModel):
+class AppApiV2SkillsViewsParameterSchema(UncheckedBaseModel):
     """
     Schema for a skill parameter.
     """
 
     name: str
-    type: ParameterType
+    type: AppApiV2SkillsViewsParameterType
     required: typing.Optional[bool] = None
     description: typing.Optional[str] = None
     default: typing.Optional[typing.Optional[typing.Any]] = None
