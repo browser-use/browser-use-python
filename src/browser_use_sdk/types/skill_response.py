@@ -7,7 +7,7 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .app_api_v2skills_views_parameter_schema import AppApiV2SkillsViewsParameterSchema
+from .parameter_schema import ParameterSchema
 from .skills_generation_status import SkillsGenerationStatus
 
 
@@ -48,7 +48,7 @@ class SkillResponse(UncheckedBaseModel):
     Status of the skill
     """
 
-    parameters: typing.List[AppApiV2SkillsViewsParameterSchema] = pydantic.Field()
+    parameters: typing.List[ParameterSchema] = pydantic.Field()
     """
     Input parameters of the skill
     """
@@ -80,6 +80,20 @@ class SkillResponse(UncheckedBaseModel):
     )
     """
     Current version of the skill
+    """
+
+    current_version_started_at: typing_extensions.Annotated[
+        typing.Optional[str], FieldMetadata(alias="currentVersionStartedAt")
+    ] = pydantic.Field(default=None)
+    """
+    When the current version started generating
+    """
+
+    current_version_finished_at: typing_extensions.Annotated[
+        typing.Optional[str], FieldMetadata(alias="currentVersionFinishedAt")
+    ] = pydantic.Field(default=None)
+    """
+    When the current version finished generating
     """
 
     code: typing.Optional[str] = pydantic.Field(default=None)

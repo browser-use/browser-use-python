@@ -7,7 +7,7 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .app_api_v2marketplace_skills_views_parameter_schema import AppApiV2MarketplaceSkillsViewsParameterSchema
+from .parameter_schema import ParameterSchema
 
 
 class MarketplaceSkillResponse(UncheckedBaseModel):
@@ -30,7 +30,7 @@ class MarketplaceSkillResponse(UncheckedBaseModel):
     Description of the skill (shows up in the public view)
     """
 
-    parameters: typing.List[AppApiV2MarketplaceSkillsViewsParameterSchema] = pydantic.Field()
+    parameters: typing.List[ParameterSchema] = pydantic.Field()
     """
     Input parameters of the skill
     """

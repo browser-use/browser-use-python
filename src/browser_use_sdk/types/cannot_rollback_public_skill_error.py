@@ -5,19 +5,14 @@ import typing
 import pydantic
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .app_api_v2skills_views_parameter_type import AppApiV2SkillsViewsParameterType
 
 
-class AppApiV2SkillsViewsParameterSchema(UncheckedBaseModel):
+class CannotRollbackPublicSkillError(UncheckedBaseModel):
     """
-    Schema for a skill parameter.
+    Error response when trying to rollback a public skill
     """
 
-    name: str
-    type: AppApiV2SkillsViewsParameterType
-    required: typing.Optional[bool] = None
-    description: typing.Optional[str] = None
-    default: typing.Optional[typing.Optional[typing.Any]] = None
+    detail: typing.Optional[str] = None
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2

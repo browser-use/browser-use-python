@@ -2733,6 +2733,76 @@ client.skills.cancel_generation(
 </dl>
 </details>
 
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">rollback_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Rollback to the previous version (cannot be undone).
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.rollback_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">execute_skill</a>(...)</code></summary>
 <dl>
 <dd>

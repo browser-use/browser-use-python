@@ -291,6 +291,38 @@ class SkillsClient:
         _response = self._raw_client.cancel_generation(skill_id, request_options=request_options)
         return _response.data
 
+    def rollback_skill(
+        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SkillResponse:
+        """
+        Rollback to the previous version (cannot be undone).
+
+        Parameters
+        ----------
+        skill_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.skills.rollback_skill(
+            skill_id="skill_id",
+        )
+        """
+        _response = self._raw_client.rollback_skill(skill_id, request_options=request_options)
+        return _response.data
+
     def execute_skill(
         self,
         skill_id: str,
@@ -704,6 +736,46 @@ class AsyncSkillsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.cancel_generation(skill_id, request_options=request_options)
+        return _response.data
+
+    async def rollback_skill(
+        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SkillResponse:
+        """
+        Rollback to the previous version (cannot be undone).
+
+        Parameters
+        ----------
+        skill_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.skills.rollback_skill(
+                skill_id="skill_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.rollback_skill(skill_id, request_options=request_options)
         return _response.data
 
     async def execute_skill(
