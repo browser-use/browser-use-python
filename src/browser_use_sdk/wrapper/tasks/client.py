@@ -45,6 +45,7 @@ class BrowserUseTasksClient(TasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedStructuredTaskCreatedResponse[T]: ...
 
@@ -70,6 +71,7 @@ class BrowserUseTasksClient(TasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> WrappedTaskCreatedResponse: ...
 
@@ -95,6 +97,7 @@ class BrowserUseTasksClient(TasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[WrappedStructuredTaskCreatedResponse[T], WrappedTaskCreatedResponse]:
         if schema is not None and schema is not OMIT:
@@ -119,6 +122,7 @@ class BrowserUseTasksClient(TasksClient):
                 judge=judge,
                 judge_ground_truth=judge_ground_truth,
                 judge_llm=judge_llm,
+                skill_ids=skill_ids,
                 request_options=request_options,
             )
 
@@ -144,6 +148,7 @@ class BrowserUseTasksClient(TasksClient):
                 judge=judge,
                 judge_ground_truth=judge_ground_truth,
                 judge_llm=judge_llm,
+                skill_ids=skill_ids,
                 request_options=request_options,
             )
 
@@ -200,6 +205,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedStructuredTaskCreatedResponse[T]: ...
 
@@ -225,6 +231,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncWrappedTaskCreatedResponse: ...
 
@@ -250,6 +257,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> typing.Union[AsyncWrappedStructuredTaskCreatedResponse[T], AsyncWrappedTaskCreatedResponse]:
         if schema is not None and schema is not OMIT:
@@ -274,6 +282,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 judge=judge,
                 judge_ground_truth=judge_ground_truth,
                 judge_llm=judge_llm,
+                skill_ids=skill_ids,
                 request_options=request_options,
             )
             return AsyncWrappedStructuredTaskCreatedResponse[T](id=res.id, session_id=res.session_id, schema=schema, client=self)
@@ -298,6 +307,7 @@ class AsyncBrowserUseTasksClient(AsyncTasksClient):
                 judge=judge,
                 judge_ground_truth=judge_ground_truth,
                 judge_llm=judge_llm,
+                skill_ids=skill_ids,
                 request_options=request_options,
             )
             return AsyncWrappedTaskCreatedResponse(id=res.id, session_id=res.session_id, client=self)
