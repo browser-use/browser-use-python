@@ -4,6 +4,7 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
+from ..types.workflow_create_from_task_response import WorkflowCreateFromTaskResponse
 from ..types.workflow_execution_created_response import WorkflowExecutionCreatedResponse
 from ..types.workflow_execution_list_response import WorkflowExecutionListResponse
 from ..types.workflow_execution_log_response import WorkflowExecutionLogResponse
@@ -278,6 +279,68 @@ class WorkflowsClient:
         )
         """
         _response = self._raw_client.get_workflow_generation_state(workflow_id, request_options=request_options)
+        return _response.data
+
+    def create_workflow_from_task(
+        self,
+        *,
+        name: str,
+        task_id: str,
+        session_id: str,
+        description: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> WorkflowCreateFromTaskResponse:
+        """
+        Create a workflow from an existing agent task's recorded history.
+
+        This endpoint creates a workflow by using the browser-use rerun history
+        feature. The task must have completed with history stored in S3.
+
+        The workflow creation process:
+        1. Creates a new workflow record in pending state
+        2. Triggers an Inngest event to process the task history
+        3. The Inngest handler downloads history, detects variables, and updates the workflow
+
+        Use GET /workflows/{workflow_id} to poll for creation completion.
+
+        Parameters
+        ----------
+        name : str
+            Name for the new workflow
+
+        task_id : str
+            ID of the agent task to create workflow from
+
+        session_id : str
+            ID of the agent session containing the task
+
+        description : typing.Optional[str]
+            Optional description for the workflow
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowCreateFromTaskResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.workflows.create_workflow_from_task(
+            name="name",
+            task_id="taskId",
+            session_id="sessionId",
+        )
+        """
+        _response = self._raw_client.create_workflow_from_task(
+            name=name, task_id=task_id, session_id=session_id, description=description, request_options=request_options
+        )
         return _response.data
 
     def get_workflow_yaml_presigned_url(
@@ -1064,6 +1127,76 @@ class AsyncWorkflowsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.get_workflow_generation_state(workflow_id, request_options=request_options)
+        return _response.data
+
+    async def create_workflow_from_task(
+        self,
+        *,
+        name: str,
+        task_id: str,
+        session_id: str,
+        description: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> WorkflowCreateFromTaskResponse:
+        """
+        Create a workflow from an existing agent task's recorded history.
+
+        This endpoint creates a workflow by using the browser-use rerun history
+        feature. The task must have completed with history stored in S3.
+
+        The workflow creation process:
+        1. Creates a new workflow record in pending state
+        2. Triggers an Inngest event to process the task history
+        3. The Inngest handler downloads history, detects variables, and updates the workflow
+
+        Use GET /workflows/{workflow_id} to poll for creation completion.
+
+        Parameters
+        ----------
+        name : str
+            Name for the new workflow
+
+        task_id : str
+            ID of the agent task to create workflow from
+
+        session_id : str
+            ID of the agent session containing the task
+
+        description : typing.Optional[str]
+            Optional description for the workflow
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        WorkflowCreateFromTaskResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.workflows.create_workflow_from_task(
+                name="name",
+                task_id="taskId",
+                session_id="sessionId",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.create_workflow_from_task(
+            name=name, task_id=task_id, session_id=session_id, description=description, request_options=request_options
+        )
         return _response.data
 
     async def get_workflow_yaml_presigned_url(

@@ -21,7 +21,7 @@ class RawBillingClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[AccountView]:
         """
-        Get authenticated account information including credit balances and account details.
+        Get authenticated account information including credit balance and account details.
 
         Parameters
         ----------
@@ -84,7 +84,7 @@ class AsyncRawBillingClient:
         self, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[AccountView]:
         """
-        Get authenticated account information including credit balances and account details.
+        Get authenticated account information including credit balance and account details.
 
         Parameters
         ----------

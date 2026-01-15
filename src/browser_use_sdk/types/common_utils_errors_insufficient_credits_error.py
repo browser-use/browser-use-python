@@ -7,9 +7,9 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class AccountNotFoundError(UncheckedBaseModel):
+class CommonUtilsErrorsInsufficientCreditsError(UncheckedBaseModel):
     """
-    Error response when an account is not found
+    Error response when user has insufficient credits
     """
 
     detail: typing.Optional[str] = None

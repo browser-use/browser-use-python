@@ -58,6 +58,13 @@ class SessionView(UncheckedBaseModel):
     Optional URL to access the public share of the session
     """
 
+    persist_memory: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="persistMemory")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Whether tasks in this session share memory and history with each other
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

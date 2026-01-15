@@ -13,9 +13,16 @@ from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
 from ..errors.not_found_error import NotFoundError
+from ..errors.payment_required_error import PaymentRequiredError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.marketplace_skill_list_response import MarketplaceSkillListResponse
 from ..types.marketplace_skill_response import MarketplaceSkillResponse
+from ..types.skill_category import SkillCategory
+from ..types.skill_response import SkillResponse
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class RawSkillsMarketplaceClient:
@@ -28,6 +35,7 @@ class RawSkillsMarketplaceClient:
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
         query: typing.Optional[str] = None,
+        category: typing.Optional[SkillCategory] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -42,6 +50,8 @@ class RawSkillsMarketplaceClient:
         page_number : typing.Optional[int]
 
         query : typing.Optional[str]
+
+        category : typing.Optional[SkillCategory]
 
         from_date : typing.Optional[dt.datetime]
 
@@ -62,6 +72,7 @@ class RawSkillsMarketplaceClient:
                 "pageSize": page_size,
                 "pageNumber": page_number,
                 "query": query,
+                "category": category,
                 "fromDate": serialize_datetime(from_date) if from_date is not None else None,
                 "toDate": serialize_datetime(to_date) if to_date is not None else None,
             },
@@ -94,14 +105,14 @@ class RawSkillsMarketplaceClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     def get_skill(
-        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, skill_slug: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> HttpResponse[MarketplaceSkillResponse]:
         """
         Get details of a specific public skill from the marketplace.
 
         Parameters
         ----------
-        skill_id : str
+        skill_slug : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -112,7 +123,7 @@ class RawSkillsMarketplaceClient:
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
-            f"marketplace/skills/{jsonable_encoder(skill_id)}",
+            f"marketplace/skills/{jsonable_encoder(skill_slug)}",
             method="GET",
             request_options=request_options,
         )
@@ -155,7 +166,7 @@ class RawSkillsMarketplaceClient:
 
     def clone_skill(
         self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> HttpResponse[MarketplaceSkillResponse]:
+    ) -> HttpResponse[SkillResponse]:
         """
         Clone a public marketplace skill to the user's project.
 
@@ -168,7 +179,7 @@ class RawSkillsMarketplaceClient:
 
         Returns
         -------
-        HttpResponse[MarketplaceSkillResponse]
+        HttpResponse[SkillResponse]
             Successful Response
         """
         _response = self._client_wrapper.httpx_client.request(
@@ -179,15 +190,111 @@ class RawSkillsMarketplaceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    MarketplaceSkillResponse,
+                    SkillResponse,
                     construct_type(
-                        type_=MarketplaceSkillResponse,  # type: ignore
+                        type_=SkillResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
             if _response.status_code == 400:
                 raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def execute_skill(
+        self,
+        skill_id: str,
+        *,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[ExecuteSkillResponse]:
+        """
+        Execute a skill with the provided parameters.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+            Parameters to pass to the skill handler
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[ExecuteSkillResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"marketplace/skills/{jsonable_encoder(skill_id)}/execute",
+            method="POST",
+            json={
+                "parameters": parameters,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ExecuteSkillResponse,
+                    construct_type(
+                        type_=ExecuteSkillResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Optional[typing.Any],
@@ -235,6 +342,7 @@ class AsyncRawSkillsMarketplaceClient:
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
         query: typing.Optional[str] = None,
+        category: typing.Optional[SkillCategory] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -249,6 +357,8 @@ class AsyncRawSkillsMarketplaceClient:
         page_number : typing.Optional[int]
 
         query : typing.Optional[str]
+
+        category : typing.Optional[SkillCategory]
 
         from_date : typing.Optional[dt.datetime]
 
@@ -269,6 +379,7 @@ class AsyncRawSkillsMarketplaceClient:
                 "pageSize": page_size,
                 "pageNumber": page_number,
                 "query": query,
+                "category": category,
                 "fromDate": serialize_datetime(from_date) if from_date is not None else None,
                 "toDate": serialize_datetime(to_date) if to_date is not None else None,
             },
@@ -301,14 +412,14 @@ class AsyncRawSkillsMarketplaceClient:
         raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
 
     async def get_skill(
-        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, skill_slug: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> AsyncHttpResponse[MarketplaceSkillResponse]:
         """
         Get details of a specific public skill from the marketplace.
 
         Parameters
         ----------
-        skill_id : str
+        skill_slug : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -319,7 +430,7 @@ class AsyncRawSkillsMarketplaceClient:
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
-            f"marketplace/skills/{jsonable_encoder(skill_id)}",
+            f"marketplace/skills/{jsonable_encoder(skill_slug)}",
             method="GET",
             request_options=request_options,
         )
@@ -362,7 +473,7 @@ class AsyncRawSkillsMarketplaceClient:
 
     async def clone_skill(
         self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> AsyncHttpResponse[MarketplaceSkillResponse]:
+    ) -> AsyncHttpResponse[SkillResponse]:
         """
         Clone a public marketplace skill to the user's project.
 
@@ -375,7 +486,7 @@ class AsyncRawSkillsMarketplaceClient:
 
         Returns
         -------
-        AsyncHttpResponse[MarketplaceSkillResponse]
+        AsyncHttpResponse[SkillResponse]
             Successful Response
         """
         _response = await self._client_wrapper.httpx_client.request(
@@ -386,15 +497,111 @@ class AsyncRawSkillsMarketplaceClient:
         try:
             if 200 <= _response.status_code < 300:
                 _data = typing.cast(
-                    MarketplaceSkillResponse,
+                    SkillResponse,
                     construct_type(
-                        type_=MarketplaceSkillResponse,  # type: ignore
+                        type_=SkillResponse,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 400:
                 raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def execute_skill(
+        self,
+        skill_id: str,
+        *,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[ExecuteSkillResponse]:
+        """
+        Execute a skill with the provided parameters.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+            Parameters to pass to the skill handler
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[ExecuteSkillResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"marketplace/skills/{jsonable_encoder(skill_id)}/execute",
+            method="POST",
+            json={
+                "parameters": parameters,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    ExecuteSkillResponse,
+                    construct_type(
+                        type_=ExecuteSkillResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 400:
+                raise BadRequestError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
                     headers=dict(_response.headers),
                     body=typing.cast(
                         typing.Optional[typing.Any],

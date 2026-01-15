@@ -45,6 +45,11 @@ class SessionItemView(UncheckedBaseModel):
     Timestamp when the session was stopped (None if still active)
     """
 
+    persist_memory: typing_extensions.Annotated[bool, FieldMetadata(alias="persistMemory")] = pydantic.Field()
+    """
+    Whether tasks in this session share memory and history with each other
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

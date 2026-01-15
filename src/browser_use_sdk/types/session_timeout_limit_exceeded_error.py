@@ -9,7 +9,7 @@ from ..core.unchecked_base_model import UncheckedBaseModel
 
 class SessionTimeoutLimitExceededError(UncheckedBaseModel):
     """
-    Error response when free user tries to create session longer than allowed
+    Error response when session timeout exceeds the maximum allowed limit
     """
 
     detail: typing.Optional[str] = None

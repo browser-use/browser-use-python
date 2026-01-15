@@ -7,9 +7,9 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class AppViewsV2ErrorViewsInsufficientCreditsError(UncheckedBaseModel):
+class AppEndpointsApiV2SkillsViewsInsufficientCreditsError(UncheckedBaseModel):
     """
-    Error response when user has insufficient credits
+    Error response when there are insufficient credits
     """
 
     detail: typing.Optional[str] = None

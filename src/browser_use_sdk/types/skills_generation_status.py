@@ -3,5 +3,5 @@
 import typing
 
 SkillsGenerationStatus = typing.Union[
-    typing.Literal["recording", "generating", "failed", "finished", "cancelled"], typing.Any
+    typing.Literal["recording", "generating", "failed", "finished", "cancelled", "timed_out"], typing.Any
 ]

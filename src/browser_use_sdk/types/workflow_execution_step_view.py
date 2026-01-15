@@ -14,12 +14,14 @@ class WorkflowExecutionStepView(UncheckedBaseModel):
     View model for a single workflow execution step.
     """
 
-    id: str = pydantic.Field()
+    id: typing.Optional[str] = pydantic.Field(default=None)
     """
     Unique identifier for the step (execution_id-step-N)
     """
 
-    step_number: typing_extensions.Annotated[int, FieldMetadata(alias="stepNumber")] = pydantic.Field()
+    step_number: typing_extensions.Annotated[typing.Optional[int], FieldMetadata(alias="stepNumber")] = pydantic.Field(
+        default=None
+    )
     """
     Sequential step number (1-indexed)
     """
@@ -31,7 +33,9 @@ class WorkflowExecutionStepView(UncheckedBaseModel):
     Name of the step from workflow definition
     """
 
-    next_goal: typing_extensions.Annotated[str, FieldMetadata(alias="nextGoal")] = pydantic.Field()
+    next_goal: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="nextGoal")] = pydantic.Field(
+        default=None
+    )
     """
     Description of what this step is doing
     """
@@ -77,7 +81,9 @@ class WorkflowExecutionStepView(UncheckedBaseModel):
     Error message if step failed
     """
 
-    created_at: typing_extensions.Annotated[str, FieldMetadata(alias="createdAt")] = pydantic.Field()
+    created_at: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="createdAt")] = pydantic.Field(
+        default=None
+    )
     """
     ISO 8601 timestamp when step was executed
     """

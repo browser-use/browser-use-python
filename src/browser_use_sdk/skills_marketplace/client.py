@@ -5,9 +5,15 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
+from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.marketplace_skill_list_response import MarketplaceSkillListResponse
 from ..types.marketplace_skill_response import MarketplaceSkillResponse
+from ..types.skill_category import SkillCategory
+from ..types.skill_response import SkillResponse
 from .raw_client import AsyncRawSkillsMarketplaceClient, RawSkillsMarketplaceClient
+
+# this is used as the default value for optional parameters
+OMIT = typing.cast(typing.Any, ...)
 
 
 class SkillsMarketplaceClient:
@@ -31,6 +37,7 @@ class SkillsMarketplaceClient:
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
         query: typing.Optional[str] = None,
+        category: typing.Optional[SkillCategory] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -45,6 +52,8 @@ class SkillsMarketplaceClient:
         page_number : typing.Optional[int]
 
         query : typing.Optional[str]
+
+        category : typing.Optional[SkillCategory]
 
         from_date : typing.Optional[dt.datetime]
 
@@ -71,6 +80,7 @@ class SkillsMarketplaceClient:
             page_size=page_size,
             page_number=page_number,
             query=query,
+            category=category,
             from_date=from_date,
             to_date=to_date,
             request_options=request_options,
@@ -78,14 +88,14 @@ class SkillsMarketplaceClient:
         return _response.data
 
     def get_skill(
-        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, skill_slug: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> MarketplaceSkillResponse:
         """
         Get details of a specific public skill from the marketplace.
 
         Parameters
         ----------
-        skill_id : str
+        skill_slug : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -103,15 +113,13 @@ class SkillsMarketplaceClient:
             api_key="YOUR_API_KEY",
         )
         client.skills_marketplace.get_skill(
-            skill_id="skill_id",
+            skill_slug="skill_slug",
         )
         """
-        _response = self._raw_client.get_skill(skill_id, request_options=request_options)
+        _response = self._raw_client.get_skill(skill_slug, request_options=request_options)
         return _response.data
 
-    def clone_skill(
-        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> MarketplaceSkillResponse:
+    def clone_skill(self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None) -> SkillResponse:
         """
         Clone a public marketplace skill to the user's project.
 
@@ -124,7 +132,7 @@ class SkillsMarketplaceClient:
 
         Returns
         -------
-        MarketplaceSkillResponse
+        SkillResponse
             Successful Response
 
         Examples
@@ -139,6 +147,45 @@ class SkillsMarketplaceClient:
         )
         """
         _response = self._raw_client.clone_skill(skill_id, request_options=request_options)
+        return _response.data
+
+    def execute_skill(
+        self,
+        skill_id: str,
+        *,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecuteSkillResponse:
+        """
+        Execute a skill with the provided parameters.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+            Parameters to pass to the skill handler
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecuteSkillResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.skills_marketplace.execute_skill(
+            skill_id="skill_id",
+        )
+        """
+        _response = self._raw_client.execute_skill(skill_id, parameters=parameters, request_options=request_options)
         return _response.data
 
 
@@ -163,6 +210,7 @@ class AsyncSkillsMarketplaceClient:
         page_size: typing.Optional[int] = None,
         page_number: typing.Optional[int] = None,
         query: typing.Optional[str] = None,
+        category: typing.Optional[SkillCategory] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
         request_options: typing.Optional[RequestOptions] = None,
@@ -177,6 +225,8 @@ class AsyncSkillsMarketplaceClient:
         page_number : typing.Optional[int]
 
         query : typing.Optional[str]
+
+        category : typing.Optional[SkillCategory]
 
         from_date : typing.Optional[dt.datetime]
 
@@ -211,6 +261,7 @@ class AsyncSkillsMarketplaceClient:
             page_size=page_size,
             page_number=page_number,
             query=query,
+            category=category,
             from_date=from_date,
             to_date=to_date,
             request_options=request_options,
@@ -218,14 +269,14 @@ class AsyncSkillsMarketplaceClient:
         return _response.data
 
     async def get_skill(
-        self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
+        self, skill_slug: str, *, request_options: typing.Optional[RequestOptions] = None
     ) -> MarketplaceSkillResponse:
         """
         Get details of a specific public skill from the marketplace.
 
         Parameters
         ----------
-        skill_id : str
+        skill_slug : str
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -248,18 +299,18 @@ class AsyncSkillsMarketplaceClient:
 
         async def main() -> None:
             await client.skills_marketplace.get_skill(
-                skill_id="skill_id",
+                skill_slug="skill_slug",
             )
 
 
         asyncio.run(main())
         """
-        _response = await self._raw_client.get_skill(skill_id, request_options=request_options)
+        _response = await self._raw_client.get_skill(skill_slug, request_options=request_options)
         return _response.data
 
     async def clone_skill(
         self, skill_id: str, *, request_options: typing.Optional[RequestOptions] = None
-    ) -> MarketplaceSkillResponse:
+    ) -> SkillResponse:
         """
         Clone a public marketplace skill to the user's project.
 
@@ -272,7 +323,7 @@ class AsyncSkillsMarketplaceClient:
 
         Returns
         -------
-        MarketplaceSkillResponse
+        SkillResponse
             Successful Response
 
         Examples
@@ -295,4 +346,53 @@ class AsyncSkillsMarketplaceClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.clone_skill(skill_id, request_options=request_options)
+        return _response.data
+
+    async def execute_skill(
+        self,
+        skill_id: str,
+        *,
+        parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> ExecuteSkillResponse:
+        """
+        Execute a skill with the provided parameters.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
+            Parameters to pass to the skill handler
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        ExecuteSkillResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.skills_marketplace.execute_skill(
+                skill_id="skill_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.execute_skill(
+            skill_id, parameters=parameters, request_options=request_options
+        )
         return _response.data

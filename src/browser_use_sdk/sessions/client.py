@@ -81,6 +81,7 @@ class SessionsClient:
         start_url: typing.Optional[str] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        persist_memory: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -102,6 +103,9 @@ class SessionsClient:
 
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
+
+        persist_memory : typing.Optional[bool]
+            If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -126,6 +130,7 @@ class SessionsClient:
             start_url=start_url,
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
+            persist_memory=persist_memory,
             request_options=request_options,
         )
         return _response.data
@@ -393,6 +398,7 @@ class AsyncSessionsClient:
         start_url: typing.Optional[str] = OMIT,
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
+        persist_memory: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -414,6 +420,9 @@ class AsyncSessionsClient:
 
         browser_screen_height : typing.Optional[int]
             Custom screen height in pixels for the browser.
+
+        persist_memory : typing.Optional[bool]
+            If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -446,6 +455,7 @@ class AsyncSessionsClient:
             start_url=start_url,
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
+            persist_memory=persist_memory,
             request_options=request_options,
         )
         return _response.data

@@ -8,6 +8,7 @@ from ..core.request_options import RequestOptions
 from ..types.create_skill_response import CreateSkillResponse
 from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.refine_skill_response import RefineSkillResponse
+from ..types.skill_category import SkillCategory
 from ..types.skill_list_response import SkillListResponse
 from ..types.skill_response import SkillResponse
 from .raw_client import AsyncRawSkillsClient, RawSkillsClient
@@ -38,6 +39,7 @@ class SkillsClient:
         page_number: typing.Optional[int] = None,
         is_public: typing.Optional[bool] = None,
         is_enabled: typing.Optional[bool] = None,
+        category: typing.Optional[SkillCategory] = None,
         query: typing.Optional[str] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
@@ -55,6 +57,8 @@ class SkillsClient:
         is_public : typing.Optional[bool]
 
         is_enabled : typing.Optional[bool]
+
+        category : typing.Optional[SkillCategory]
 
         query : typing.Optional[str]
 
@@ -84,6 +88,7 @@ class SkillsClient:
             page_number=page_number,
             is_public=is_public,
             is_enabled=is_enabled,
+            category=category,
             query=query,
             from_date=from_date,
             to_date=to_date,
@@ -207,8 +212,9 @@ class SkillsClient:
         *,
         title: typing.Optional[str] = OMIT,
         description: typing.Optional[str] = OMIT,
+        categories: typing.Optional[typing.Sequence[SkillCategory]] = OMIT,
+        domains: typing.Optional[typing.Sequence[str]] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
-        is_public: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SkillResponse:
         """
@@ -224,11 +230,14 @@ class SkillsClient:
         description : typing.Optional[str]
             Description of what the skill does (shows up in the public view)
 
+        categories : typing.Optional[typing.Sequence[SkillCategory]]
+            Categories to assign to the skill
+
+        domains : typing.Optional[typing.Sequence[str]]
+            Domains/websites this skill interacts with
+
         is_enabled : typing.Optional[bool]
             Whether the skill is enabled for execution
-
-        is_public : typing.Optional[bool]
-            Whether the skill is publicly available
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -253,8 +262,9 @@ class SkillsClient:
             skill_id,
             title=title,
             description=description,
+            categories=categories,
+            domains=domains,
             is_enabled=is_enabled,
-            is_public=is_public,
             request_options=request_options,
         )
         return _response.data
@@ -435,6 +445,7 @@ class AsyncSkillsClient:
         page_number: typing.Optional[int] = None,
         is_public: typing.Optional[bool] = None,
         is_enabled: typing.Optional[bool] = None,
+        category: typing.Optional[SkillCategory] = None,
         query: typing.Optional[str] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
@@ -452,6 +463,8 @@ class AsyncSkillsClient:
         is_public : typing.Optional[bool]
 
         is_enabled : typing.Optional[bool]
+
+        category : typing.Optional[SkillCategory]
 
         query : typing.Optional[str]
 
@@ -489,6 +502,7 @@ class AsyncSkillsClient:
             page_number=page_number,
             is_public=is_public,
             is_enabled=is_enabled,
+            category=category,
             query=query,
             from_date=from_date,
             to_date=to_date,
@@ -638,8 +652,9 @@ class AsyncSkillsClient:
         *,
         title: typing.Optional[str] = OMIT,
         description: typing.Optional[str] = OMIT,
+        categories: typing.Optional[typing.Sequence[SkillCategory]] = OMIT,
+        domains: typing.Optional[typing.Sequence[str]] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
-        is_public: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SkillResponse:
         """
@@ -655,11 +670,14 @@ class AsyncSkillsClient:
         description : typing.Optional[str]
             Description of what the skill does (shows up in the public view)
 
+        categories : typing.Optional[typing.Sequence[SkillCategory]]
+            Categories to assign to the skill
+
+        domains : typing.Optional[typing.Sequence[str]]
+            Domains/websites this skill interacts with
+
         is_enabled : typing.Optional[bool]
             Whether the skill is enabled for execution
-
-        is_public : typing.Optional[bool]
-            Whether the skill is publicly available
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -692,8 +710,9 @@ class AsyncSkillsClient:
             skill_id,
             title=title,
             description=description,
+            categories=categories,
+            domains=domains,
             is_enabled=is_enabled,
-            is_public=is_public,
             request_options=request_options,
         )
         return _response.data

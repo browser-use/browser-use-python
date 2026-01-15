@@ -25,7 +25,7 @@ class BillingClient:
 
     def get_account_billing(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
         """
-        Get authenticated account information including credit balances and account details.
+        Get authenticated account information including credit balance and account details.
 
         Parameters
         ----------
@@ -67,7 +67,7 @@ class AsyncBillingClient:
 
     async def get_account_billing(self, *, request_options: typing.Optional[RequestOptions] = None) -> AccountView:
         """
-        Get authenticated account information including credit balances and account details.
+        Get authenticated account information including credit balance and account details.
 
         Parameters
         ----------

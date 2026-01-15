@@ -84,6 +84,20 @@ class WorkflowExecutionStateView(UncheckedBaseModel):
     Live browser view URL (available during and up to 60s after execution)
     """
 
+    ai_summary: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="aiSummary")] = pydantic.Field(
+        default=None
+    )
+    """
+    AI-generated summary of the execution result
+    """
+
+    ai_success: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="aiSuccess")] = pydantic.Field(
+        default=None
+    )
+    """
+    AI's determination of whether execution succeeded
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

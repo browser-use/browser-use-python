@@ -12,12 +12,14 @@ from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
 from ..errors.bad_request_error import BadRequestError
+from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
 from ..errors.payment_required_error import PaymentRequiredError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.create_skill_response import CreateSkillResponse
 from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.refine_skill_response import RefineSkillResponse
+from ..types.skill_category import SkillCategory
 from ..types.skill_list_response import SkillListResponse
 from ..types.skill_response import SkillResponse
 
@@ -36,6 +38,7 @@ class RawSkillsClient:
         page_number: typing.Optional[int] = None,
         is_public: typing.Optional[bool] = None,
         is_enabled: typing.Optional[bool] = None,
+        category: typing.Optional[SkillCategory] = None,
         query: typing.Optional[str] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
@@ -53,6 +56,8 @@ class RawSkillsClient:
         is_public : typing.Optional[bool]
 
         is_enabled : typing.Optional[bool]
+
+        category : typing.Optional[SkillCategory]
 
         query : typing.Optional[str]
 
@@ -76,6 +81,7 @@ class RawSkillsClient:
                 "pageNumber": page_number,
                 "isPublic": is_public,
                 "isEnabled": is_enabled,
+                "category": category,
                 "query": query,
                 "fromDate": serialize_datetime(from_date) if from_date is not None else None,
                 "toDate": serialize_datetime(to_date) if to_date is not None else None,
@@ -323,8 +329,9 @@ class RawSkillsClient:
         *,
         title: typing.Optional[str] = OMIT,
         description: typing.Optional[str] = OMIT,
+        categories: typing.Optional[typing.Sequence[SkillCategory]] = OMIT,
+        domains: typing.Optional[typing.Sequence[str]] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
-        is_public: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SkillResponse]:
         """
@@ -340,11 +347,14 @@ class RawSkillsClient:
         description : typing.Optional[str]
             Description of what the skill does (shows up in the public view)
 
+        categories : typing.Optional[typing.Sequence[SkillCategory]]
+            Categories to assign to the skill
+
+        domains : typing.Optional[typing.Sequence[str]]
+            Domains/websites this skill interacts with
+
         is_enabled : typing.Optional[bool]
             Whether the skill is enabled for execution
-
-        is_public : typing.Optional[bool]
-            Whether the skill is publicly available
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -360,8 +370,9 @@ class RawSkillsClient:
             json={
                 "title": title,
                 "description": description,
+                "categories": categories,
+                "domains": domains,
                 "isEnabled": is_enabled,
-                "isPublic": is_public,
             },
             headers={
                 "content-type": "application/json",
@@ -379,6 +390,17 @@ class RawSkillsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -751,6 +773,7 @@ class AsyncRawSkillsClient:
         page_number: typing.Optional[int] = None,
         is_public: typing.Optional[bool] = None,
         is_enabled: typing.Optional[bool] = None,
+        category: typing.Optional[SkillCategory] = None,
         query: typing.Optional[str] = None,
         from_date: typing.Optional[dt.datetime] = None,
         to_date: typing.Optional[dt.datetime] = None,
@@ -768,6 +791,8 @@ class AsyncRawSkillsClient:
         is_public : typing.Optional[bool]
 
         is_enabled : typing.Optional[bool]
+
+        category : typing.Optional[SkillCategory]
 
         query : typing.Optional[str]
 
@@ -791,6 +816,7 @@ class AsyncRawSkillsClient:
                 "pageNumber": page_number,
                 "isPublic": is_public,
                 "isEnabled": is_enabled,
+                "category": category,
                 "query": query,
                 "fromDate": serialize_datetime(from_date) if from_date is not None else None,
                 "toDate": serialize_datetime(to_date) if to_date is not None else None,
@@ -1038,8 +1064,9 @@ class AsyncRawSkillsClient:
         *,
         title: typing.Optional[str] = OMIT,
         description: typing.Optional[str] = OMIT,
+        categories: typing.Optional[typing.Sequence[SkillCategory]] = OMIT,
+        domains: typing.Optional[typing.Sequence[str]] = OMIT,
         is_enabled: typing.Optional[bool] = OMIT,
-        is_public: typing.Optional[bool] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SkillResponse]:
         """
@@ -1055,11 +1082,14 @@ class AsyncRawSkillsClient:
         description : typing.Optional[str]
             Description of what the skill does (shows up in the public view)
 
+        categories : typing.Optional[typing.Sequence[SkillCategory]]
+            Categories to assign to the skill
+
+        domains : typing.Optional[typing.Sequence[str]]
+            Domains/websites this skill interacts with
+
         is_enabled : typing.Optional[bool]
             Whether the skill is enabled for execution
-
-        is_public : typing.Optional[bool]
-            Whether the skill is publicly available
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1075,8 +1105,9 @@ class AsyncRawSkillsClient:
             json={
                 "title": title,
                 "description": description,
+                "categories": categories,
+                "domains": domains,
                 "isEnabled": is_enabled,
-                "isPublic": is_public,
             },
             headers={
                 "content-type": "application/json",
@@ -1094,6 +1125,17 @@ class AsyncRawSkillsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 403:
+                raise ForbiddenError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),

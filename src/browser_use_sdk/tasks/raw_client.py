@@ -131,12 +131,19 @@ class RawTasksClient:
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[TaskCreatedResponse]:
         """
+        Create and start a new task.
+
         You can either:
-        1. Start a new task (auto creates a new simple session)
-        2. Start a new task in an existing session (you can create a custom session before starting the task and reuse it for follow-up tasks)
+        1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+        2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
+
+        Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
+        To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
+        then pass that sessionId when creating tasks.
 
         Parameters
         ----------
@@ -194,6 +201,9 @@ class RawTasksClient:
         judge_llm : typing.Optional[SupportedLlMs]
             The LLM model to use for judging. If not provided, uses the default judge LLM.
 
+        skill_ids : typing.Optional[typing.Sequence[str]]
+            List of skill IDs to enable for this task. Use ['*'] to enable all available skills for the project.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -226,6 +236,7 @@ class RawTasksClient:
                 "judge": judge,
                 "judgeGroundTruth": judge_ground_truth,
                 "judgeLlm": judge_llm,
+                "skillIds": skill_ids,
             },
             headers={
                 "content-type": "application/json",
@@ -594,12 +605,19 @@ class AsyncRawTasksClient:
         judge: typing.Optional[bool] = OMIT,
         judge_ground_truth: typing.Optional[str] = OMIT,
         judge_llm: typing.Optional[SupportedLlMs] = OMIT,
+        skill_ids: typing.Optional[typing.Sequence[str]] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[TaskCreatedResponse]:
         """
+        Create and start a new task.
+
         You can either:
-        1. Start a new task (auto creates a new simple session)
-        2. Start a new task in an existing session (you can create a custom session before starting the task and reuse it for follow-up tasks)
+        1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+        2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
+
+        Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
+        To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
+        then pass that sessionId when creating tasks.
 
         Parameters
         ----------
@@ -657,6 +675,9 @@ class AsyncRawTasksClient:
         judge_llm : typing.Optional[SupportedLlMs]
             The LLM model to use for judging. If not provided, uses the default judge LLM.
 
+        skill_ids : typing.Optional[typing.Sequence[str]]
+            List of skill IDs to enable for this task. Use ['*'] to enable all available skills for the project.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -689,6 +710,7 @@ class AsyncRawTasksClient:
                 "judge": judge,
                 "judgeGroundTruth": judge_ground_truth,
                 "judgeLlm": judge_llm,
+                "skillIds": skill_ids,
             },
             headers={
                 "content-type": "application/json",

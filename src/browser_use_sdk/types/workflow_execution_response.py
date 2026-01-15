@@ -109,6 +109,20 @@ class WorkflowExecutionResponse(UncheckedBaseModel):
     Presigned URL to download execution logs
     """
 
+    ai_summary: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="aiSummary")] = pydantic.Field(
+        default=None
+    )
+    """
+    AI-generated summary of the execution result
+    """
+
+    ai_success: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="aiSuccess")] = pydantic.Field(
+        default=None
+    )
+    """
+    AI's determination of whether execution succeeded
+    """
+
     created_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="createdAt")] = pydantic.Field()
     """
     Naive UTC timestamp when execution was created

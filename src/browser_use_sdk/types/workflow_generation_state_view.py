@@ -34,6 +34,20 @@ class WorkflowGenerationStateView(UncheckedBaseModel):
     Current status of workflow generation
     """
 
+    generation_error: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="generationError")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Error message if generation failed
+    """
+
+    generation_progress: typing_extensions.Annotated[
+        typing.Optional[str], FieldMetadata(alias="generationProgress")
+    ] = pydantic.Field(default=None)
+    """
+    Current progress step (e.g., "downloading_history", "detecting_variables")
+    """
+
     live_url: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="liveUrl")] = pydantic.Field(
         default=None
     )
@@ -49,6 +63,13 @@ class WorkflowGenerationStateView(UncheckedBaseModel):
     created_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="createdAt")] = pydantic.Field()
     """
     When workflow was created
+    """
+
+    updated_at: typing_extensions.Annotated[typing.Optional[dt.datetime], FieldMetadata(alias="updatedAt")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    When workflow was last updated
     """
 
     if IS_PYDANTIC_V2:

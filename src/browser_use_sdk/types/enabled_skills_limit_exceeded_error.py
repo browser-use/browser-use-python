@@ -7,9 +7,9 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class AppApiV2SkillsViewsInsufficientCreditsError(UncheckedBaseModel):
+class EnabledSkillsLimitExceededError(UncheckedBaseModel):
     """
-    Error response when there are insufficient credits
+    Error response when trying to enable more skills than allowed by plan
     """
 
     detail: typing.Optional[str] = None

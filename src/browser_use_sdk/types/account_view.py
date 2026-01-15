@@ -12,7 +12,7 @@ from .plan_info import PlanInfo
 
 class AccountView(UncheckedBaseModel):
     """
-    View model for account information
+    View model for account information.
     """
 
     name: typing.Optional[str] = pydantic.Field(default=None)
@@ -20,25 +20,25 @@ class AccountView(UncheckedBaseModel):
     The name of the user
     """
 
+    total_credits_balance_usd: typing_extensions.Annotated[float, FieldMetadata(alias="totalCreditsBalanceUsd")] = (
+        pydantic.Field()
+    )
+    """
+    The total credits balance in USD
+    """
+
     monthly_credits_balance_usd: typing_extensions.Annotated[float, FieldMetadata(alias="monthlyCreditsBalanceUsd")] = (
         pydantic.Field()
     )
     """
-    The monthly credits balance in USD
+    Monthly subscription credits balance in USD
     """
 
     additional_credits_balance_usd: typing_extensions.Annotated[
         float, FieldMetadata(alias="additionalCreditsBalanceUsd")
     ] = pydantic.Field()
     """
-    The additional credits balance in USD
-    """
-
-    total_credits_balance_usd: typing_extensions.Annotated[float, FieldMetadata(alias="totalCreditsBalanceUsd")] = (
-        pydantic.Field()
-    )
-    """
-    The total credits balance in USD
+    Additional top-up credits balance in USD
     """
 
     rate_limit: typing_extensions.Annotated[int, FieldMetadata(alias="rateLimit")] = pydantic.Field()

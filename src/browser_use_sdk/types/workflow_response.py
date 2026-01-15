@@ -88,6 +88,13 @@ class WorkflowResponse(UncheckedBaseModel):
     Error message if generation failed
     """
 
+    generation_metadata: typing_extensions.Annotated[
+        typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]], FieldMetadata(alias="generationMetadata")
+    ] = pydantic.Field(default=None)
+    """
+    Generation metadata including progress_step
+    """
+
     input_schema: typing_extensions.Annotated[
         typing.Optional[typing.List[typing.Dict[str, typing.Optional[typing.Any]]]], FieldMetadata(alias="inputSchema")
     ] = pydantic.Field(default=None)

@@ -12,7 +12,7 @@
 <dl>
 <dd>
 
-Get authenticated account information including credit balances and account details.
+Get authenticated account information including credit balance and account details.
 </dd>
 </dl>
 </dd>
@@ -181,9 +181,15 @@ client.tasks.list_tasks()
 <dl>
 <dd>
 
+Create and start a new task.
+
 You can either:
-1. Start a new task (auto creates a new simple session)
-2. Start a new task in an existing session (you can create a custom session before starting the task and reuse it for follow-up tasks)
+1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
+
+Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
+To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
+then pass that sessionId when creating tasks.
 </dd>
 </dl>
 </dd>
@@ -358,6 +364,14 @@ client.tasks.create_task(
 <dd>
 
 **judge_llm:** `typing.Optional[SupportedLlMs]` — The LLM model to use for judging. If not provided, uses the default judge LLM.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**skill_ids:** `typing.Optional[typing.Sequence[str]]` — List of skill IDs to enable for this task. Use ['*'] to enable all available skills for the project.
     
 </dd>
 </dl>
@@ -762,6 +776,14 @@ client.sessions.create_session()
 <dd>
 
 **browser_screen_height:** `typing.Optional[int]` — Custom screen height in pixels for the browser.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**persist_memory:** `typing.Optional[bool]` — If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
     
 </dd>
 </dl>
@@ -1951,16 +1973,18 @@ client.browsers.list_browser_sessions()
 
 Create a new browser session.
 
-**Pricing:** Browser sessions are charged at $0.05 per hour.
-The full hourly rate is charged upfront when the session starts.
+**Pricing:** Browser sessions are charged per hour with tiered pricing:
+- Pay As You Go users: $0.06/hour
+- Business/Scaleup subscribers: $0.03/hour (50% discount)
+
+The full rate is charged upfront when the session starts.
 When you stop the session, any unused time is automatically refunded proportionally.
 
-Billing is rounded to the nearest minute (minimum 1 minute).
-For example, if you stop a session after 30 minutes, you'll be refunded $0.025.
+Billing is rounded up to the minute (minimum 1 minute).
+For example, if you stop a session after 30 minutes, you'll be refunded half the charged amount.
 
 **Session Limits:**
-- Free users (without active subscription): Maximum 15 minutes per session
-- Paid subscribers: Up to 4 hours per session
+- All users: Up to 4 hours per session
 </dd>
 </dl>
 </dd>
@@ -2012,7 +2036,7 @@ client.browsers.create_browser_session()
 <dl>
 <dd>
 
-**timeout:** `typing.Optional[int]` — The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
+**timeout:** `typing.Optional[int]` — The timeout for the session in minutes. All users can use up to 240 minutes (4 hours). Pay As You Go users are charged $0.06/hour, subscribers get 50% off.
     
 </dd>
 </dl>
@@ -2283,6 +2307,14 @@ client.skills.list_skills()
 <dd>
 
 **is_enabled:** `typing.Optional[bool]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**category:** `typing.Optional[SkillCategory]` 
     
 </dd>
 </dl>
@@ -2635,7 +2667,7 @@ client.skills.update_skill(
 <dl>
 <dd>
 
-**is_enabled:** `typing.Optional[bool]` — Whether the skill is enabled for execution
+**categories:** `typing.Optional[typing.Sequence[SkillCategory]]` — Categories to assign to the skill
     
 </dd>
 </dl>
@@ -2643,7 +2675,15 @@ client.skills.update_skill(
 <dl>
 <dd>
 
-**is_public:** `typing.Optional[bool]` — Whether the skill is publicly available
+**domains:** `typing.Optional[typing.Sequence[str]]` — Domains/websites this skill interacts with
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**is_enabled:** `typing.Optional[bool]` — Whether the skill is enabled for execution
     
 </dd>
 </dl>
@@ -3049,6 +3089,14 @@ client.skills_marketplace.list_skills()
 <dl>
 <dd>
 
+**category:** `typing.Optional[SkillCategory]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **from_date:** `typing.Optional[dt.datetime]` 
     
 </dd>
@@ -3110,7 +3158,7 @@ client = BrowserUse(
     api_key="YOUR_API_KEY",
 )
 client.skills_marketplace.get_skill(
-    skill_id="skill_id",
+    skill_slug="skill_slug",
 )
 
 ```
@@ -3127,7 +3175,7 @@ client.skills_marketplace.get_skill(
 <dl>
 <dd>
 
-**skill_id:** `str` 
+**skill_slug:** `str` 
     
 </dd>
 </dl>
@@ -3198,6 +3246,84 @@ client.skills_marketplace.clone_skill(
 <dd>
 
 **skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills_marketplace.<a href="src/browser_use_sdk/skills_marketplace/client.py">execute_skill</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Execute a skill with the provided parameters.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills_marketplace.execute_skill(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Parameters to pass to the skill handler
     
 </dd>
 </dl>
@@ -3685,6 +3811,112 @@ client.workflows.get_workflow_generation_state(
 <dd>
 
 **workflow_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">create_workflow_from_task</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create a workflow from an existing agent task's recorded history.
+
+This endpoint creates a workflow by using the browser-use rerun history
+feature. The task must have completed with history stored in S3.
+
+The workflow creation process:
+1. Creates a new workflow record in pending state
+2. Triggers an Inngest event to process the task history
+3. The Inngest handler downloads history, detects variables, and updates the workflow
+
+Use GET /workflows/{workflow_id} to poll for creation completion.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.workflows.create_workflow_from_task(
+    name="name",
+    task_id="taskId",
+    session_id="sessionId",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**name:** `str` — Name for the new workflow
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**task_id:** `str` — ID of the agent task to create workflow from
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_id:** `str` — ID of the agent session containing the task
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**description:** `typing.Optional[str]` — Optional description for the workflow
     
 </dd>
 </dl>

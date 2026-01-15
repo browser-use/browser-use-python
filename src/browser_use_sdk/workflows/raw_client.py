@@ -9,7 +9,9 @@ from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
 from ..core.unchecked_base_model import construct_type
+from ..errors.not_found_error import NotFoundError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.workflow_create_from_task_response import WorkflowCreateFromTaskResponse
 from ..types.workflow_execution_created_response import WorkflowExecutionCreatedResponse
 from ..types.workflow_execution_list_response import WorkflowExecutionListResponse
 from ..types.workflow_execution_log_response import WorkflowExecutionLogResponse
@@ -376,6 +378,102 @@ class RawWorkflowsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def create_workflow_from_task(
+        self,
+        *,
+        name: str,
+        task_id: str,
+        session_id: str,
+        description: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[WorkflowCreateFromTaskResponse]:
+        """
+        Create a workflow from an existing agent task's recorded history.
+
+        This endpoint creates a workflow by using the browser-use rerun history
+        feature. The task must have completed with history stored in S3.
+
+        The workflow creation process:
+        1. Creates a new workflow record in pending state
+        2. Triggers an Inngest event to process the task history
+        3. The Inngest handler downloads history, detects variables, and updates the workflow
+
+        Use GET /workflows/{workflow_id} to poll for creation completion.
+
+        Parameters
+        ----------
+        name : str
+            Name for the new workflow
+
+        task_id : str
+            ID of the agent task to create workflow from
+
+        session_id : str
+            ID of the agent session containing the task
+
+        description : typing.Optional[str]
+            Optional description for the workflow
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[WorkflowCreateFromTaskResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            "workflows/from-task",
+            method="POST",
+            json={
+                "name": name,
+                "taskId": task_id,
+                "sessionId": session_id,
+                "description": description,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowCreateFromTaskResponse,
+                    construct_type(
+                        type_=WorkflowCreateFromTaskResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -1405,6 +1503,102 @@ class AsyncRawWorkflowsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def create_workflow_from_task(
+        self,
+        *,
+        name: str,
+        task_id: str,
+        session_id: str,
+        description: typing.Optional[str] = OMIT,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[WorkflowCreateFromTaskResponse]:
+        """
+        Create a workflow from an existing agent task's recorded history.
+
+        This endpoint creates a workflow by using the browser-use rerun history
+        feature. The task must have completed with history stored in S3.
+
+        The workflow creation process:
+        1. Creates a new workflow record in pending state
+        2. Triggers an Inngest event to process the task history
+        3. The Inngest handler downloads history, detects variables, and updates the workflow
+
+        Use GET /workflows/{workflow_id} to poll for creation completion.
+
+        Parameters
+        ----------
+        name : str
+            Name for the new workflow
+
+        task_id : str
+            ID of the agent task to create workflow from
+
+        session_id : str
+            ID of the agent session containing the task
+
+        description : typing.Optional[str]
+            Optional description for the workflow
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[WorkflowCreateFromTaskResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            "workflows/from-task",
+            method="POST",
+            json={
+                "name": name,
+                "taskId": task_id,
+                "sessionId": session_id,
+                "description": description,
+            },
+            headers={
+                "content-type": "application/json",
+            },
+            request_options=request_options,
+            omit=OMIT,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    WorkflowCreateFromTaskResponse,
+                    construct_type(
+                        type_=WorkflowCreateFromTaskResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),

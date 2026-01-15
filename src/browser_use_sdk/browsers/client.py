@@ -86,16 +86,18 @@ class BrowsersClient:
         """
         Create a new browser session.
 
-        **Pricing:** Browser sessions are charged at $0.05 per hour.
-        The full hourly rate is charged upfront when the session starts.
+        **Pricing:** Browser sessions are charged per hour with tiered pricing:
+        - Pay As You Go users: $0.06/hour
+        - Business/Scaleup subscribers: $0.03/hour (50% discount)
+
+        The full rate is charged upfront when the session starts.
         When you stop the session, any unused time is automatically refunded proportionally.
 
-        Billing is rounded to the nearest minute (minimum 1 minute).
-        For example, if you stop a session after 30 minutes, you'll be refunded $0.025.
+        Billing is rounded up to the minute (minimum 1 minute).
+        For example, if you stop a session after 30 minutes, you'll be refunded half the charged amount.
 
         **Session Limits:**
-        - Free users (without active subscription): Maximum 15 minutes per session
-        - Paid subscribers: Up to 4 hours per session
+        - All users: Up to 4 hours per session
 
         Parameters
         ----------
@@ -106,7 +108,7 @@ class BrowsersClient:
             Country code for proxy location.
 
         timeout : typing.Optional[int]
-            The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
+            The timeout for the session in minutes. All users can use up to 240 minutes (4 hours). Pay As You Go users are charged $0.06/hour, subscribers get 50% off.
 
         browser_screen_width : typing.Optional[int]
             Custom screen width in pixels for the browser.
@@ -300,16 +302,18 @@ class AsyncBrowsersClient:
         """
         Create a new browser session.
 
-        **Pricing:** Browser sessions are charged at $0.05 per hour.
-        The full hourly rate is charged upfront when the session starts.
+        **Pricing:** Browser sessions are charged per hour with tiered pricing:
+        - Pay As You Go users: $0.06/hour
+        - Business/Scaleup subscribers: $0.03/hour (50% discount)
+
+        The full rate is charged upfront when the session starts.
         When you stop the session, any unused time is automatically refunded proportionally.
 
-        Billing is rounded to the nearest minute (minimum 1 minute).
-        For example, if you stop a session after 30 minutes, you'll be refunded $0.025.
+        Billing is rounded up to the minute (minimum 1 minute).
+        For example, if you stop a session after 30 minutes, you'll be refunded half the charged amount.
 
         **Session Limits:**
-        - Free users (without active subscription): Maximum 15 minutes per session
-        - Paid subscribers: Up to 4 hours per session
+        - All users: Up to 4 hours per session
 
         Parameters
         ----------
@@ -320,7 +324,7 @@ class AsyncBrowsersClient:
             Country code for proxy location.
 
         timeout : typing.Optional[int]
-            The timeout for the session in minutes. Free users are limited to 15 minutes, paid users can use up to 240 minutes (4 hours).
+            The timeout for the session in minutes. All users can use up to 240 minutes (4 hours). Pay As You Go users are charged $0.06/hour, subscribers get 50% off.
 
         browser_screen_width : typing.Optional[int]
             Custom screen width in pixels for the browser.

@@ -8,6 +8,7 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
+from .workflow_generation_status import WorkflowGenerationStatus
 
 
 class WorkflowItemView(UncheckedBaseModel):
@@ -45,6 +46,27 @@ class WorkflowItemView(UncheckedBaseModel):
     )
     """
     Whether the workflow is archived
+    """
+
+    generation_status: typing_extensions.Annotated[
+        typing.Optional[WorkflowGenerationStatus], FieldMetadata(alias="generationStatus")
+    ] = pydantic.Field(default=None)
+    """
+    Status of workflow generation
+    """
+
+    generation_error: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="generationError")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Error message if generation failed
+    """
+
+    generation_metadata: typing_extensions.Annotated[
+        typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]], FieldMetadata(alias="generationMetadata")
+    ] = pydantic.Field(default=None)
+    """
+    Generation metadata including progress_step
     """
 
     created_at: typing_extensions.Annotated[dt.datetime, FieldMetadata(alias="createdAt")] = pydantic.Field()

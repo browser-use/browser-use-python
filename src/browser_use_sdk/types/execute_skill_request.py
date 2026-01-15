@@ -7,12 +7,15 @@ from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class AccountNotFoundError(UncheckedBaseModel):
+class ExecuteSkillRequest(UncheckedBaseModel):
     """
-    Error response when an account is not found
+    Request to execute a skill.
     """
 
-    detail: typing.Optional[str] = None
+    parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = pydantic.Field(default=None)
+    """
+    Parameters to pass to the skill handler
+    """
 
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
