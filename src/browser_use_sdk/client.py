@@ -13,7 +13,6 @@ from .files.client import AsyncFilesClient, FilesClient
 from .profiles.client import AsyncProfilesClient, ProfilesClient
 from .sessions.client import AsyncSessionsClient, SessionsClient
 from .skills.client import AsyncSkillsClient, SkillsClient
-from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 from .wrapper.tasks.client import AsyncBrowserUseTasksClient, BrowserUseTasksClient
 
 
@@ -89,7 +88,6 @@ class BrowserUse:
         self.sessions = SessionsClient(client_wrapper=self._client_wrapper)
         self.files = FilesClient(client_wrapper=self._client_wrapper)
         self.profiles = ProfilesClient(client_wrapper=self._client_wrapper)
-        self.workflows = WorkflowsClient(client_wrapper=self._client_wrapper)
         self.skills = SkillsClient(client_wrapper=self._client_wrapper)
 
 
@@ -165,7 +163,6 @@ class AsyncBrowserUse:
         self.sessions = AsyncSessionsClient(client_wrapper=self._client_wrapper)
         self.files = AsyncFilesClient(client_wrapper=self._client_wrapper)
         self.profiles = AsyncProfilesClient(client_wrapper=self._client_wrapper)
-        self.workflows = AsyncWorkflowsClient(client_wrapper=self._client_wrapper)
         self.skills = AsyncSkillsClient(client_wrapper=self._client_wrapper)
 
 
