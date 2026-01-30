@@ -1,5 +1,6 @@
 [project]
 name = "browser-use-sdk"
+dynamic = ["version"]
 
 [tool.poetry]
 name = "browser-use-sdk"
