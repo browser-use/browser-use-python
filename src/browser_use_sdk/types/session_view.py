@@ -65,6 +65,27 @@ class SessionView(UncheckedBaseModel):
     Whether tasks in this session share memory and history with each other
     """
 
+    keep_alive: typing_extensions.Annotated[typing.Optional[bool], FieldMetadata(alias="keepAlive")] = pydantic.Field(
+        default=None
+    )
+    """
+    Whether the browser session stays alive after tasks complete
+    """
+
+    proxy_used_mb: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="proxyUsedMb")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Amount of proxy data used in MB
+    """
+
+    proxy_cost: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="proxyCost")] = pydantic.Field(
+        default=None
+    )
+    """
+    Cost of proxy usage in USD
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

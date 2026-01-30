@@ -118,12 +118,15 @@ class TasksClient:
         Create and start a new task.
 
         You can either:
-        1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+        1. Start a new task without a sessionId (auto-creates a session with US proxy by default).
+           Note: Tasks without a sessionId are one-off tasks that automatically close the session
+           upon completion (keep_alive=false).
         2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
 
-        Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
-        To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
-        then pass that sessionId when creating tasks.
+        Important: Proxy configuration (proxyCountryCode) and other session settings (like keep_alive) are
+        session-level settings, not task-level settings. For full control over session configuration,
+        create a session first via POST /sessions with your desired settings, then pass that sessionId
+        when creating tasks.
 
         Parameters
         ----------
@@ -433,12 +436,15 @@ class AsyncTasksClient:
         Create and start a new task.
 
         You can either:
-        1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+        1. Start a new task without a sessionId (auto-creates a session with US proxy by default).
+           Note: Tasks without a sessionId are one-off tasks that automatically close the session
+           upon completion (keep_alive=false).
         2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
 
-        Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
-        To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
-        then pass that sessionId when creating tasks.
+        Important: Proxy configuration (proxyCountryCode) and other session settings (like keep_alive) are
+        session-level settings, not task-level settings. For full control over session configuration,
+        create a session first via POST /sessions with your desired settings, then pass that sessionId
+        when creating tasks.
 
         Parameters
         ----------

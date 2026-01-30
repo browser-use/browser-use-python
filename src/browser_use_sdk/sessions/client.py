@@ -4,6 +4,7 @@ import typing
 
 from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.request_options import RequestOptions
+from ..types.custom_proxy import CustomProxy
 from ..types.proxy_country_code import ProxyCountryCode
 from ..types.session_item_view import SessionItemView
 from ..types.session_list_response import SessionListResponse
@@ -82,6 +83,8 @@ class SessionsClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         persist_memory: typing.Optional[bool] = OMIT,
+        keep_alive: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -107,6 +110,12 @@ class SessionsClient:
         persist_memory : typing.Optional[bool]
             If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
 
+        keep_alive : typing.Optional[bool]
+            If True (default), the browser session stays alive after tasks complete, allowing follow-up tasks. If False, the session is closed immediately after task completion. Set to False for simple one-off tasks to reduce session idle time.
+
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -131,6 +140,8 @@ class SessionsClient:
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
             persist_memory=persist_memory,
+            keep_alive=keep_alive,
+            custom_proxy=custom_proxy,
             request_options=request_options,
         )
         return _response.data
@@ -399,6 +410,8 @@ class AsyncSessionsClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         persist_memory: typing.Optional[bool] = OMIT,
+        keep_alive: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> SessionItemView:
         """
@@ -423,6 +436,12 @@ class AsyncSessionsClient:
 
         persist_memory : typing.Optional[bool]
             If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
+
+        keep_alive : typing.Optional[bool]
+            If True (default), the browser session stays alive after tasks complete, allowing follow-up tasks. If False, the session is closed immediately after task completion. Set to False for simple one-off tasks to reduce session idle time.
+
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -456,6 +475,8 @@ class AsyncSessionsClient:
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
             persist_memory=persist_memory,
+            keep_alive=keep_alive,
+            custom_proxy=custom_proxy,
             request_options=request_options,
         )
         return _response.data

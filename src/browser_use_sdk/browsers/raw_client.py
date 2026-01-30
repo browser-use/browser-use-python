@@ -8,6 +8,7 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.unchecked_base_model import construct_type
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
@@ -18,6 +19,7 @@ from ..types.browser_session_list_response import BrowserSessionListResponse
 from ..types.browser_session_status import BrowserSessionStatus
 from ..types.browser_session_update_action import BrowserSessionUpdateAction
 from ..types.browser_session_view import BrowserSessionView
+from ..types.custom_proxy import CustomProxy
 from ..types.proxy_country_code import ProxyCountryCode
 from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
 
@@ -101,6 +103,7 @@ class RawBrowsersClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         allow_resizing: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[BrowserSessionItemView]:
         """
@@ -139,6 +142,9 @@ class RawBrowsersClient:
         allow_resizing : typing.Optional[bool]
             Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
 
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -157,6 +163,9 @@ class RawBrowsersClient:
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
                 "allowResizing": allow_resizing,
+                "customProxy": convert_and_respect_annotation_metadata(
+                    object_=custom_proxy, annotation=typing.Optional[CustomProxy], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -438,6 +447,7 @@ class AsyncRawBrowsersClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         allow_resizing: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[BrowserSessionItemView]:
         """
@@ -476,6 +486,9 @@ class AsyncRawBrowsersClient:
         allow_resizing : typing.Optional[bool]
             Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
 
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -494,6 +507,9 @@ class AsyncRawBrowsersClient:
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
                 "allowResizing": allow_resizing,
+                "customProxy": convert_and_respect_annotation_metadata(
+                    object_=custom_proxy, annotation=typing.Optional[CustomProxy], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",

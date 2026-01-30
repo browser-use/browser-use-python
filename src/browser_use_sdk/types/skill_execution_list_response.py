@@ -7,17 +7,17 @@ import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
 from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
-from .workflow_execution_item_view import WorkflowExecutionItemView
+from .skill_execution_view import SkillExecutionView
 
 
-class WorkflowExecutionListResponse(UncheckedBaseModel):
+class SkillExecutionListResponse(UncheckedBaseModel):
     """
-    Response model for paginated execution list requests.
+    Response for listing skill executions.
     """
 
-    items: typing.List[WorkflowExecutionItemView] = pydantic.Field()
+    items: typing.List[SkillExecutionView] = pydantic.Field()
     """
-    List of executions for the current page
+    List of executions
     """
 
     total_items: typing_extensions.Annotated[int, FieldMetadata(alias="totalItems")] = pydantic.Field()

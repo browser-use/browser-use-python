@@ -9,6 +9,7 @@ from ..types.browser_session_list_response import BrowserSessionListResponse
 from ..types.browser_session_status import BrowserSessionStatus
 from ..types.browser_session_update_action import BrowserSessionUpdateAction
 from ..types.browser_session_view import BrowserSessionView
+from ..types.custom_proxy import CustomProxy
 from ..types.proxy_country_code import ProxyCountryCode
 from .raw_client import AsyncRawBrowsersClient, RawBrowsersClient
 
@@ -81,6 +82,7 @@ class BrowsersClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         allow_resizing: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -119,6 +121,9 @@ class BrowsersClient:
         allow_resizing : typing.Optional[bool]
             Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
 
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -143,6 +148,7 @@ class BrowsersClient:
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
             allow_resizing=allow_resizing,
+            custom_proxy=custom_proxy,
             request_options=request_options,
         )
         return _response.data
@@ -297,6 +303,7 @@ class AsyncBrowsersClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         allow_resizing: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> BrowserSessionItemView:
         """
@@ -335,6 +342,9 @@ class AsyncBrowsersClient:
         allow_resizing : typing.Optional[bool]
             Whether to allow the browser to be resized during the session (not recommended since it reduces stealthiness).
 
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -367,6 +377,7 @@ class AsyncBrowsersClient:
             browser_screen_width=browser_screen_width,
             browser_screen_height=browser_screen_height,
             allow_resizing=allow_resizing,
+            custom_proxy=custom_proxy,
             request_options=request_options,
         )
         return _response.data

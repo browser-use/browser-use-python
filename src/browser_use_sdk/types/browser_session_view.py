@@ -57,6 +57,27 @@ class BrowserSessionView(UncheckedBaseModel):
     Timestamp when the session was stopped (None if still active)
     """
 
+    proxy_used_mb: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="proxyUsedMb")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Amount of proxy data used in MB
+    """
+
+    proxy_cost: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="proxyCost")] = pydantic.Field(
+        default=None
+    )
+    """
+    Cost of proxy usage in USD
+    """
+
+    browser_cost: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="browserCost")] = (
+        pydantic.Field(default=None)
+    )
+    """
+    Cost of browser session hosting in USD
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

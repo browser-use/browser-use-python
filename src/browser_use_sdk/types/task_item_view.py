@@ -92,6 +92,11 @@ class TaskItemView(UncheckedBaseModel):
     Judge verdict - True if the judge found the task to be successful, False otherwise (None if judge is not enabled)
     """
 
+    cost: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Total cost of the task in USD. This is the sum of all step costs incurred during task execution.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

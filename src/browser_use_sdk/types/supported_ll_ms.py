@@ -5,6 +5,7 @@ import typing
 SupportedLlMs = typing.Union[
     typing.Literal[
         "browser-use-llm",
+        "browser-use-2.0",
         "gpt-4.1",
         "gpt-4.1-mini",
         "o4-mini",
@@ -12,6 +13,7 @@ SupportedLlMs = typing.Union[
         "gemini-2.5-flash",
         "gemini-2.5-pro",
         "gemini-3-pro-preview",
+        "gemini-3-flash-preview",
         "gemini-flash-latest",
         "gemini-flash-lite-latest",
         "claude-sonnet-4-20250514",

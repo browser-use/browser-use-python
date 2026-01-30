@@ -3,30 +3,33 @@
 import typing
 
 import pydantic
-import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
-from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class WorkflowCreateFromTaskResponse(UncheckedBaseModel):
+class CustomProxy(UncheckedBaseModel):
     """
-    Response model for workflow created from an agent task.
-    """
-
-    workflow_id: typing_extensions.Annotated[str, FieldMetadata(alias="workflowId")] = pydantic.Field()
-    """
-    ID of the newly created workflow
+    Request model for creating a custom proxy.
     """
 
-    status: typing.Optional[str] = pydantic.Field(default=None)
+    host: str = pydantic.Field()
     """
-    Status of the workflow creation (pending, completed)
+    Host of the proxy.
     """
 
-    message: typing.Optional[str] = pydantic.Field(default=None)
+    port: int = pydantic.Field()
     """
-    Human-readable message about the creation
+    Port of the proxy.
+    """
+
+    username: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Username for proxy authentication.
+    """
+
+    password: typing.Optional[str] = pydantic.Field(default=None)
+    """
+    Password for proxy authentication.
     """
 
     if IS_PYDANTIC_V2:

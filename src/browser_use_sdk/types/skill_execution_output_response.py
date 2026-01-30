@@ -9,24 +9,14 @@ from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
-class WorkflowGenerateResponse(UncheckedBaseModel):
+class SkillExecutionOutputResponse(UncheckedBaseModel):
     """
-    Response model for workflow generation request.
-    """
-
-    workflow_id: typing_extensions.Annotated[str, FieldMetadata(alias="workflowId")] = pydantic.Field()
-    """
-    ID of the workflow that was updated with generated YAML
+    Response containing presigned URL for downloading execution output.
     """
 
-    status: typing.Optional[str] = pydantic.Field(default=None)
+    download_url: typing_extensions.Annotated[str, FieldMetadata(alias="downloadUrl")] = pydantic.Field()
     """
-    Status of the generation request (e.g., "pending", "processing")
-    """
-
-    message: typing.Optional[str] = pydantic.Field(default=None)
-    """
-    Human-readable message about the generation request
+    Presigned URL for downloading the execution output (valid for 5 minutes)
     """
 
     if IS_PYDANTIC_V2:

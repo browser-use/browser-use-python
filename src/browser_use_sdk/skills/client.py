@@ -9,6 +9,8 @@ from ..types.create_skill_response import CreateSkillResponse
 from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.refine_skill_response import RefineSkillResponse
 from ..types.skill_category import SkillCategory
+from ..types.skill_execution_list_response import SkillExecutionListResponse
+from ..types.skill_execution_output_response import SkillExecutionOutputResponse
 from ..types.skill_list_response import SkillListResponse
 from ..types.skill_response import SkillResponse
 from .raw_client import AsyncRawSkillsClient, RawSkillsClient
@@ -420,6 +422,84 @@ class SkillsClient:
         _response = self._raw_client.refine_skill(
             skill_id, feedback=feedback, test_output=test_output, test_logs=test_logs, request_options=request_options
         )
+        return _response.data
+
+    def list_skill_executions(
+        self,
+        skill_id: str,
+        *,
+        page_size: typing.Optional[int] = None,
+        page_number: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SkillExecutionListResponse:
+        """
+        List executions for a specific skill.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        page_size : typing.Optional[int]
+
+        page_number : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillExecutionListResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.skills.list_skill_executions(
+            skill_id="skill_id",
+        )
+        """
+        _response = self._raw_client.list_skill_executions(
+            skill_id, page_size=page_size, page_number=page_number, request_options=request_options
+        )
+        return _response.data
+
+    def get_skill_execution_output(
+        self, skill_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SkillExecutionOutputResponse:
+        """
+        Get presigned URL for downloading skill execution output.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillExecutionOutputResponse
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.skills.get_skill_execution_output(
+            skill_id="skill_id",
+            execution_id="execution_id",
+        )
+        """
+        _response = self._raw_client.get_skill_execution_output(skill_id, execution_id, request_options=request_options)
         return _response.data
 
 
@@ -901,5 +981,101 @@ class AsyncSkillsClient:
         """
         _response = await self._raw_client.refine_skill(
             skill_id, feedback=feedback, test_output=test_output, test_logs=test_logs, request_options=request_options
+        )
+        return _response.data
+
+    async def list_skill_executions(
+        self,
+        skill_id: str,
+        *,
+        page_size: typing.Optional[int] = None,
+        page_number: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> SkillExecutionListResponse:
+        """
+        List executions for a specific skill.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        page_size : typing.Optional[int]
+
+        page_number : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillExecutionListResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.skills.list_skill_executions(
+                skill_id="skill_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.list_skill_executions(
+            skill_id, page_size=page_size, page_number=page_number, request_options=request_options
+        )
+        return _response.data
+
+    async def get_skill_execution_output(
+        self, skill_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> SkillExecutionOutputResponse:
+        """
+        Get presigned URL for downloading skill execution output.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        SkillExecutionOutputResponse
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.skills.get_skill_execution_output(
+                skill_id="skill_id",
+                execution_id="execution_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_skill_execution_output(
+            skill_id, execution_id, request_options=request_options
         )
         return _response.data

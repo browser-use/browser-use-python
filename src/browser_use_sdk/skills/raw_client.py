@@ -15,13 +15,17 @@ from ..errors.bad_request_error import BadRequestError
 from ..errors.forbidden_error import ForbiddenError
 from ..errors.not_found_error import NotFoundError
 from ..errors.payment_required_error import PaymentRequiredError
+from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
 from ..types.create_skill_response import CreateSkillResponse
 from ..types.execute_skill_response import ExecuteSkillResponse
 from ..types.refine_skill_response import RefineSkillResponse
 from ..types.skill_category import SkillCategory
+from ..types.skill_execution_list_response import SkillExecutionListResponse
+from ..types.skill_execution_output_response import SkillExecutionOutputResponse
 from ..types.skill_list_response import SkillListResponse
 from ..types.skill_response import SkillResponse
+from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
 
 # this is used as the default value for optional parameters
 OMIT = typing.cast(typing.Any, ...)
@@ -184,6 +188,17 @@ class RawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -191,6 +206,17 @@ class RawSkillsClient:
                         typing.Optional[typing.Any],
                         construct_type(
                             type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -661,6 +687,17 @@ class RawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -734,6 +771,152 @@ class RawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def list_skill_executions(
+        self,
+        skill_id: str,
+        *,
+        page_size: typing.Optional[int] = None,
+        page_number: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> HttpResponse[SkillExecutionListResponse]:
+        """
+        List executions for a specific skill.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        page_size : typing.Optional[int]
+
+        page_number : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[SkillExecutionListResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"skills/{jsonable_encoder(skill_id)}/executions",
+            method="GET",
+            params={
+                "pageSize": page_size,
+                "pageNumber": page_number,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SkillExecutionListResponse,
+                    construct_type(
+                        type_=SkillExecutionListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_skill_execution_output(
+        self, skill_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[SkillExecutionOutputResponse]:
+        """
+        Get presigned URL for downloading skill execution output.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[SkillExecutionOutputResponse]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"skills/{jsonable_encoder(skill_id)}/executions/{jsonable_encoder(execution_id)}/output",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SkillExecutionOutputResponse,
+                    construct_type(
+                        type_=SkillExecutionOutputResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -919,6 +1102,17 @@ class AsyncRawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 422:
                 raise UnprocessableEntityError(
                     headers=dict(_response.headers),
@@ -926,6 +1120,17 @@ class AsyncRawSkillsClient:
                         typing.Optional[typing.Any],
                         construct_type(
                             type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
                             object_=_response.json(),
                         ),
                     ),
@@ -1396,6 +1601,17 @@ class AsyncRawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             _response_json = _response.json()
         except JSONDecodeError:
             raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
@@ -1469,6 +1685,152 @@ class AsyncRawSkillsClient:
                         ),
                     ),
                 )
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 429:
+                raise TooManyRequestsError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        TooManyConcurrentActiveSessionsError,
+                        construct_type(
+                            type_=TooManyConcurrentActiveSessionsError,  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def list_skill_executions(
+        self,
+        skill_id: str,
+        *,
+        page_size: typing.Optional[int] = None,
+        page_number: typing.Optional[int] = None,
+        request_options: typing.Optional[RequestOptions] = None,
+    ) -> AsyncHttpResponse[SkillExecutionListResponse]:
+        """
+        List executions for a specific skill.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        page_size : typing.Optional[int]
+
+        page_number : typing.Optional[int]
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[SkillExecutionListResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"skills/{jsonable_encoder(skill_id)}/executions",
+            method="GET",
+            params={
+                "pageSize": page_size,
+                "pageNumber": page_number,
+            },
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SkillExecutionListResponse,
+                    construct_type(
+                        type_=SkillExecutionListResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_skill_execution_output(
+        self, skill_id: str, execution_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[SkillExecutionOutputResponse]:
+        """
+        Get presigned URL for downloading skill execution output.
+
+        Parameters
+        ----------
+        skill_id : str
+
+        execution_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[SkillExecutionOutputResponse]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"skills/{jsonable_encoder(skill_id)}/executions/{jsonable_encoder(execution_id)}/output",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    SkillExecutionOutputResponse,
+                    construct_type(
+                        type_=SkillExecutionOutputResponse,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),

@@ -8,10 +8,13 @@ from ..core.client_wrapper import AsyncClientWrapper, SyncClientWrapper
 from ..core.http_response import AsyncHttpResponse, HttpResponse
 from ..core.jsonable_encoder import jsonable_encoder
 from ..core.request_options import RequestOptions
+from ..core.serialization import convert_and_respect_annotation_metadata
 from ..core.unchecked_base_model import construct_type
 from ..errors.not_found_error import NotFoundError
+from ..errors.payment_required_error import PaymentRequiredError
 from ..errors.too_many_requests_error import TooManyRequestsError
 from ..errors.unprocessable_entity_error import UnprocessableEntityError
+from ..types.custom_proxy import CustomProxy
 from ..types.proxy_country_code import ProxyCountryCode
 from ..types.session_item_view import SessionItemView
 from ..types.session_list_response import SessionListResponse
@@ -101,6 +104,8 @@ class RawSessionsClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         persist_memory: typing.Optional[bool] = OMIT,
+        keep_alive: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[SessionItemView]:
         """
@@ -126,6 +131,12 @@ class RawSessionsClient:
         persist_memory : typing.Optional[bool]
             If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
 
+        keep_alive : typing.Optional[bool]
+            If True (default), the browser session stays alive after tasks complete, allowing follow-up tasks. If False, the session is closed immediately after task completion. Set to False for simple one-off tasks to reduce session idle time.
+
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -144,6 +155,10 @@ class RawSessionsClient:
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
                 "persistMemory": persist_memory,
+                "keepAlive": keep_alive,
+                "customProxy": convert_and_respect_annotation_metadata(
+                    object_=custom_proxy, annotation=typing.Optional[CustomProxy], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -161,6 +176,17 @@ class RawSessionsClient:
                     ),
                 )
                 return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),
@@ -630,6 +656,8 @@ class AsyncRawSessionsClient:
         browser_screen_width: typing.Optional[int] = OMIT,
         browser_screen_height: typing.Optional[int] = OMIT,
         persist_memory: typing.Optional[bool] = OMIT,
+        keep_alive: typing.Optional[bool] = OMIT,
+        custom_proxy: typing.Optional[CustomProxy] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[SessionItemView]:
         """
@@ -655,6 +683,12 @@ class AsyncRawSessionsClient:
         persist_memory : typing.Optional[bool]
             If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
 
+        keep_alive : typing.Optional[bool]
+            If True (default), the browser session stays alive after tasks complete, allowing follow-up tasks. If False, the session is closed immediately after task completion. Set to False for simple one-off tasks to reduce session idle time.
+
+        custom_proxy : typing.Optional[CustomProxy]
+            Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
 
@@ -673,6 +707,10 @@ class AsyncRawSessionsClient:
                 "browserScreenWidth": browser_screen_width,
                 "browserScreenHeight": browser_screen_height,
                 "persistMemory": persist_memory,
+                "keepAlive": keep_alive,
+                "customProxy": convert_and_respect_annotation_metadata(
+                    object_=custom_proxy, annotation=typing.Optional[CustomProxy], direction="write"
+                ),
             },
             headers={
                 "content-type": "application/json",
@@ -690,6 +728,17 @@ class AsyncRawSessionsClient:
                     ),
                 )
                 return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 402:
+                raise PaymentRequiredError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
             if _response.status_code == 404:
                 raise NotFoundError(
                     headers=dict(_response.headers),

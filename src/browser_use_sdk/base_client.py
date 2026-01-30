@@ -17,7 +17,6 @@ if typing.TYPE_CHECKING:
     from .skills.client import AsyncSkillsClient, SkillsClient
     from .skills_marketplace.client import AsyncSkillsMarketplaceClient, SkillsMarketplaceClient
     from .tasks.client import AsyncTasksClient, TasksClient
-    from .workflows.client import AsyncWorkflowsClient, WorkflowsClient
 
 
 class BaseClient:
@@ -93,7 +92,6 @@ class BaseClient:
         self._browsers: typing.Optional[BrowsersClient] = None
         self._skills: typing.Optional[SkillsClient] = None
         self._skills_marketplace: typing.Optional[SkillsMarketplaceClient] = None
-        self._workflows: typing.Optional[WorkflowsClient] = None
 
     @property
     def billing(self):
@@ -158,14 +156,6 @@ class BaseClient:
 
             self._skills_marketplace = SkillsMarketplaceClient(client_wrapper=self._client_wrapper)
         return self._skills_marketplace
-
-    @property
-    def workflows(self):
-        if self._workflows is None:
-            from .workflows.client import WorkflowsClient  # noqa: E402
-
-            self._workflows = WorkflowsClient(client_wrapper=self._client_wrapper)
-        return self._workflows
 
 
 class AsyncBaseClient:
@@ -241,7 +231,6 @@ class AsyncBaseClient:
         self._browsers: typing.Optional[AsyncBrowsersClient] = None
         self._skills: typing.Optional[AsyncSkillsClient] = None
         self._skills_marketplace: typing.Optional[AsyncSkillsMarketplaceClient] = None
-        self._workflows: typing.Optional[AsyncWorkflowsClient] = None
 
     @property
     def billing(self):
@@ -306,14 +295,6 @@ class AsyncBaseClient:
 
             self._skills_marketplace = AsyncSkillsMarketplaceClient(client_wrapper=self._client_wrapper)
         return self._skills_marketplace
-
-    @property
-    def workflows(self):
-        if self._workflows is None:
-            from .workflows.client import AsyncWorkflowsClient  # noqa: E402
-
-            self._workflows = AsyncWorkflowsClient(client_wrapper=self._client_wrapper)
-        return self._workflows
 
 
 def _get_base_url(*, base_url: typing.Optional[str] = None, environment: BrowserUseEnvironment) -> str:

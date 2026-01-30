@@ -184,12 +184,15 @@ client.tasks.list_tasks()
 Create and start a new task.
 
 You can either:
-1. Start a new task without a sessionId (auto-creates a session with US proxy by default)
+1. Start a new task without a sessionId (auto-creates a session with US proxy by default).
+   Note: Tasks without a sessionId are one-off tasks that automatically close the session
+   upon completion (keep_alive=false).
 2. Start a new task in an existing session (reuse for follow-up tasks or custom configuration)
 
-Important: Proxy configuration (proxyCountryCode) is a session-level setting, not a task-level setting.
-To use a custom proxy location, create a session first via POST /sessions with your desired proxyCountryCode,
-then pass that sessionId when creating tasks.
+Important: Proxy configuration (proxyCountryCode) and other session settings (like keep_alive) are
+session-level settings, not task-level settings. For full control over session configuration,
+create a session first via POST /sessions with your desired settings, then pass that sessionId
+when creating tasks.
 </dd>
 </dl>
 </dd>
@@ -784,6 +787,22 @@ client.sessions.create_session()
 <dd>
 
 **persist_memory:** `typing.Optional[bool]` — If True (default), tasks in this session share memory and history with each other, allowing follow-up tasks to continue from previous context. If False, each task runs as a standalone task without any previous task context.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**keep_alive:** `typing.Optional[bool]` — If True (default), the browser session stays alive after tasks complete, allowing follow-up tasks. If False, the session is closed immediately after task completion. Set to False for simple one-off tasks to reduce session idle time.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**custom_proxy:** `typing.Optional[CustomProxy]` — Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
     
 </dd>
 </dl>
@@ -2068,6 +2087,14 @@ client.browsers.create_browser_session()
 <dl>
 <dd>
 
+**custom_proxy:** `typing.Optional[CustomProxy]` — Custom proxy settings to use for the session. If not provided, our proxies will be used. Custom proxies are only available for Business and Scaleup subscribers.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -3016,6 +3043,171 @@ client.skills.refine_skill(
 </dl>
 </details>
 
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">list_skill_executions</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+List executions for a specific skill.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.list_skill_executions(
+    skill_id="skill_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_size:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page_number:** `typing.Optional[int]` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.skills.<a href="src/browser_use_sdk/skills/client.py">get_skill_execution_output</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get presigned URL for downloading skill execution output.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.skills.get_skill_execution_output(
+    skill_id="skill_id",
+    execution_id="execution_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**skill_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**execution_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## SkillsMarketplace
 <details><summary><code>client.skills_marketplace.<a href="src/browser_use_sdk/skills_marketplace/client.py">list_skills</a>(...)</code></summary>
 <dl>
@@ -3324,1513 +3516,6 @@ client.skills_marketplace.execute_skill(
 <dd>
 
 **parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Parameters to pass to the skill handler
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Workflows
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">list_workflows</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get paginated list of workflows with optional filtering.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.list_workflows()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**page_size:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**page_number:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**is_archived:** `typing.Optional[bool]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**user_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">create_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a new workflow. The workflow YAML should be uploaded separately via the update endpoint.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.create_workflow(
-    name="name",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` — Name of the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `typing.Optional[str]` — Optional description of the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**variables:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Optional variables/parameters for the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get detailed workflow information including presigned URL to download YAML.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_workflow(
-    workflow_id="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">delete_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Archive a workflow (soft delete).
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.delete_workflow(
-    workflow_id="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">update_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Update workflow metadata.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.update_workflow(
-    workflow_id="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**name:** `typing.Optional[str]` — Name of the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `typing.Optional[str]` — Description of the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**variables:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Variables/parameters for the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_workflow_generation_state</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get workflow generation state with live browser URL for polling.
-
-This endpoint returns the current state of workflow generation including
-the live browser URL (if available). It's designed to be polled every 2 seconds
-during generation to show real-time browser activity in the frontend.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_workflow_generation_state(
-    workflow_id="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">create_workflow_from_task</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Create a workflow from an existing agent task's recorded history.
-
-This endpoint creates a workflow by using the browser-use rerun history
-feature. The task must have completed with history stored in S3.
-
-The workflow creation process:
-1. Creates a new workflow record in pending state
-2. Triggers an Inngest event to process the task history
-3. The Inngest handler downloads history, detects variables, and updates the workflow
-
-Use GET /workflows/{workflow_id} to poll for creation completion.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.create_workflow_from_task(
-    name="name",
-    task_id="taskId",
-    session_id="sessionId",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**name:** `str` — Name for the new workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**task_id:** `str` — ID of the agent task to create workflow from
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**session_id:** `str` — ID of the agent session containing the task
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**description:** `typing.Optional[str]` — Optional description for the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_workflow_yaml_presigned_url</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get a presigned URL to upload workflow YAML directly to S3 from the browser.
-
-This avoids sending the YAML content through the backend, reducing latency
-and avoiding KMS permission issues in local development.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_workflow_yaml_presigned_url(
-    workflow_id="workflow_id",
-    size_bytes=1,
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**size_bytes:** `int` — Size of the YAML file in bytes
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**file_name:** `typing.Optional[str]` — The name of the YAML file to upload
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">run_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Execute a workflow asynchronously.
-
-Returns execution ID immediately and processes in background via Inngest.
-Use the GET /workflows/executions/{execution_id} endpoint to check status and retrieve results.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.run_workflow(
-    workflow_id="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**input:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Input parameters for the workflow execution
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**execution_metadata:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Optional metadata for this execution
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">generate_workflow</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Generate a workflow from a natural language task description.
-
-This endpoint uses the workflow-use library's HealingService to:
-1. Record browser interactions for the task
-2. Convert interactions to a reusable workflow
-3. Extract variables for parameterization
-4. Save the generated YAML to S3
-
-The generation happens asynchronously via the workflow_worker Lambda.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.generate_workflow(
-    workflow_id="workflow_id",
-    task_prompt="Go to github.com and search for browser-use",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**task_prompt:** `str` — Natural language description of the task to automate
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workflow_name:** `typing.Optional[str]` — Optional name for the generated workflow. If not provided, will be inferred from prompt.
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enable_variable_extraction:** `typing.Optional[bool]` — Whether to extract reusable variables from the workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**use_deterministic_conversion:** `typing.Optional[bool]` — Whether to use deterministic conversion (faster and cheaper)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**use_cloud_browser:** `typing.Optional[bool]` — Whether to use cloud browser for recording (recommended for production)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enable_pattern_variable_identification:** `typing.Optional[bool]` — Enable pattern-based variable identification (no LLM, $0 cost)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**pattern_variable_confidence:** `typing.Optional[float]` — Minimum confidence threshold for pattern-based detection (0.0 to 1.0)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**enable_ai_validation:** `typing.Optional[bool]` — Enable AI validation to review and fix generated workflow
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**cleanup_yaml:** `typing.Optional[bool]` — Remove verbose fields from generated YAML
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**remove_descriptions:** `typing.Optional[bool]` — Remove step descriptions (only if cleanup_yaml=True)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**remove_verification_checks:** `typing.Optional[bool]` — Remove verification_checks (only if cleanup_yaml=True)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**remove_expected_outcomes:** `typing.Optional[bool]` — Remove expected_outcome fields (only if cleanup_yaml=True)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**remove_agent_reasoning:** `typing.Optional[bool]` — Remove agent_reasoning fields (only if cleanup_yaml=True)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get detailed execution information including status, results, and costs.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_execution(
-    execution_id="execution_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**execution_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">list_workflow_executions</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get paginated list of executions for a specific workflow.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.list_workflow_executions(
-    workflow_id_="workflow_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**workflow_id_:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**page_size:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**page_number:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[WorkflowExecutionStatus]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workflow_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">list_all_executions</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get paginated list of all workflow executions for a project.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.list_all_executions()
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**page_size:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**page_number:** `typing.Optional[int]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**status:** `typing.Optional[WorkflowExecutionStatus]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**workflow_id:** `typing.Optional[str]` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">cancel_execution</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Cancel a pending or running workflow execution.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.cancel_execution(
-    execution_id="execution_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**execution_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution_logs</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get presigned URL to download execution logs.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_execution_logs(
-    execution_id="execution_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**execution_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution_state</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get workflow execution state with steps for live UI polling.
-
-This endpoint returns the current state of a workflow execution including all steps
-with their details. It's designed to be polled every 2 seconds during execution
-to show real-time progress in the frontend.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_execution_state(
-    execution_id="execution_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**execution_id:** `str` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.workflows.<a href="src/browser_use_sdk/workflows/client.py">get_execution_media</a>(...)</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Get workflow execution media (screenshots) with presigned URLs.
-
-This endpoint returns media URLs for completed executions. Screenshots
-are returned with presigned S3 URLs for direct access from the frontend.
-Should be called when execution status is 'completed', 'failed', or 'cancelled'.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```python
-from browser_use_sdk import BrowserUse
-
-client = BrowserUse(
-    api_key="YOUR_API_KEY",
-)
-client.workflows.get_execution_media(
-    execution_id="execution_id",
-)
-
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**execution_id:** `str` 
     
 </dd>
 </dl>

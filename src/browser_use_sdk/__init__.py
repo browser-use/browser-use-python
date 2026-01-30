@@ -6,7 +6,7 @@ import typing
 from importlib import import_module
 
 if typing.TYPE_CHECKING:
-    from . import billing, browsers, files, profiles, sessions, skills, skills_marketplace, tasks, workflows
+    from . import billing, browsers, files, profiles, sessions, skills, skills_marketplace, tasks
     from .client import AsyncBrowserUse, BrowserUse
     from .version import __version__
 _dynamic_imports: typing.Dict[str, str] = {
@@ -21,7 +21,6 @@ _dynamic_imports: typing.Dict[str, str] = {
     "skills": ".",
     "skills_marketplace": ".",
     "tasks": ".",
-    "workflows": ".",
 }
 
 
@@ -56,5 +55,4 @@ __all__ = [
     "skills",
     "skills_marketplace",
     "tasks",
-    "workflows",
 ]
