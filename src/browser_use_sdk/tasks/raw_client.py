@@ -22,6 +22,7 @@ from ..types.task_created_response import TaskCreatedResponse
 from ..types.task_list_response import TaskListResponse
 from ..types.task_log_file_response import TaskLogFileResponse
 from ..types.task_status import TaskStatus
+from ..types.task_status_view import TaskStatusView
 from ..types.task_update_action import TaskUpdateAction
 from ..types.task_view import TaskView
 from ..types.too_many_concurrent_active_sessions_error import TooManyConcurrentActiveSessionsError
@@ -405,6 +406,75 @@ class RawTasksClient:
                     TaskView,
                     construct_type(
                         type_=TaskView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return HttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    def get_task_status(
+        self, task_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> HttpResponse[TaskStatusView]:
+        """
+        Lightweight endpoint optimized for polling task status.
+
+        Returns only the task status, output, and cost without loading steps,
+        files, or session details. Use this endpoint for efficient polling
+        instead of GET /tasks/{task_id}.
+
+        Recommended polling pattern:
+        1. POST /tasks to create a task
+        2. Poll GET /tasks/{task_id}/status until status is 'finished' or 'stopped'
+        3. GET /tasks/{task_id} once at the end for full details including steps
+
+        Parameters
+        ----------
+        task_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        HttpResponse[TaskStatusView]
+            Successful Response
+        """
+        _response = self._client_wrapper.httpx_client.request(
+            f"tasks/{jsonable_encoder(task_id)}/status",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TaskStatusView,
+                    construct_type(
+                        type_=TaskStatusView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )
@@ -882,6 +952,75 @@ class AsyncRawTasksClient:
                     TaskView,
                     construct_type(
                         type_=TaskView,  # type: ignore
+                        object_=_response.json(),
+                    ),
+                )
+                return AsyncHttpResponse(response=_response, data=_data)
+            if _response.status_code == 404:
+                raise NotFoundError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            if _response.status_code == 422:
+                raise UnprocessableEntityError(
+                    headers=dict(_response.headers),
+                    body=typing.cast(
+                        typing.Optional[typing.Any],
+                        construct_type(
+                            type_=typing.Optional[typing.Any],  # type: ignore
+                            object_=_response.json(),
+                        ),
+                    ),
+                )
+            _response_json = _response.json()
+        except JSONDecodeError:
+            raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response.text)
+        raise ApiError(status_code=_response.status_code, headers=dict(_response.headers), body=_response_json)
+
+    async def get_task_status(
+        self, task_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> AsyncHttpResponse[TaskStatusView]:
+        """
+        Lightweight endpoint optimized for polling task status.
+
+        Returns only the task status, output, and cost without loading steps,
+        files, or session details. Use this endpoint for efficient polling
+        instead of GET /tasks/{task_id}.
+
+        Recommended polling pattern:
+        1. POST /tasks to create a task
+        2. Poll GET /tasks/{task_id}/status until status is 'finished' or 'stopped'
+        3. GET /tasks/{task_id} once at the end for full details including steps
+
+        Parameters
+        ----------
+        task_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        AsyncHttpResponse[TaskStatusView]
+            Successful Response
+        """
+        _response = await self._client_wrapper.httpx_client.request(
+            f"tasks/{jsonable_encoder(task_id)}/status",
+            method="GET",
+            request_options=request_options,
+        )
+        try:
+            if 200 <= _response.status_code < 300:
+                _data = typing.cast(
+                    TaskStatusView,
+                    construct_type(
+                        type_=TaskStatusView,  # type: ignore
                         object_=_response.json(),
                     ),
                 )

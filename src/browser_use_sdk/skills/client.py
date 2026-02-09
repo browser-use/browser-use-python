@@ -340,6 +340,7 @@ class SkillsClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecuteSkillResponse:
         """
@@ -351,6 +352,9 @@ class SkillsClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -371,7 +375,9 @@ class SkillsClient:
             skill_id="skill_id",
         )
         """
-        _response = self._raw_client.execute_skill(skill_id, parameters=parameters, request_options=request_options)
+        _response = self._raw_client.execute_skill(
+            skill_id, parameters=parameters, session_id=session_id, request_options=request_options
+        )
         return _response.data
 
     def refine_skill(
@@ -882,6 +888,7 @@ class AsyncSkillsClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecuteSkillResponse:
         """
@@ -893,6 +900,9 @@ class AsyncSkillsClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -922,7 +932,7 @@ class AsyncSkillsClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.execute_skill(
-            skill_id, parameters=parameters, request_options=request_options
+            skill_id, parameters=parameters, session_id=session_id, request_options=request_options
         )
         return _response.data
 

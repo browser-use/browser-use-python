@@ -154,6 +154,7 @@ class SkillsMarketplaceClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecuteSkillResponse:
         """
@@ -165,6 +166,9 @@ class SkillsMarketplaceClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -185,7 +189,9 @@ class SkillsMarketplaceClient:
             skill_id="skill_id",
         )
         """
-        _response = self._raw_client.execute_skill(skill_id, parameters=parameters, request_options=request_options)
+        _response = self._raw_client.execute_skill(
+            skill_id, parameters=parameters, session_id=session_id, request_options=request_options
+        )
         return _response.data
 
 
@@ -353,6 +359,7 @@ class AsyncSkillsMarketplaceClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> ExecuteSkillResponse:
         """
@@ -364,6 +371,9 @@ class AsyncSkillsMarketplaceClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -393,6 +403,6 @@ class AsyncSkillsMarketplaceClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.execute_skill(
-            skill_id, parameters=parameters, request_options=request_options
+            skill_id, parameters=parameters, session_id=session_id, request_options=request_options
         )
         return _response.data

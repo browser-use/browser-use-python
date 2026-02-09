@@ -240,6 +240,7 @@ class RawSkillsMarketplaceClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecuteSkillResponse]:
         """
@@ -251,6 +252,9 @@ class RawSkillsMarketplaceClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -265,6 +269,7 @@ class RawSkillsMarketplaceClient:
             method="POST",
             json={
                 "parameters": parameters,
+                "sessionId": session_id,
             },
             headers={
                 "content-type": "application/json",
@@ -547,6 +552,7 @@ class AsyncRawSkillsMarketplaceClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecuteSkillResponse]:
         """
@@ -558,6 +564,9 @@ class AsyncRawSkillsMarketplaceClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -572,6 +581,7 @@ class AsyncRawSkillsMarketplaceClient:
             method="POST",
             json={
                 "parameters": parameters,
+                "sessionId": session_id,
             },
             headers={
                 "content-type": "application/json",

@@ -101,6 +101,13 @@ class TaskView(UncheckedBaseModel):
     Total cost of the task in USD. This is the sum of all step costs incurred during task execution.
     """
 
+    suggestions: typing.Optional[typing.List[typing.Dict[str, typing.Optional[typing.Any]]]] = pydantic.Field(
+        default=None
+    )
+    """
+    List of actionable suggestions for improving task configuration based on detected issues during execution.
+    """
+
     if IS_PYDANTIC_V2:
         model_config: typing.ClassVar[pydantic.ConfigDict] = pydantic.ConfigDict(extra="allow", frozen=True)  # type: ignore # Pydantic v2
     else:

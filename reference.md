@@ -543,6 +543,85 @@ client.tasks.update_task(
 </dl>
 </details>
 
+<details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">get_task_status</a>(...)</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Lightweight endpoint optimized for polling task status.
+
+Returns only the task status, output, and cost without loading steps,
+files, or session details. Use this endpoint for efficient polling
+instead of GET /tasks/{task_id}.
+
+Recommended polling pattern:
+1. POST /tasks to create a task
+2. Poll GET /tasks/{task_id}/status until status is 'finished' or 'stopped'
+3. GET /tasks/{task_id} once at the end for full details including steps
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```python
+from browser_use_sdk import BrowserUse
+
+client = BrowserUse(
+    api_key="YOUR_API_KEY",
+)
+client.tasks.get_task_status(
+    task_id="task_id",
+)
+
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**task_id:** `str` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.tasks.<a href="src/browser_use_sdk/tasks/client.py">get_task_logs</a>(...)</code></summary>
 <dl>
 <dd>
@@ -2936,6 +3015,14 @@ client.skills.execute_skill(
 <dl>
 <dd>
 
+**session_id:** `typing.Optional[str]` — Optional session ID (UUID) for IP persistence.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **request_options:** `typing.Optional[RequestOptions]` — Request-specific configuration.
     
 </dd>
@@ -3516,6 +3603,14 @@ client.skills_marketplace.execute_skill(
 <dd>
 
 **parameters:** `typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]` — Parameters to pass to the skill handler
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**session_id:** `typing.Optional[str]` — Optional session ID (UUID) for IP persistence.
     
 </dd>
 </dl>

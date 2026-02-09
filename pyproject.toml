@@ -1,10 +1,9 @@
 [project]
 name = "browser-use-sdk"
-dynamic = ["version"]
 
 [tool.poetry]
 name = "browser-use-sdk"
-version = "2.0.14"
+version = "2.0.15"
 description = "The official Python library for the Browser Use API"
 readme = "README.md"
 authors = []

@@ -3,7 +3,9 @@
 import typing
 
 import pydantic
+import typing_extensions
 from ..core.pydantic_utilities import IS_PYDANTIC_V2
+from ..core.serialization import FieldMetadata
 from ..core.unchecked_base_model import UncheckedBaseModel
 
 
@@ -15,6 +17,13 @@ class ExecuteSkillRequest(UncheckedBaseModel):
     parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = pydantic.Field(default=None)
     """
     Parameters to pass to the skill handler
+    """
+
+    session_id: typing_extensions.Annotated[typing.Optional[str], FieldMetadata(alias="sessionId")] = pydantic.Field(
+        default=None
+    )
+    """
+    Optional session ID (UUID) for IP persistence.
     """
 
     if IS_PYDANTIC_V2:

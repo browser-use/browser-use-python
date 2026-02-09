@@ -601,6 +601,7 @@ class RawSkillsClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> HttpResponse[ExecuteSkillResponse]:
         """
@@ -612,6 +613,9 @@ class RawSkillsClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -626,6 +630,7 @@ class RawSkillsClient:
             method="POST",
             json={
                 "parameters": parameters,
+                "sessionId": session_id,
             },
             headers={
                 "content-type": "application/json",
@@ -1515,6 +1520,7 @@ class AsyncRawSkillsClient:
         skill_id: str,
         *,
         parameters: typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]] = OMIT,
+        session_id: typing.Optional[str] = OMIT,
         request_options: typing.Optional[RequestOptions] = None,
     ) -> AsyncHttpResponse[ExecuteSkillResponse]:
         """
@@ -1526,6 +1532,9 @@ class AsyncRawSkillsClient:
 
         parameters : typing.Optional[typing.Dict[str, typing.Optional[typing.Any]]]
             Parameters to pass to the skill handler
+
+        session_id : typing.Optional[str]
+            Optional session ID (UUID) for IP persistence.
 
         request_options : typing.Optional[RequestOptions]
             Request-specific configuration.
@@ -1540,6 +1549,7 @@ class AsyncRawSkillsClient:
             method="POST",
             json={
                 "parameters": parameters,
+                "sessionId": session_id,
             },
             headers={
                 "content-type": "application/json",

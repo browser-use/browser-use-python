@@ -10,6 +10,7 @@ from ..types.task_created_response import TaskCreatedResponse
 from ..types.task_list_response import TaskListResponse
 from ..types.task_log_file_response import TaskLogFileResponse
 from ..types.task_status import TaskStatus
+from ..types.task_status_view import TaskStatusView
 from ..types.task_update_action import TaskUpdateAction
 from ..types.task_view import TaskView
 from .raw_client import AsyncRawTasksClient, RawTasksClient
@@ -294,6 +295,47 @@ class TasksClient:
         )
         """
         _response = self._raw_client.update_task(task_id, action=action, request_options=request_options)
+        return _response.data
+
+    def get_task_status(
+        self, task_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TaskStatusView:
+        """
+        Lightweight endpoint optimized for polling task status.
+
+        Returns only the task status, output, and cost without loading steps,
+        files, or session details. Use this endpoint for efficient polling
+        instead of GET /tasks/{task_id}.
+
+        Recommended polling pattern:
+        1. POST /tasks to create a task
+        2. Poll GET /tasks/{task_id}/status until status is 'finished' or 'stopped'
+        3. GET /tasks/{task_id} once at the end for full details including steps
+
+        Parameters
+        ----------
+        task_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TaskStatusView
+            Successful Response
+
+        Examples
+        --------
+        from browser_use_sdk import BrowserUse
+
+        client = BrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+        client.tasks.get_task_status(
+            task_id="task_id",
+        )
+        """
+        _response = self._raw_client.get_task_status(task_id, request_options=request_options)
         return _response.data
 
     def get_task_logs(
@@ -636,6 +678,55 @@ class AsyncTasksClient:
         asyncio.run(main())
         """
         _response = await self._raw_client.update_task(task_id, action=action, request_options=request_options)
+        return _response.data
+
+    async def get_task_status(
+        self, task_id: str, *, request_options: typing.Optional[RequestOptions] = None
+    ) -> TaskStatusView:
+        """
+        Lightweight endpoint optimized for polling task status.
+
+        Returns only the task status, output, and cost without loading steps,
+        files, or session details. Use this endpoint for efficient polling
+        instead of GET /tasks/{task_id}.
+
+        Recommended polling pattern:
+        1. POST /tasks to create a task
+        2. Poll GET /tasks/{task_id}/status until status is 'finished' or 'stopped'
+        3. GET /tasks/{task_id} once at the end for full details including steps
+
+        Parameters
+        ----------
+        task_id : str
+
+        request_options : typing.Optional[RequestOptions]
+            Request-specific configuration.
+
+        Returns
+        -------
+        TaskStatusView
+            Successful Response
+
+        Examples
+        --------
+        import asyncio
+
+        from browser_use_sdk import AsyncBrowserUse
+
+        client = AsyncBrowserUse(
+            api_key="YOUR_API_KEY",
+        )
+
+
+        async def main() -> None:
+            await client.tasks.get_task_status(
+                task_id="task_id",
+            )
+
+
+        asyncio.run(main())
+        """
+        _response = await self._raw_client.get_task_status(task_id, request_options=request_options)
         return _response.data
 
     async def get_task_logs(
